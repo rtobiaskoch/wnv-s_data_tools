@@ -1,6 +1,7 @@
 calc_vi_stats = function(df , grp_var) {
+  
   if (!require("pacman")) install.packages("pacman")
-  pacman::p_load(dplyr, PooledInfRate)
+  pacman::p_load(tidyverse, PooledInfRate)
   #calculate the PIR
   df2 = df %>%
     unite(col = "grp", all_of(grp_var), sep = "-", remove = FALSE)
