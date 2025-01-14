@@ -8,8 +8,8 @@ pacman::p_load(tidyverse, googledrive)
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #---------------- R E A D   D A T A  -------------------------------------------
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-fn_new_data = "1_input/wnv-s_database.csv"
-fn_old_data = "1_input/wnv-s_database_old.csv"
+fn_new_data = "2_output/wnv-s_database_0_expand.csv"
+fn_old_data = "1_input/wnv-s_database.csv"
 
 #join cq (pcr) data and the trap location data to get new data to add to the database
 #keep the standards controls and other samples that arent i 
@@ -47,11 +47,11 @@ missing_id = anti_join(database, new_data0, by = "csu_id")
 database_update = database_update %>%
   mutate(across(everything(), ~ ifelse(is.na(.), "", .))) %>% #prevents NA from making non character variables in database throw errors
   select(all_of(database_col)) %>% #reorder them because natural_join fucked up the order
-  arrange(desc(trap_date)) %>%
+  arrange(year, week, zone, trap_id, desc(trap_date), spp) %>%
   distinct(csu_id, trap_id, trap_date, spp, .keep_all = T)
 
 #save it to the working directory
-write.csv(database_update, fn_database_update, row.names = F)
+#write.csv(database_update, fn_database_update, row.names = F)
 
 
 #save it to gdrive

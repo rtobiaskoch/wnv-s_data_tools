@@ -4,9 +4,9 @@ calc_vi_stats = function(df , grp_var) {
   pacman::p_load(tidyverse, PooledInfRate)
   #calculate the PIR
   df2 = df %>%
-    unite(col = "grp", all_of(grp_var), sep = "-", remove = FALSE)
+    tidyr::unite(col = "grp", all_of(grp_var), sep = "-", remove = FALSE)
   
-  mle = pIR(test_code ~ total|grp, data = df2, pt.method = "firth")
+  mle = PooledInfRate::pIR(test_code ~ total|grp, data = df2, pt.method = "firth")
   
   mle
   

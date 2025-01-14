@@ -12,20 +12,20 @@ pacman::p_load(tidyverse, PooledInfRate)
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 #GET DATA
-data_input = read.csv("1_input/wnv-s_database.csv") #24-10-28 updated with 0 traps
+1_input = read.csv("1_input/wnv-s_database.csv") #24-10-28 updated with 0 traps
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #--------------------------------T R A P S ----------------------------------------------
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #get number of active traps. For the purposes of historical calculations not going to consider malfunctioning traps
 
-  trap_data0 = data_input %>% 
+  trap_data0 = 1_input %>% 
     filter(method == "L") %>%
     distinct(year, week, zone, trap_id) %>%
     group_by(year, week, zone) %>%
     summarize(trap_L= n())
     
-  trap_data_fc = data_input %>% 
+  trap_data_fc = 1_input %>% 
     filter(method == "L") %>% #only keep active light traps
     filter(zone %in% fc_zones) %>% #keep zones in group
     distinct(year, week, zone, trap_id) %>%
@@ -44,7 +44,7 @@ suppressMessages({
   #get number of traps per night
   
   #get number of mosquitoes per zone per week per year
-  m_p_wk0 = data_input %>%
+  m_p_wk0 = 1_input %>%
     ungroup() %>%
     filter(method == "L") %>% #remove gravid traps for abundance calculation
     group_by(year,week,zone,spp) %>% #calc number of mosquitoes per week per zone
@@ -108,12 +108,12 @@ abund_ci_fun(df_abund, grp_vars, abund)
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 #create a grouping variable for mle
-data_input = data_input %>%
+1_input = 1_input %>%
   arrange(across(all_of(grp_vars))) %>% #dont split by method because PIR includes gravid traps
   mutate(grp = paste(year,week,zone,spp, sep ="-"))
 
 #run pIR
-mle = pIR(test_code ~ total|grp, data = data_input, pt.method = "firth")
+mle = pIR(test_code ~ total|grp, data = 1_input, pt.method = "firth")
 
 
 #create pIR dataframe
@@ -135,7 +135,7 @@ df_pir0 = as.data.frame(mle) %>%
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #calculate FC row for sum
 suppressMessages({
-  fc_pir0 = data_input %>%
+  fc_pir0 = 1_input %>%
     filter(zone %in% fc_zones) %>% #keep only fc zones
     mutate(zone = "FC") %>% #change zone to be FC
     mutate(grp = paste(year,week,zone,spp, sep ="-"))

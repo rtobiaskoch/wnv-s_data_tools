@@ -18,12 +18,9 @@ rm(list = ls())
 #Use config file for input filenames
 #if no config file you can use arguments 
 #if no arguments change the inputs below and they will be used in the script
-input_folder = "1_input/"
-fn_trap_hardcode = paste0(input_folder, "foco_trap.csv")
-fn_database_input_hardcode = paste0(input_folder,"wnv-s_database.csv")
-fn_config_file = paste0(input_folder, "config_params.RDS") # if you dont have a config file you can make it NA
-output_folder = "2_output/"
-fn_output = paste0(output_folder, "wnv-s_database_0_expand.csv")
+fn_trap_hardcode = "1_input/foco_trap.csv"
+fn_database_input_hardcode = "1_input/wnv-s_database.csv"
+fn_config_file = "1_input/config_params.RDS" # if you dont have a config file you can make it NA
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
@@ -31,15 +28,6 @@ fn_output = paste0(output_folder, "wnv-s_database_0_expand.csv")
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #--------------------------------- D E F I N E   P A R A M E T E R S ---------------------------------------------
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-#CREATE FOLDERS IF THEY DON'T EXIST
-if(!dir.exists(input_folder)) {
-  dir.create(input_folder)
-}
-
-if(!dir.exists(output_folder)) {
-  dir.create(output_folder)
-}
 
 #else define the necessary inputs yourself
 if(file.exists(fn_config_file)){
@@ -68,7 +56,6 @@ if(file.exists(fn_config_file)){
       cat("Database file:", fn_database_input, "\n")
 
 }
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -155,22 +142,26 @@ data_input_expand_no_traps = trap_expand %>%
 data_input_expand = trap_expand %>%
   left_join(data_input, by = c("year", "week", "zone", "trap_id", "method", "spp")) %>%
   select(-any_of(c("lat", "long"))) %>%
-  # ***** FILL IN DATA FOR 0 TRAPS ***************
+  #fill in the missing trap date for traps with one spp but not another
   arrange(year, week, zone, trap_id) %>%
   group_by(year, week, zone, trap_id) %>% #fixed bug previously was group_by(year, week, zone)
   fill(trap_date, .direction = "downup") %>% 
   fill(county, .direction = "downup") %>%
   ungroup %>%
+  #fill in the likely missing trap date for traps with no spp for that week
   arrange(year, week, zone) %>%
   group_by(year, week, zone) %>% #remove trap_id
   fill(trap_date, .direction = "downup") %>% 
   fill(county, .direction = "downup") %>%
   ungroup %>%
-  mutate(csu_id = if_else(is.na(csu_id), "CSU00000", csu_id)) %>%   #add in csu_id
-  mutate(total = if_else(is.na(total), 0, total)) %>% #replace na with 0
-  left_join(foco_traps0 %>% select(trap_id, active, start, lat, long),   #add lat and long back in
-            by = "trap_id") %>% #42515 25-01-13
-  # *******FILTER ******
+  #add in csu_id and total for 0 traps
+  mutate(csu_id = if_else(is.na(csu_id), "CSU00000", csu_id)) %>%
+  mutate(total = if_else(is.na(total), 0, total)) %>%
+  #add lat and long back in
+  left_join(foco_traps0 %>% select(trap_id, active, start, lat, long),
+            by = "trap_id")  %>%
+  mutate(csu_id = str_remove(csu_id, "-")) %>% #42515 25-01-13
+  #FILTER
   #remove traps with no data for entire week for a zone
   group_by(year, week, zone) %>% 
   filter(!all(csu_id == "CSU00000")) %>% #remove weeks where there was no trapping in the particular zones n = 31261 25-01-13
@@ -197,13 +188,45 @@ filter_check = data_input_expand_all_spp %>%
   anti_join(inactive, by = c("year", "week", "zone", "trap_id")) %>%
   mutate(date_check = year < start)
 
-
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#--------------------------- P L O T   E X P A N D E D   D A T A S E T--------------------------------------------
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+p_active  = data_input_expand %>%
+  anti_join(inactive, by = c("year", "week", "zone", "trap_id")) %>%
+  filter(year > 2014) %>%
+  filter(active == 0) %>%
+  group_by(year, week, zone, active, trap_id) %>%
+  summarize(total = sum(total)) %>%
+  mutate(active = factor(active, levels = c(0,1))) %>%
+  ungroup %>%
+  ggplot(aes(x = week, y = total, color = trap_id)) +
+  geom_point() +
+  facet_grid(zone~year) +
+  theme_minimal()
+  
+plotly::ggplotly(p_active)
+  
+data_input_expand %>%
+    anti_join(inactive, by = c("year", "week", "zone", "trap_id")) %>%
+    filter(year > 2014) %>%
+    filter(zone %in% fc_zones) %>%
+    group_by(year, week, zone, trap_id, spp) %>%
+    summarize(total = sum(total)) %>%
+    ungroup %>%
+    ggplot(aes(x = week, y = total, color = spp)) +
+    geom_point(alpha = 0.5) +
+    scale_color_manual(values = mozzy_pal2) +
+    scale_x_continuous(breaks = seq(min(data_input_expand$week), max(data_input_expand$week), by = 2)) +
+    theme(axis.text.x = element_text(angle = 90)) +
+    facet_grid(zone~year) +
+    ylim(0,1500) +
+    theme_classic()
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #---------------------------------- C R E A T E   N E W D A T A ------------------------------------------------------
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 data_input_expand2 = data_input_expand %>%
-  anti_join(inactive, by = c("year", "week", "zone", "trap_id")) %>% #n = 22434
+  anti_join(inactive, by = c("year", "week", "zone", "trap_id")) #%>% #n = 22434
 select(colnames(data_input)) 
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -215,6 +238,12 @@ missing_id = anti_join(data_input, data_input_expand2, by = "csu_id")
 if(nrow(missing_id) > 0) {
   warning("add_0_traps dropped samples. check code.")
 }
+
+
+check_expand_df2 = check_expand(data_input_expand2)
+
+# Example usage:
+check_trap_consistency(check_expand_df2 %>% filter(zone != 'BE'))
 
 write.csv(data_input_expand2, "2_output/wnv-s_database_0_expand.csv", row.names = F)
 
