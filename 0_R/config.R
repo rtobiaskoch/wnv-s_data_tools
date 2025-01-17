@@ -7,13 +7,37 @@ suppressMessages({
   pacman::p_load(googlesheets4, googledrive, rio, readxl, openxlsx, googledrive, #importing and exporting
                  tidyverse, janitor, lubridate, rquery, #manipulation
                  PooledInfRate, #analysis
-                 ggpubr, wesanderson, paletteer, leaflet, patchwork# plotting
+                 ggpubr, wesanderson, paletteer, leaflet, patchwork s# plotting
                  )
   
   
 })
 
-if(!file.exists("1_input/config_params.RDS")) {
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#FOLDER NAME CREATE AND CHECK
+#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+#NAMEO OF FOLDERS
+folder_input = "1_input"
+folder_mid = "2_mid"
+folder_output = "3_output"
+
+#CREATE FOLDERS IF THEY DON'T EXIST
+if(!dir.exists(folder_input)) {
+  dir.create(folder_input)
+}
+
+if(!dir.exists(folder_mid)) {
+  dir.create(folder_mid)
+}
+
+if(!dir.exists(folder_output)) {
+  dir.create(folder_output)
+}
+
+
+
+
+if(!file.exists(paste0(folder_input, "/config_params.RDS"))) {
   
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -76,26 +100,6 @@ if(length(week_filter) > 1){ #if looking at multiple years then create YYYY-YYYY
 
 
 
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#FOLDER NAME CREATE AND CHECK
-#>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-#NAMEO OF FOLDERS
-folder_input = "1_input"
-folder_mid = "1_input"
-folder_output = "3_output"
-
-#CREATE FOLDERS IF THEY DON'T EXIST
-if(!dir.exists(folder_input)) {
-  dir.create(folder_input)
-}
-
-if(!dir.exists(folder_mid)) {
-  dir.create(folder_mid)
-}
-
-if(!dir.exists(folder_output)) {
-  dir.create(folder_output)
-}
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #FILE NAMES INPUT
@@ -106,21 +110,18 @@ trap_malfunction_key = "1dsTyvZoCN6NUJlTcDLINMfxuGZdJuP2ADpn8noQwL6Q"
 #trap_active_key = "1SA_PE74KLH6_jG3yR49e8py1uXgb_C02Q3Iz9MWivrY"
 standards_key = "1bSMYQ4bZ9uBfrOQ6ylsegNmmGYdf9YFVbxB4qBhnFQo"
 routine_trap_tl_key = "1kIOqx6CldJ3ivXu9_ws60qqxrlLSmjHRz_tkv03vhqs"
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
+#google drive file names
 fn_gdrive_database = "wnv-s_database"
 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #weekly input
-fn_datasheet_input = "1_input/datasheet" #replaced vdci and cdc input because also have boulder so all in one place
-fn_platemap = "1_input/platemap"
-fn_pcr = "1_input/pcr"
-
-fn_trap_malfunction = "1_input/trap_malfunction.csv"
-fn_trap_active = "1_input/trap_active.csv"
-fn_trap = "1_input/foco_trap.csv"
-fn_database_input = "1_input/wnv-s_database.csv" 
+fn_datasheet_input = paste0(folder_input, "/datasheet") #replaced vdci and cdc input because also have boulder so all in one place
+fn_platemap = paste0(folder_input, "/platemap")
+fn_pcr = paste0(folder_input, "/pcr")
+fn_trap_malfunction = paste0(folder_input, "/trap_malfunction.csv")
+fn_trap_active = paste0(folder_input, "/trap_active.csv")
+fn_trap = paste0(folder_input, "/foco_trap.csv")
+fn_database_input = paste0(folder_input, "/wnv-s_database.csv")
 
 
 
@@ -128,27 +129,27 @@ fn_database_input = "1_input/wnv-s_database.csv"
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # FILE NAMES MID
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-fn_database_update = "1_input/wnv-s_database_update.csv"
+fn_database_update = paste0(folder_mid, "/wnv-s_database_update.csv")
 
-fn_datasheet_clean = paste0("1_input/","y",fn_year, "_", "w",fn_week, "_datasheet.csv")
+fn_datasheet_clean = paste0(folder_mid,"y",fn_year, "_", "w",fn_week, "_datasheet.csv")
 
-fn_datasheet_clean_test = paste0("1_input/","y",fn_year, "_", "w",fn_week, "_datasheet_test.csv")
+fn_datasheet_clean_test = paste0(folder_mid,"y",fn_year, "_", "w",fn_week, "_datasheet_test.csv")
 
-fn_weekly_input_format_mid = "1_input/weekly_1_input_format_mid.RData"
+fn_weekly_input_format_mid = paste0(folder_mid, "/weekly_1_input_format_mid.RData")
 
-fn_cq_out = paste0("1_input/","y",fn_year, "_", "w",fn_week, "_platemap.csv")
+fn_cq_out = paste0(folder_mid,"y",fn_year, "_", "w",fn_week, "_platemap.csv")
 
-fn_abund_out = paste0("1_input/","y",fn_year, "_", "w",fn_week, "_abundance")
+fn_abund_out = paste0(folder_mid,"y",fn_year, "_", "w",fn_week, "_abundance")
 
-fn_pools_mid = paste0("1_input/","y",fn_year, "_", "w",fn_week, "_pools.csv")
+fn_pools_mid = paste0(folder_mid,"y",fn_year, "_", "w",fn_week, "_pools.csv")
 
-fn_inactive_trap = "1_input/inactive_traps.csv"
+fn_inactive_trap = paste0(folder_mid, "/inactive_traps.csv")
 
-fn_func_trap = "1_input/functional_traps.csv"
+fn_func_trap = paste0(folder_mid, "/functional_traps.csv")
 
-fn_max_trap_yr = "1_input/max_trap_zone_yr.csv"
+fn_max_trap_yr = paste0(folder_mid, "/max_trap_zone_yr.csv")
 
-fn_trap_p_wk = "1_input/trap_p_wk.csv"
+fn_trap_p_wk = paste0(folder_mid, "/trap_p_wk.csv")
 
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -157,13 +158,13 @@ fn_trap_p_wk = "1_input/trap_p_wk.csv"
 
 fn_gdrive_archive = paste0("wnv-s_database_pre_y",year_filter, "_w", week_filter,".gsheet")
 
-fn_data_output = paste0("3_output/","y",fn_year, "_", "w",fn_week, "_data_update.csv")
+fn_data_output = paste0(folder_output,"y",fn_year, "_", "w",fn_week, "_data_update.csv")
 
-fn_weekly_input_format = "3_output/weekly_1_input_format.csv"
+fn_weekly_input_format = paste0(folder_output, "weekly_1_input_format.csv")
 
-fn_stds_ctrl_slev_bird = "3_output/std_ctrl_slev_bird.csv"
+fn_stds_ctrl_slev_bird = paste0(folder_output, "std_ctrl_slev_bird.csv")
 
-fn_non_database_sample = "3_output/non_database_samples(std-ctrl-bird-etc).csv"
+fn_non_database_sample = paste0(folder_output, "non_database_samples(std-ctrl-bird-etc).csv")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -301,13 +302,13 @@ all_params <- ls(envir = .GlobalEnv)
 # Create a list containing all the values of these objects
 all_params_list <- mget(all_params, envir = .GlobalEnv)
 
-saveRDS(all_params_list, "1_input/config_params.RDS")
+saveRDS(all_params_list, paste0(folder_input, "/config_params.RDS"))
 
 } else { #end of if config_params.RDS file exists
 
-  list2env(readRDS("1_input/config_params.RDS"), 
+  list2env(readRDS(paste0(folder_input, "/config_params.RDS")), 
            envir = .GlobalEnv)
-  cat(paste0("config file already exists in 1_input/config_params.RDS", "\n",
+  cat(paste0("config file already exists in ", folder_input, "/config_params.RDS", "\n",
                "year filter = ", year_filter, "\n",
                "week filter = ", week_filter)
   )
