@@ -24,7 +24,7 @@ fun_gsheet_pull_prompt = function(filename, sheet, key) {
       mutate(across(where(is.list), ~ sapply(., paste, collapse = ", ")))
     #mdata = apply(mdata, 2, as.character) #added because error   unimplemented type 'list' in 'EncodeElement' was occuring
     write.csv(mdata, filename, row.names = F, na = "")
-    read.csv(filename)
+    head(read.csv(filename))
     print("...Checking that gdrive download worked...")
     
     #if file exists process else stop function
