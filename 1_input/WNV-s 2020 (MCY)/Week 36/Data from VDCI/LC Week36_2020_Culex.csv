@@ -1,0 +1,51 @@
+date_trap_set,contract,location,zone,mosquito_species,mosquito_count,trap_type,trap_name
+8/30/2020,Fort Collins,Prospect Ponds Gravid,NE,Culex pipiens,26,Gravid Trap,FC-066gr
+8/30/2020,Fort Collins,N. Linden,NE,Culex pipiens,2,CDC Light Trap,FC-006
+8/30/2020,Fort Collins,Udall Natural Gravid,NE,Culex pipiens,6,Gravid Trap,FC-092gr
+8/30/2020,Fort Collins,Redwood Gravid,NE,Culex pipiens,19,Gravid Trap,FC-040gr
+8/30/2020,Fort Collins,Redwood,NE,Culex tarsalis,1,CDC Light Trap,FC-040
+8/30/2020,Fort Collins,Edora Park,NE,Culex tarsalis,1,CDC Light Trap,FC-019
+8/30/2020,Fort Collins,Edora Park,NE,Culex pipiens,2,CDC Light Trap,FC-019
+8/30/2020,Fort Collins,PVH Gravid,NE,Culex pipiens,2,Gravid Trap,FC-091gr
+8/30/2020,Fort Collins,Linden Lake Rd,NE,Culex tarsalis,6,CDC Light Trap,FC-069
+8/31/2020,Fort Collins,Boltz,SE,Culex tarsalis,8,CDC Light Trap,FC-023
+8/31/2020,Fort Collins,West Chase,SE,Culex tarsalis,1,CDC Light Trap,FC-064
+8/31/2020,Fort Collins,Sage Creek North Gravid,SE,Culex pipiens,9,Gravid Trap,FC-075gr
+8/31/2020,Fort Collins,Rock Creek,SE,Culex tarsalis,1,CDC Light Trap,FC-074
+8/31/2020,Fort Collins,English Ranch Park Gravid,SE,Culex pipiens,23,Gravid Trap,FC-088gr
+8/31/2020,Fort Collins,Westshore Ct,SE,Culex pipiens,2,CDC Light Trap,FC-046
+8/31/2020,Fort Collins,Big Horn,SE,Culex pipiens,1,CDC Light Trap,FC-004
+8/31/2020,Fort Collins,Boltz,SE,Culex pipiens,10,CDC Light Trap,FC-023
+8/31/2020,Fort Collins,Keeneland And Twin Oak,SE,Culex pipiens,2,CDC Light Trap,FC-047
+8/31/2020,Fort Collins,Keeneland And Twin Oak,SE,Culex tarsalis,2,CDC Light Trap,FC-047
+8/31/2020,Fort Collins,Golden Meadows Ditch,SE,Culex pipiens,15,CDC Light Trap,FC-050
+8/31/2020,Fort Collins,Willow Springs,SE,Culex pipiens,1,CDC Light Trap,FC-031
+8/31/2020,Fort Collins,Willow Springs,SE,Culex tarsalis,1,CDC Light Trap,FC-031
+9/1/2020,Fort Collins,603 Gilgalad Way,NW,Culex pipiens,2,CDC Light Trap,FC-052
+9/1/2020,Fort Collins,Holley Plant Research Center,NW,Culex tarsalis,1,CDC Light Trap,FC-061
+9/1/2020,Fort Collins,Mountain Grandview Cemetery Gravid,NW,Culex pipiens,20,Gravid Trap,FC-090gr
+9/1/2020,Fort Collins,118 S Grant ,NW,Culex pipiens,29,CDC Light Trap,FC-073
+9/1/2020,Fort Collins,Red Fox Meadows Gravid,NW,Culex pipiens,29,Gravid Trap,FC-063gr
+9/1/2020,Fort Collins,Red Fox Meadows,NW,Culex tarsalis,1,CDC Light Trap,FC-063
+9/1/2020,Fort Collins,Fishback,NW,Culex tarsalis,3,CDC Light Trap,FC-041
+9/1/2020,Fort Collins,Fishback,NW,Culex pipiens,13,CDC Light Trap,FC-041
+9/1/2020,Fort Collins,Red Fox Meadows,NW,Culex pipiens,1,CDC Light Trap,FC-063
+9/1/2020,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Culex tarsalis,3,CDC Light Trap,FC-058
+9/1/2020,Fort Collins,808 Ponderosa,NW,Culex pipiens,5,CDC Light Trap,FC-060
+9/1/2020,Fort Collins,Golden Current,NW,Culex pipiens,20,CDC Light Trap,FC-011
+9/2/2020,Fort Collins,5029 Crest Dr,SW,Culex pipiens,2,CDC Light Trap,FC-068
+9/2/2020,Fort Collins,Ben's Park Gravid,SE,Culex pipiens,25,Gravid Trap,FC-029gr
+9/2/2020,Fort Collins,5029 Crest Dr,SW,Culex tarsalis,1,CDC Light Trap,FC-068
+9/2/2020,Fort Collins,Kunz Ct. and Brook Dr. Gravid,SW,Culex pipiens,31,Gravid Trap,FC-089gr
+9/2/2020,Fort Collins,Water's Edge at Blue Mesa,SW,Culex tarsalis,2,CDC Light Trap,FC-062
+9/2/2020,Fort Collins,Lopez Elementary,SW,Culex pipiens,8,CDC Light Trap,FC-093
+9/3/2020,Fort Collins,737 Parliament,SE,Culex tarsalis,7,CDC Light Trap,FC-054
+8/31/2020,Loveland,Boyd Lake,LV,Culex tarsalis,2,CDC Light Trap,LV-095
+8/31/2020,Loveland,Boyd Lake,LV,Culex pipiens,4,CDC Light Trap,LV-095
+8/31/2020,Loveland,Horseshoe Pennninsula,LV,Culex pipiens,1,CDC Light Trap,LV-069
+8/31/2020,Loveland,9th and DesMoines,LV,Culex tarsalis,4,CDC Light Trap,LV-089
+8/31/2020,Loveland,9th and DesMoines,LV,Culex pipiens,4,CDC Light Trap,LV-089
+8/31/2020,Loveland,Cr 20 and 9,LV,Culex tarsalis,2,CDC Light Trap,LV-104
+8/31/2020,Loveland,Cr 20 and 9,LV,Culex pipiens,16,CDC Light Trap,LV-104
+8/31/2020,Loveland,Cattail Pond,LV,Culex tarsalis,13,CDC Light Trap,LV-020
+8/31/2020,Loveland,Cattail Pond,LV,Culex pipiens,8,CDC Light Trap,LV-020

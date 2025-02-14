@@ -1,0 +1,10 @@
+Discrepancy in Week 33 historical average for vector abundance (between reported scores calculated with Reyes and new Graphpad file), why?
+
+091918: Reyes and I traced it back to a single cell that was, for whatever reason, incorrect (week 33, 2008). The Week 33 2018 citywide abundance data in 
+Graphpad read something like 17 when it should have, based on Excel data, read 33. Fixed this on the 2018 Prism file, left it as it was on the 2017
+Prism files. 
+
+
+
+Temperature loggers (minumum of two, 3-4 ideal, ethernet connections ideal but not necessary) 
+and new humidifier (the same kind purchased before). 

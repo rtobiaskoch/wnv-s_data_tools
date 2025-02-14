@@ -1,0 +1,43 @@
+date_trap_set,contract,location,zone,mosquito_species,mosquito_count,trap_type,trap_name
+6/9/2019,Fort Collins,Redwood,NE,Culex tarsalis,1,CDC Light Trap,FC-040
+6/9/2019,Fort Collins,Linden Lake,NE,Culex tarsalis,2,CDC Light Trap,FC-069
+6/9/2019,Fort Collins,FC Visitors Center,NE,Culex tarsalis,5,CDC Light Trap,FC-014
+6/9/2019,Fort Collins,422 Lake Dr,NE,Culex tarsalis,4,CDC Light Trap,FC-072
+6/9/2019,Fort Collins,Country Club,NE,Culex tarsalis,4,CDC Light Trap,FC-034
+6/10/2019,Fort Collins,3001 San Luis,SE,Culex tarsalis,3,CDC Light Trap,FC-027
+6/10/2019,Fort Collins,Fossil Creek South,SE,Culex tarsalis,7,CDC Light Trap,FC-039
+6/10/2019,Fort Collins,Bighorn,SE,Culex tarsalis,3,CDC Light Trap,FC-004
+6/10/2019,Fort Collins,Rock Creek,SE,Culex tarsalis,10,CDC Light Trap,FC-074
+6/12/2019,Fort Collins,Chelsea Ridge,SW,Culex pipiens,5,CDC Light Trap,FC-037
+6/9/2019,Loveland,2229 Arikaree,LV,Culex pipiens,1,CDC Light Trap,LV-088
+6/9/2019,Loveland,7 Lakes Park,LV,Culex tarsalis,1,CDC Light Trap,LV-078
+6/9/2019,Loveland,Horseshoe Pennninsula,LV,Culex tarsalis,1,CDC Light Trap,LV-069
+6/9/2019,Loveland,Centerra,LV,Culex pipiens,1,CDC Light Trap,LV-117
+6/9/2019,Loveland,Pond at Silver Lake,LV,Culex pipiens,8,CDC Light Trap,LV-093
+6/9/2019,Loveland,7 Lakes Park,LV,Culex pipiens,1,CDC Light Trap,LV-078
+6/9/2019,Loveland,Centerra,LV,Culex tarsalis,6,CDC Light Trap,LV-117
+6/9/2019,Loveland,2229 Arikaree,LV,Culex tarsalis,1,CDC Light Trap,LV-088
+6/10/2019,Loveland,Storage Yard and 2nd,LV,Culex tarsalis,1,CDC Light Trap,LV-124
+6/10/2019,Loveland,915 S Boise,LV,Culex tarsalis,1,CDC Light Trap,LV-112
+6/10/2019,Loveland,Jefferson and 11th,LV,Culex pipiens,1,CDC Light Trap,LV-074
+6/10/2019,Loveland,8th And No Name,LV,Culex tarsalis,4,CDC Light Trap,LV-125
+6/10/2019,Loveland,8th And No Name,LV,Culex pipiens,2,CDC Light Trap,LV-125
+6/10/2019,Loveland,Storage Yard and 2nd,LV,Culex pipiens,1,CDC Light Trap,LV-124
+6/10/2019,Loveland,Jefferson and 11th,LV,Culex tarsalis,3,CDC Light Trap,LV-074
+6/10/2019,Loveland,Blue Tree Realty,LV,Culex tarsalis,2,CDC Light Trap,LV-100
+6/10/2019,Loveland,Golf Vista,LV,Culex tarsalis,1,CDC Light Trap,LV-118
+6/10/2019,Loveland,Cr 20 and 9,LV,Culex tarsalis,17,CDC Light Trap,LV-104
+6/10/2019,Loveland,1105 East 1st Street,LV,Culex tarsalis,1,CDC Light Trap,LV-077
+6/11/2019,Loveland,Jocelyn and Eagle,LV,Culex tarsalis,8,CDC Light Trap,LV-019
+6/11/2019,Loveland,Derby Hill,LV,Culex tarsalis,10,CDC Light Trap,LV-087
+6/11/2019,Loveland,2001 S Douglas,LV,Culex tarsalis,11,CDC Light Trap,LV-042
+6/11/2019,Loveland,Del Norte Private Park,LV,Culex tarsalis,9,CDC Light Trap,LV-067
+6/11/2019,Loveland,Cattail Pond,LV,Culex tarsalis,9,CDC Light Trap,LV-020
+6/11/2019,Loveland,Del Norte Private Park,LV,Culex pipiens,1,CDC Light Trap,LV-067
+6/12/2019,Loveland,Hendler Gravid,LV,Culex pipiens,1,Gravid Trap,LV-010gr
+6/12/2019,Loveland,Farasita at Rist Benson,LV,Culex tarsalis,2,CDC Light Trap,LV-097
+6/11/2019,Berthoud,Berthoud West,BE,Culex tarsalis,5,CDC Light Trap,LC-053 
+6/9/2019,Timnath,Timnath - Golf Course,TT,Culex tarsalis,1,CDC Light Trap,LC-022 
+6/9/2019,Timnath,Timnath - Wildwing,TT,Culex tarsalis,7,CDC Light Trap,LC-050 
+6/9/2019,Timnath,Timnath - Serratoga Falls,TT,Culex tarsalis,2,CDC Light Trap,LC-051 
+6/9/2019,Timnath,Timnath - Walmart,TT,Culex tarsalis,12,CDC Light Trap,LC-052 

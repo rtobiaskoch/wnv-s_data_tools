@@ -1,9 +1,13 @@
 {
     "sortOrder": [
         {
+            "columnIndex": 4,
+            "ascending": false
+        },
+        {
             "columnIndex": 2,
-            "ascending": true
+            "ascending": false
         }
     ],
-    "path": "~/Programming Directory/Ebel Lab/wnv-ss_database_tools/0_R"
+    "path": "~/Programming_Directory/Ebel Lab/wnv-ss_database_tools/0_R"
 }

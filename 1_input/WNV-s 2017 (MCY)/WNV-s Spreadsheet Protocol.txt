@@ -1,0 +1,94 @@
+Open FC_LV Weekly Skeleton
+
+Two documents from CMC: 
+	Week # 2017 CSU West Nile Pool Data
+	LC Week#_Full_2017_009
+
+For Week # 2017 CSU West Nile Pool Data:
+
+	Copy & PasteValues into Skeleton
+	Verify that Gravid + Deplete = Total (e.g. "=N2+O2=P2", returns true)
+	Check to make sure that the dates are correct. This hasn't routinely been the case after copy&pastevalue for whatever reason
+	When qRT-PCR data is available, highlight positive samples. Make sure you use "CSU" ID numbers and all plates.
+	Go to "FC_LV Week #" from the week before and find the CSU IDA pool #. Copy and paste the last value, add one,
+		and then fill the full series. 
+	Sort samples by zone and replace LC and LV values as needed. [Update: Account column, change all "LC" from Berthod traps to "BE".]
+
+	Go to the junk space beside the spreadsheet and fill in with this: "=Left(G2,2)&"-"&Left(L2,3)", 
+		where G2 equals city and L2 equals species.Pull down for all samples. Copy and pasteValue 
+		into the PIR-City colum.
+	repeate with PIR-Zone column as before, only swapping out zone for city. "=LEFT(I2,2)&"-"&LEFT(L2,3)" 
+		Remember, do not do this in the column itself, or the formatting will be jacked and your pivottables will not work.
+
+For LC Week#_Full_2017_009:
+
+	Copy & PasteValues into Skeleton
+	Sort and delete all malfunctions and gravid traps
+	Sort by trap #
+	Replace or add information for "Zone" column for all LC and LV traps [Update: LC-001, LC-049, LC-053, and LC-054 should be changed to "BE"]
+	Verify that tarsalis + pipiens equals total Cx ((e.g. "=H2+I2=J2", returns true)
+	On "Total Number of Ind," go to Pivottable Tools, Options, Change Data Source.
+		Include headers and expand data ranage to include all data. Then refresh the pivot table. 
+	Go to Graphs, 2A, and confirm that "Number CDC light trap nights" matches data 
+		from sorted "Zone" column of [009] Skeleton. If there is a discrepancy, correct manually on graph sheet
+		and then make sure that the sum totals out as well. 
+
+Go to main file in T-Drive and activate the macros by clicking on "PooledInfRate"
+
+Generate four sheets in the following manner:
+	Select add-ins from the Weekly Data Input sheet.
+	click Pooled Infection Rate option, and select One Sample.
+		For Pool Size, click the Total column and hit enter
+		For # Positive, click the Test Code column and hit enter
+		Ignore the Number of Pools.
+	The four sheets will differ in their name and in the column used to generate groups. These are:
+
+		InfRateCI --- PIR-City
+		InfRateZO --- PIR-Zone
+		InfRateZone --- Zone
+		InfRateTotal --- Account [Note: If this sheet generates multiple entries for a city, 
+						go back and make sure account columns are textually identical]
+
+Copy and paste the first two columns of InfRateZO into ZONEINFRATE sheet. Do not copy and paste directly
+	or this will ruin your formatting. Do it manually from junk space. [This appears to be FC only]
+
+Copy and paste the first two columns of InfRateCI into CITYINFRATE sheet. Again, do not copy paste directly.
+
+Go to the following three sheets: Total Number Ind Examined, Total Number of Pools Examined, and
+	Total Number of WNV + Pools. Pivot, options, Change Data Source, grab data through Test Result column
+
+Check Graphs Sheet for any formula reference errors
+
+Then take InfRateZone into 3A (four zones) and InfrateTotal into 3A (FC-citywide and LV) [Remember to grab from the correct sheet]
+
+Finally, take the righthand "All Culex" Columns of Graphs 1A, 2A, and 3a, and copy pasteValue into the correct
+week of the corresponding B graph. Then change some of the number formats to make decimal places a bit more sane.
+
+Last clean-up step: go back through weekly data input sheet and 009 input sheet and sort by CSU trap number.
+
+NOTE: When copying the final spreadsheet graphs into the word document, remember to update the week on each #A graph.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+	

@@ -1,5 +1,9 @@
 fun_gsheet_pull_prompt = function(filename, sheet, key) {
   
+  if (!require("pacman")) install.packages("pacman")
+  pacman::p_load(tidyverse, googledrive, googlesheets4)
+  
+  
   #first check if user has drive token. They don't have them provide one
   if(!drive_has_token()) {
     googledrive::drive_auth()
@@ -10,9 +14,6 @@ fun_gsheet_pull_prompt = function(filename, sheet, key) {
   # Check the user's input
   if (tolower(user_input) == "yes") {
     # Run the script if the user says "yes"
-    
-    require(googlesheets4)
-    require(googledrive)
     
     
     #remove old file if it exists

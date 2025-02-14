@@ -1,0 +1,81 @@
+date_trap_set,contract,location,zone,mosquito_species,mosquito_count,trap_type,trap_name
+9/1/2019,Fort Collins,N. Linden,NE,Culex tarsalis,12,CDC Light Trap,FC-006
+9/1/2019,Fort Collins,N. Linden,NE,Culex pipiens,12,CDC Light Trap,FC-006
+9/1/2019,Fort Collins,FC Visitors Center,NE,Culex tarsalis,41,CDC Light Trap,FC-014
+9/1/2019,Fort Collins,FC Visitors Center,NE,Culex pipiens,36,CDC Light Trap,FC-014
+9/1/2019,Fort Collins,Edora Park,NE,Culex tarsalis,7,CDC Light Trap,FC-019
+9/1/2019,Fort Collins,Edora Park,NE,Culex pipiens,8,CDC Light Trap,FC-019
+9/1/2019,Fort Collins,Country Club,NE,Culex tarsalis,22,CDC Light Trap,FC-034
+9/1/2019,Fort Collins,Hemlock,NW,Culex tarsalis,32,CDC Light Trap,FC-036 
+9/1/2019,Fort Collins,Lochside Lane,NE,Culex tarsalis,29,CDC Light Trap,FC-038
+9/1/2019,Fort Collins,Lochside Lane,NE,Culex pipiens,10,CDC Light Trap,FC-038
+9/1/2019,Fort Collins,Redwood,NE,Culex pipiens,22,CDC Light Trap,FC-040
+9/1/2019,Fort Collins,Redwood,NE,Culex tarsalis,48,CDC Light Trap,FC-040
+9/1/2019,Fort Collins,Redwood Gravid,NE,Culex pipiens,21,Gravid Trap,FC-040gr
+9/1/2019,Fort Collins,Prospect Ponds,NE,Culex tarsalis,26,CDC Light Trap,FC-066
+9/1/2019,Fort Collins,Prospect Ponds,NE,Culex pipiens,79,CDC Light Trap,FC-066
+9/1/2019,Fort Collins,Prospect Ponds Gravid,NE,Culex pipiens,116,Gravid Trap,FC-066gr
+9/1/2019,Fort Collins,Poudre River Trail,NE,Culex pipiens,8,CDC Light Trap,FC-067
+9/1/2019,Fort Collins,Poudre River Trail,NE,Culex tarsalis,56,CDC Light Trap,FC-067
+9/1/2019,Fort Collins,Linden Lake,NE,Culex pipiens,3,CDC Light Trap,FC-069
+9/1/2019,Fort Collins,Linden Lake,NE,Culex tarsalis,39,CDC Light Trap,FC-069
+9/1/2019,Fort Collins,422 Lake Dr,NE,Culex tarsalis,29,CDC Light Trap,FC-072
+9/1/2019,Fort Collins,422 Lake Dr,NE,Culex pipiens,9,CDC Light Trap,FC-072
+9/1/2019,Fort Collins,PVH Gravid,NE,Culex pipiens,26,Gravid Trap,FC-091gr
+9/1/2019,Fort Collins,Udall Natural Gravid,NE,Culex pipiens,31,Gravid Trap,FC-092gr
+9/2/2019,Fort Collins,Bighorn,SE,Culex tarsalis,36,CDC Light Trap,FC-004
+9/2/2019,Fort Collins,Bighorn,SE,Culex pipiens,10,CDC Light Trap,FC-004
+9/2/2019,Fort Collins,Boltz,SE,Culex tarsalis,25,CDC Light Trap,FC-023
+9/2/2019,Fort Collins,3001 San Luis,SE,Culex pipiens,20,CDC Light Trap,FC-027
+9/2/2019,Fort Collins,3001 San Luis,SE,Culex tarsalis,22,CDC Light Trap,FC-027
+9/2/2019,Fort Collins,Willow Springs,SE,Culex tarsalis,41,CDC Light Trap,FC-031
+9/2/2019,Fort Collins,Willow Springs,SE,Culex pipiens,7,CDC Light Trap,FC-031
+9/2/2019,Fort Collins,Fossil Creek South,SE,Culex pipiens,3,CDC Light Trap,FC-039
+9/2/2019,Fort Collins,Fossil Creek South,SE,Culex tarsalis,21,CDC Light Trap,FC-039
+9/2/2019,Fort Collins,725 Westshore Court,SE,Culex pipiens,4,CDC Light Trap,FC-046
+9/2/2019,Fort Collins,725 Westshore Court,SE,Culex tarsalis,37,CDC Light Trap,FC-046
+9/2/2019,Fort Collins,Keenland and Twin Oak,SE,Culex tarsalis,14,CDC Light Trap,FC-047
+9/2/2019,Fort Collins,Golden Meadows Ditch,SE,Culex tarsalis,18,CDC Light Trap,FC-050
+9/2/2019,Fort Collins,Golden Meadows Ditch,SE,Culex pipiens,19,CDC Light Trap,FC-050
+9/2/2019,Fort Collins,Egret and Rookery,SE,Culex pipiens,6,CDC Light Trap,FC-053
+9/2/2019,Fort Collins,Egret and Rookery,SE,Culex tarsalis,64,CDC Light Trap,FC-053
+9/2/2019,Fort Collins,Springwood and Lochwood,SE,Culex tarsalis,8,CDC Light Trap,FC-059
+9/2/2019,Fort Collins,West Chase,SE,Culex tarsalis,16,CDC Light Trap,FC-064
+9/2/2019,Fort Collins,Rock Creek,SE,Culex tarsalis,34,CDC Light Trap,FC-074
+9/2/2019,Fort Collins,Sage Creek North,SE,Culex tarsalis,5,CDC Light Trap,FC-075
+9/2/2019,Fort Collins,Sage Creek North,SE,Culex pipiens,10,CDC Light Trap,FC-075
+9/2/2019,Fort Collins,Sage Creek North Gravid,SE,Culex pipiens,65,Gravid Trap,FC-075gr
+9/2/2019,Fort Collins,English Ranch Park Gravid,SE,Culex pipiens,42,Gravid Trap,FC-088gr
+9/3/2019,Fort Collins,Golden Current,NW,Culex pipiens,12,CDC Light Trap,FC-011
+9/3/2019,Fort Collins,Golden Current,NW,Culex tarsalis,25,CDC Light Trap,FC-011
+9/3/2019,Fort Collins,Stuart and Dorset,NW,Culex tarsalis,20,CDC Light Trap,FC-015
+9/3/2019,Fort Collins,Fishback,NW,Culex tarsalis,50,CDC Light Trap,FC-041
+9/3/2019,Fort Collins,Fishback,NW,Culex pipiens,20,CDC Light Trap,FC-041
+9/3/2019,Fort Collins,Casa Grande and Downing,SW,Culex pipiens,9,CDC Light Trap,FC-049
+9/3/2019,Fort Collins,Casa Grande and Downing,SW,Culex tarsalis,17,CDC Light Trap,FC-049
+9/3/2019,Fort Collins,603 Gilgalad Way,NW,Culex tarsalis,8,CDC Light Trap,FC-052
+9/3/2019,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Culex tarsalis,15,CDC Light Trap,FC-058
+9/3/2019,Fort Collins,808 Ponderosa,NW,Culex tarsalis,7,CDC Light Trap,FC-060
+9/3/2019,Fort Collins,808 Ponderosa,NW,Culex pipiens,10,CDC Light Trap,FC-060
+9/3/2019,Fort Collins,Holley Plant Research Center,NW,Culex tarsalis,48,CDC Light Trap,FC-061
+9/3/2019,Fort Collins,Holley Plant Research Center,NW,Culex pipiens,5,CDC Light Trap,FC-061
+9/3/2019,Fort Collins,Red Fox Meadows,NW,Culex pipiens,2,CDC Light Trap,FC-063
+9/3/2019,Fort Collins,Red Fox Meadows,NW,Culex tarsalis,7,CDC Light Trap,FC-063
+9/3/2019,Fort Collins,Red Fox Meadows Gravid,NW,Culex pipiens,59,Gravid Trap,FC-063gr
+9/3/2019,Fort Collins,118 N Grant,NW,Culex pipiens,7,CDC Light Trap,FC-073
+9/3/2019,Fort Collins,118 N Grant,NW,Culex tarsalis,18,CDC Light Trap,FC-073
+9/3/2019,Fort Collins,Mountain Grandview Cemetery Gravid,NW,Culex pipiens,92,Gravid Trap,FC-090gr
+9/4/2019,Fort Collins,Magic Carpet,SW,Culex tarsalis,11,CDC Light Trap,FC-001
+9/4/2019,Fort Collins,Ben's Park,SE,Culex tarsalis,19,CDC Light Trap,FC-029
+9/4/2019,Fort Collins,Ben's Park,SE,Culex pipiens,6,CDC Light Trap,FC-029
+9/4/2019,Fort Collins,Ben's Park Gravid,SE,Culex pipiens,74,Gravid Trap,FC-029gr
+9/4/2019,Fort Collins,Chelsea Ridge,SW,Culex pipiens,11,CDC Light Trap,FC-037
+9/4/2019,Fort Collins,Chelsea Ridge,SW,Culex tarsalis,67,CDC Light Trap,FC-037
+9/4/2019,Fort Collins,737 Parliament,SE,Culex tarsalis,15,CDC Light Trap,FC-054
+9/4/2019,Fort Collins,Registry Ridge,SW,Culex tarsalis,2,CDC Light Trap,FC-057
+9/4/2019,Fort Collins,Water's Edge at Blue Mesa,SW,Culex tarsalis,7,CDC Light Trap,FC-062
+9/4/2019,Fort Collins,Water's Edge at Blue Mesa,SW,Culex pipiens,2,CDC Light Trap,FC-062
+9/4/2019,Fort Collins,5029 Crest Dr,SW,Culex tarsalis,5,CDC Light Trap,FC-068
+9/4/2019,Fort Collins,Silvergate Rd,SW,Culex tarsalis,3,CDC Light Trap,FC-071
+9/4/2019,Fort Collins,Kunz Ct. and Brook Dr. Gravid,SW,Culex pipiens,31,Gravid Trap,FC-089gr
+9/4/2019,Fort Collins,Lopez Elementary,SW,Culex tarsalis,12,CDC Light Trap,FC-093
