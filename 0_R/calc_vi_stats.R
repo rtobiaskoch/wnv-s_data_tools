@@ -89,7 +89,7 @@ calc_vi <- function(data, grp_var, rm_zone = c("BC")) {
   
   # Calc VI by combining abundance and PIR
   #-------------------------------------------------------------------------------
-  left_join(df_abund, df_pir, by = grp_var) %>%
+  full_join(df_abund, df_pir, by = grp_var) %>%
     mutate(vi = round(abund * pir, 4),
            vi_lci = round(abund * pir_lci, 4),
            vi_uci = round(abund * pir_uci, 4))
