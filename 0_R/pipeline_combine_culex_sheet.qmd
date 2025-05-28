@@ -1,0 +1,105 @@
+
+#-------------------- E N V I R O N M E N T -------------------------------------------
+DESC: defines functions to be used in pipeline
+```{r}
+
+rm(list = ls())
+#define packages to be used
+pkg = c("dplyr", "lubridate", "purrr", "ggplot2")
+cat("\n Loading required packages: ", pkg, "\n")
+pacman::p_load(pkg, character.only = T)
+
+#USER DEFINED FUNCTIONS
+utils <- list.files("../utils", pattern = "*", full.names = TRUE)
+sapply(utils, source)
+
+```
+
+#--------------------------------  C O N F I G  ------------------------------------------------
+#DESC: defines variables for functions
+
+```{r}
+source("../config/config_combine_culex_sheet.R")
+```
+
+#--------------------------------  C O M P I L E  ------------------------------------------------
+DESCRIPTION: combines sheets that contain config\$pattern using function read_list
+
+DEPENDENCIES
+-   CRAN
+    -   dplyr
+    -   rio
+    -   purrr
+    -   tibble
+-   utils
+    -   fun_read_list
+INPUTS
+-   config
+    -   pattern: pattern for culex files to use in read_list
+```{r}
+data0 = read_list(path = config$path, pattern = config$pattern)
+```
+
+#--------------------------------  C L E A N  ------------------------------------------------
+DESCRIPTION: cleans combined sheets using culex_sheet_clean and parse_flexible_date
+DEPENDENCIES
+-   CRAN
+    -   dplyr
+    -   lubridate
+    -   purrr
+    -   ggplot2
+-   utils
+    -   fun_culex_sheet_clean
+    -   fun_parse_flexible_date
+INPUTS
+-   df: dataframe from culex sheets
+
+```{r}
+data_clean = culex_sheet_clean(data0)
+```
+
+#--------------------------------  F I L T E R  ------------------------------------------------
+DESCRIPTION: filters cleaned_culex_sheet by a na_col and from a list of traps that you want to keep
+DEPENDENCIES
+-   CRAN
+    -   dplyr
+    -   lubridate
+    -   purrr
+    -   ggplot2
+-   utils
+    -   filter_culex_sheet
+INPUTS
+-   df: dataframe output from culex_sheet_clean
+-   config$fn_trap_keep: filename for the dataframe that contains the traps that you want to keep
+-   trap_keep_df: dataframe that contains a column called trap_id that you want to keep from from the culex_sheets
+
+```{r}
+# F I L T E R
+cat("\n Reading in active foco traps to remove untested traps from", config$fn_trap_keep, "\n")
+trap_keep_df = read.csv(config$fn_trap_keep)
+
+data_filtered = filter_culex_sheet(df = data_clean, 
+                                  na_col = rlang::sym(config$na_col), 
+                                  trap_keep_df = trap_keep_df)
+```
+
+
+Save your file
+```{r}
+cat("\n Saving culex sheet trap level data to", config$output_df, "\n")
+write.csv(data_filtered, config$output_df)
+```
+
+#--------------------------------  P L O T  ------------------------------------------------
+
+```{r}
+# P L O T 
+p <- plot_abundance_by_zone(data_filtered, filter_zone = config$filter_zone)
+
+ggsave(filename = config$output_plot, plot = p,
+       width = 5, height = 3, units = "in")
+
+```
+
+
+

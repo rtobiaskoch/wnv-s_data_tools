@@ -31,6 +31,7 @@ suppressMessages({
 # D E F I N E   D I R E C T O R I E S   &   I N P U T   F I L E S 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # <<<<<<<------------------------------------------------------------------------------------------------ U S E R   I N P U T
+
 dir_input <- "1_input"
 dir_datasheet <- file.path(dir_input, "datasheet")
 dir_pcr <- file.path(dir_input, "pcr")
@@ -156,7 +157,7 @@ fc_zones = c("NE", "SE", "NW", "SW")
 non_fc_zones = c("LV", "BC", "BE")
 all_zones = c("NE", "SE", "NW", "SW", "LV", "BC", "BE")
 
-copy_threshold = 500 # <<<<<<<------------------------------------------------------------------------------------------------ U S E R   I N P U T
+
 rn_threshold = 34000 # <<<<<<<------------------------------------------------------------------------------------------------ U S E R   I N P U T
 vi_threshold = 0.75 # <<<<<<<------------------------------------------------------------------------------------------------- U S E R   I N P U T
 
@@ -169,6 +170,7 @@ vi_threshold = 0.75 # <<<<<<<---------------------------------------------------
 #variables that will change from week to week
 week_hardcode = 37  # <<<<<<<------------------------------------------------------------------------------------------------ U S E R   I N P U T
 year_hardcode = 2024 # <<<<<<<----------------------------------------------------------------------------------------------- U S E R   I N P U T
+copy_threshold_hardcode = 500 # <<<<<<<------------------------------------------------------------------------------------------------ U S E R   I N P U T
 
 # Create an argument parser
   parser <- ArgumentParser(description = "Script to handle config file data inputs")
@@ -176,6 +178,7 @@ year_hardcode = 2024 # <<<<<<<--------------------------------------------------
   # Add arguments for fn_trap and fn_database_input
   parser$add_argument("--week", help = "week of report", type = "integer")
   parser$add_argument("--year", help = "year of the report", type = "integer")
+  parser$add_argument("--threshold", help = "copy threshold for positive", type = "integer")
   
   # Parse arguments
   args <- parser$parse_args()
@@ -183,10 +186,14 @@ year_hardcode = 2024 # <<<<<<<--------------------------------------------------
   # Assign default values if arguments are not provided
   week_filter <- if (!is.null(args$week)) args$week else week_hardcode
   year_filter <- if (!is.null(args$year)) args$year else year_hardcode
+  copy_threshold <- if (!is.null(args$threshold)) args$threshold else copy_threshold_hardcode 
+  
+  rm(week_hardcode, year_hardcode, copy_threshold_hardcode)
   
   # Output the values
   cat("Week filter set to:", week_filter, "\n")
   cat("Year filter set to:", year_filter, "\n")
+  cat("Year threshold set to:",   copy_threshold, "\n")
 
 week_filter_yr= 23:week_filter
 week_filter_hx = 23:37
