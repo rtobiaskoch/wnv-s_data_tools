@@ -1,18 +1,17 @@
 
 #-------------------- E N V I R O N M E N T -------------------------------------------
 DESC: defines functions to be used in pipeline
-```{r}
+```{r, echo = FALSE}
 
 rm(list = ls())
 #define packages to be used
-pkg = c("dplyr", "lubridate", "purrr", "ggplot2")
+pkg = c("dplyr", "lubridate", "purrr", "stringr", "ggplot2")
 cat("\n Loading required packages: ", pkg, "\n")
 pacman::p_load(pkg, character.only = T)
 
 #USER DEFINED FUNCTIONS
 utils <- list.files("../utils", pattern = "*", full.names = TRUE)
-sapply(utils, source)
-
+map(utils, source)
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -36,8 +35,10 @@ DEPENDENCIES
 INPUTS
 -   config
     -   pattern: pattern for culex files to use in read_list
+    
 ```{r}
-data0 = read_list(path = config$path, pattern = config$pattern)
+culex0 = read_list(path = config$path, 
+                  pattern = config$pattern)
 ```
 
 #--------------------------------  C L E A N  ------------------------------------------------
@@ -55,8 +56,12 @@ INPUTS
 -   df: dataframe from culex sheets
 
 ```{r}
-data_clean = culex_sheet_clean(data0)
-```
+culex_clean = culex_sheet_clean(culex0)
+write.csv(culex_clean, config$output_culex)
+
+#checked to ensure that data0$trap_type == method and it held true for str_detect(trap_id, "gr) == "G
+
+``` 
 
 #--------------------------------  F I L T E R  ------------------------------------------------
 DESCRIPTION: filters cleaned_culex_sheet by a na_col and from a list of traps that you want to keep
@@ -76,29 +81,116 @@ INPUTS
 ```{r}
 # F I L T E R
 cat("\n Reading in active foco traps to remove untested traps from", config$fn_trap_keep, "\n")
-trap_keep_df = read.csv(config$fn_trap_keep)
+trap_keep_df = read.csv(config$fn_trap_keep) %>% 
+  filter(active == 1)
+  
 
-data_filtered = filter_culex_sheet(df = data_clean, 
+culex_filtered = filter_culex_sheet(df = culex_clean, 
                                   na_col = rlang::sym(config$na_col), 
                                   trap_keep_df = trap_keep_df)
+
+
+plot_n_trap(culex_filtered, config$filter_zone) +
+  ggtitle("Number of traps in Culex Sheet per Week")
+ggsave(filename = "../3_output/n_trap_per_wk_culex_sheet.png")
+
+skimr::skim(culex_filtered)
+
+write.csv(culex_filtered, config$output_culex)
+```
+
+#------------------------ R E F O R M A T   D A T A S H E E T -------------------------------------
+DESCRIPTION: we only have culex sheets from 2019 to 2024 and CDC didn't send culex sheets so we need to reformat
+the wnv-s_database that has pooled data to get the missing data
+
+DEPENDENCIES
+-   CRAN
+    -   dplyr
+-   utils
+    -   reformat_database
+INPUTS
+-   config$fn_database: filename for the csv that has the wnv-s_database
+
+```{r}
+database = read.csv(config$fn_database)
+
+database_reformat = reformat_database_2_culex_sheet(database)
+```
+
+#------------------------ B I N D   D A T A S H E E T  &  C U L E X -------------------------------------
+DESCRIPTION: bind the culex data with the wnv-s_database that has been reformatted to match the culex sheet
+
+DEPENDENCIES
+-   CRAN
+    -   dplyr
+    -   ggplot2
+-   utils
+    -   bind_culex_sheets
+INPUTS
+-   data_filtered:
+-   data_reformat: the wnv-s_database that has been reformatted
+
+```{r}
+culex_database = bind_culex_sheets(culex_filtered, #culex sheet
+                                  database_reformat) #datasheet formatted
+
+write.csv(culex_database, config$output_culex_database)
+
+p_comp = plot_culex_datasheet_comp(culex_database %>% filter(!zone %in% config$filter_zone), #combined data
+                                   2018) # year to filter for
+p_comp
+
+ggsave(plot = p_comp, filename = "../3_output/culex_v_datasheet.png")
+
 ```
 
 
-Save your file
+#------------------------ G E T   N A  C U L E X   T R A P  -------------------------------------
+DESCRIPTION: using the foco_trap get the NA traps from the culex sheet to test the completeness of those sheets
+
+DEPENDENCIES
+-   CRAN
+    -   dplyr
+    -   ggplot2
+-   utils
+    -   bind_culex_sheets
+INPUTS
+-   data_filtered:
+-   data_reformat: the wnv-s_database that has been reformatted
+
 ```{r}
-cat("\n Saving culex sheet trap level data to", config$output_df, "\n")
-write.csv(data_filtered, config$output_df)
-```
+y = lubridate::year(Sys.Date())-1
+BE_rm = c("LC-061", "LC-058", "LC-062", "LC-059", "LC-060") #remove the traps cdc sent us and weren't managed by VDCI at the time
 
-#--------------------------------  P L O T  ------------------------------------------------
+trap_active_df = trap_keep_df %>%
+  filter(active == 1) %>%
+  filter(!trap_id %in% BE_rm) %>%
+  mutate(end = y,
+         w_start = 23,
+         w_end = 37)
 
-```{r}
-# P L O T 
-p <- plot_abundance_by_zone(data_filtered, filter_zone = config$filter_zone)
+trap_expand = rowwise_expand(trap_active_df, "start", "end", "year")
+trap_expand = rowwise_expand(trap_expand, "w_start", "w_end", "week")
+trap_expand = trap_expand %>%
+  select(trap_id, zone, year, week)
 
-ggsave(filename = config$output_plot, plot = p,
-       width = 5, height = 3, units = "in")
+na_trap = anti_join(trap_expand, culex_clean, 
+                    by = c("trap_id", "year", "week")) %>%
+  mutate(zone = if_else(zone %in% config$fc_zone, "FC", zone)) %>%
+  filter(year > 2018) %>%
+  filter(zone %in% c("FC", "LV"))
 
+p_na_trap = na_trap %>%
+  group_by(trap_id) %>%
+  count() %>%
+  ggplot(aes(x = forcats::fct_reorder(trap_id, n), n)) +
+  geom_col() +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 90),
+        axis.title = element_blank()) +
+  ggtitle("Number of weeks trap is missing. 2019-2024")
+
+ggsave(plot = p_na_trap, filename = "../3_output/na_trap.png")
 ```
 
 

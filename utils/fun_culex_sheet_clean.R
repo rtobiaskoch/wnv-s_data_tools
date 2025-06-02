@@ -20,12 +20,14 @@
 #' }
 #'
 #' @importFrom dplyr mutate across transmute case_when
+#' @importFrom stringr str_detect
 #' @importFrom purrr map_chr
 #' @importFrom lubridate year week
 #' @export
 culex_sheet_clean <- function(df) {
-  required_cols <- c("trap_name", "date_trap_set", "mosquito_species",
-                     "trap_type", "mosquito_count", "zone")
+  required_cols <- c("trap_name", "date_trap_set", 
+                     "mosquito_species","trap_type", 
+                     "mosquito_count", "zone")
   
   missing_cols <- setdiff(required_cols, names(df))
   if (length(missing_cols) > 0) {
@@ -33,11 +35,11 @@ culex_sheet_clean <- function(df) {
   }
   
   df %>%
-    dplyr::mutate(dplyr::across(where(is.character), trimws)) %>%
-    dplyr::mutate(trap_date = purrr::map_chr(date_trap_set, ~ as.character(parse_flexible_date(.x)))) %>%
+    dplyr::mutate(dplyr::across(where(is.character), trimws)) %>% #remove any whitespace
+    dplyr::mutate(trap_date = purrr::map_chr(date_trap_set, ~ as.character(parse_flexible_date(.x)))) %>% #reformat dates using the utils/fun_parse_flexible_date
     dplyr::mutate(trap_date = as.Date(trap_date)) %>%
     dplyr::transmute(
-      trap_id = trap_name,
+      trap_id = toupper(trap_name),
       trap_date = trap_date,
       year = lubridate::year(trap_date),
       week = lubridate::week(trap_date),
@@ -47,11 +49,10 @@ culex_sheet_clean <- function(df) {
         mosquito_species == "Culex pipiens" ~ "Pipiens",
         TRUE ~ mosquito_species
       ),
-      method = dplyr::case_when(
-        trap_type == "Gravid Trap" ~ "G",
-        trap_type == "CDC Light Trap" ~ "L",
-        TRUE ~ trap_type
-      ),
+   #   trap_type = trap_type,
+      method = case_when(stringr::str_detect(tolower(trap_id), "gr") ~ "G",
+                         stringr::str_detect(tolower(trap_id), "gr", negate = T) ~ "L"
+                    ),
       total = as.numeric(mosquito_count)
     )
 }

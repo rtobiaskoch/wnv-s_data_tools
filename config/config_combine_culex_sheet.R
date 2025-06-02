@@ -7,10 +7,12 @@ config = list(
   path = "..",
   pattern = "^(LC|Boulder).*Culex.(xlsx|csv)$", #pattern to look for in fun_read_list 
   fn_trap_keep  = "../1_input/foco_trap.csv", #file name to be used for filtering traps if you don't want to filter by trap provide an empty dataframe
+  fn_database = "../1_input/wnv-s_database.csv",
   na_col = "trap_id",
-  #output_all = "3_output/culex_sheet_combined_all.csv",
-  output_df = "../3_output/culex_sheet_combined_surv_traps.csv", #output filename
+  output_culex_database = "../3_output/culex_sheet_database_augment.csv",
+  output_culex = "../3_output/culex_sheet_database.csv", #output filename
   output_plot = "../3_output/culex_sheet_combined_abundance.png",
-  filter_zone = "BC" #zone to remove for plotting abundance
+  filter_zone = c("BC", "BE"), #zone to remove for plotting abundance
+  fc_zone = c("NE", "NW", "SE", "SW")
 )
 

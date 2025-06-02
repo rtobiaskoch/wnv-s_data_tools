@@ -15,7 +15,9 @@ pkg = c("dplyr", "lubridate", "purrr", "ggplot2")
 cat("\n Loading required packages: ", pkg, "\n")
 pacman::p_load(pkg, character.only = T)
 
-
+#USER DEFINED FUNCTIONS
+utils <- list.files("utils", pattern = "*", full.names = TRUE)
+sapply(utils, source)
 
 #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 #--------------------------------  C O N F I G  ------------------------------------------------

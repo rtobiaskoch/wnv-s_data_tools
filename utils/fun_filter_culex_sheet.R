@@ -39,6 +39,10 @@ filter_culex_sheet <- function(df, na_col, trap_keep_df = NULL) {
   if (!is.null(trap_keep_df)) {
     data3 <- dplyr::semi_join(data2, trap_keep_df, by = rlang::set_names(rlang::quo_name(col_sym)))
     
+    if(length(unique(data3)) != length(unique(data2)) ){
+      stop(cat("Warning some traps from foco_trap were not found in the culex sheet. check the semi_join in filter_culex_sheet."))
+    }
+    
     cat("\nRemoved", nrow(data2) - nrow(data3), "observations from",
         length(unique(dplyr::pull(data2, !!col_sym))) - length(unique(dplyr::pull(data3, !!col_sym))),
         "non-testing traps,", nrow(data3), "observations remaining.\n")
