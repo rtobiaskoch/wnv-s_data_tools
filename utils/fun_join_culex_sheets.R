@@ -1,13 +1,16 @@
-join_culex_sheets = function(culex, database) {
-  culex = culex %>% 
-    mutate(source = "culex",
-           trap_date = as.Date(trap_date)) %>%
-    rename(c_total = total)
+join_merge_z = function(df_z1, df_z2, z) {
+ 
+  join_col = setdiff(colnames(df_z1), z)
   
-    database = database %>% 
-    mutate(source = "datasheet",
-           trap_date = as.Date(trap_date)) %>%
-    rename(d_total = total)
+  full = full_join(df_z1, df_z2, by = join_col) %>%
+    mutate(total = if_else(is.na(total.x), total.y, total.x)) %>%
+    mutate(check = if_else(!is.na(total.x) & total.x!= total.y, T, F)) %>%
+    arrange(desc(check))
   
-  full_join(culex, database)
+  final = full %>%
+    select(-c(total.x, total.y, check))
+  
+  list(full = full, 
+       final = final)
+
 }

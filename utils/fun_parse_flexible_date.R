@@ -15,25 +15,36 @@
 #'
 #' @export
 parse_flexible_date <- function(date_str) {
-  # Validate input
-  if (!is.character(date_str) || length(date_str) != 1) {
-    stop("`date_str` must be a single character string.")
-  }
+  # Return NA immediately if input is NA
+  if (is.na(date_str)) return(NA_Date_)
   
-  # Define common date formats
-  formats <- c(
-    "%m/%d/%Y", "%m-%d-%Y",     # U.S.
-    "%Y-%m-%d", "%Y/%m/%d",     # ISO
-    "%d/%m/%Y", "%d-%m-%Y",     # European
-    "%Y.%m.%d", "%m.%d.%Y",     # Dot formats
-    "%b %d %Y", "%d %b %Y",     # Abbreviated month
-    "%B %d %Y", "%d %B %Y"      # Full month
-  )
-  
-  # Try parsing using all formats
-  parsed_dates <- purrr::map(formats, ~ suppressWarnings(as.Date(date_str, format = .x)))
-  valid_dates <- purrr::keep(parsed_dates, ~ !is.na(.x))
-  
-  # Return first successful parse or NA
-  if (length(valid_dates) == 0) NA_Date_ else valid_dates[[1]]
+  #if its already a date do stuff else nothing
+  if(!is.Date(date_str)) {
+    
+    # Validate input
+    if (!is.character(date_str) || length(date_str) != 1) {
+      stop("`date_str` must be a single character string.")
+    }
+    
+    # Define common date formats
+    formats <- c(
+      "%m/%d/%Y", "%m-%d-%Y",     # U.S.
+      "%Y-%m-%d", "%Y/%m/%d",     # ISO
+      "%d/%m/%Y", "%d-%m-%Y",     # European
+      "%Y.%m.%d", "%m.%d.%Y",     # Dot formats
+      "%b %d %Y", "%d %b %Y",     # Abbreviated month
+      "%B %d %Y", "%d %B %Y"      # Full month
+    )
+    
+    # Try parsing using all formats
+    parsed_dates <- purrr::map(formats, ~ suppressWarnings(as.Date(date_str, format = .x)))
+    valid_dates <- purrr::keep(parsed_dates, ~ !is.na(.x))
+    
+    # Return first successful parse or NA
+    if (length(valid_dates) == 0) NA_Date_ else valid_dates[[1]]
+    
+  } else {
+    return(date_str)
+  } # end if date
+
 }
