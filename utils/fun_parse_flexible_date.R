@@ -1,50 +1,44 @@
-#' Parse Dates with Multiple Possible Formats
-#'
-#' Attempts to parse a date string using a range of common date formats
-#' (U.S., ISO, European, and formats with full/abbreviated month names).
-#'
-#' @param date_str A character string representing a date.
-#'   Can be in a variety of formats (e.g., "2024-06-10", "06/10/2024", "10 Jun 2024").
-#'
-#' @return A `Date` object if parsing is successful, or `NA` if no format matches.
-#'
-#' @examples
-#' parse_flexible_date("2024-06-10")
-#' parse_flexible_date("10/06/2024")
-#' parse_flexible_date("June 10 2024")
-#'
-#' @export
 parse_flexible_date <- function(date_str) {
   # Return NA immediately if input is NA
   if (is.na(date_str)) return(NA_Date_)
   
-  #if its already a date do stuff else nothing
-  if(!is.Date(date_str)) {
-    
-    # Validate input
-    if (!is.character(date_str) || length(date_str) != 1) {
-      stop("`date_str` must be a single character string.")
-    }
-    
-    # Define common date formats
-    formats <- c(
-      "%m/%d/%Y", "%m-%d-%Y",     # U.S.
-      "%Y-%m-%d", "%Y/%m/%d",     # ISO
-      "%d/%m/%Y", "%d-%m-%Y",     # European
-      "%Y.%m.%d", "%m.%d.%Y",     # Dot formats
-      "%b %d %Y", "%d %b %Y",     # Abbreviated month
-      "%B %d %Y", "%d %B %Y"      # Full month
-    )
-    
-    # Try parsing using all formats
-    parsed_dates <- purrr::map(formats, ~ suppressWarnings(as.Date(date_str, format = .x)))
-    valid_dates <- purrr::keep(parsed_dates, ~ !is.na(.x))
-    
-    # Return first successful parse or NA
-    if (length(valid_dates) == 0) NA_Date_ else valid_dates[[1]]
-    
-  } else {
-    return(date_str)
-  } # end if date
-
+  # If already a Date, ensure it's formatted as YYYY-MM-DD
+  if (inherits(date_str, "Date")) return(as.Date(format(date_str, "%Y-%m-%d")))
+  
+  # Validate input
+  if (!is.character(date_str) || length(date_str) != 1) {
+    stop("`date_str` must be a single character string.")
+  }
+  
+  # If it already looks like a proper ISO date, return it if valid
+  if (grepl("^\\d{4}-\\d{2}-\\d{2}$", date_str)) {
+    iso_date <- suppressWarnings(as.Date(date_str, format = "%Y-%m-%d"))
+    if (!is.na(iso_date)) return(iso_date)
+  }
+  
+  # Common formats with 2-digit years
+  formats_2digit <- c("%m/%d/%y", "%d/%m/%y", "%y-%m-%d", "%y/%m/%d")
+  
+  # Expand 2-digit years manually
+  for (fmt in formats_2digit) {
+    dt <- suppressWarnings(as.Date(date_str, format = fmt))
+    if (!is.na(dt)) return(dt)
+  }
+  
+  # Other full 4-digit year formats
+  formats <- c(
+    "%m/%d/%Y", "%m-%d-%Y",
+    "%Y/%m/%d", "%d/%m/%Y", "%d-%m-%Y",
+    "%Y.%m.%d", "%m.%d.%Y",
+    "%b %d %Y", "%d %b %Y",
+    "%B %d %Y", "%d %B %Y"
+  )
+  
+  for (fmt in formats) {
+    dt <- suppressWarnings(as.Date(date_str, format = fmt))
+    if (!is.na(dt)) return(dt)
+  }
+  
+  # Could not parse
+  return(NA_Date_)
 }

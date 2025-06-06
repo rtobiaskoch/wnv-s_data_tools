@@ -1,0 +1,9 @@
+default:
+  input_dir: "../1_input"
+  fn_wnv_s_database: "wnv-s_database.csv"
+  key_database: "12Mf-w9I9NHTTDjzEPRoxUE08ka4WZ6RE-RM1s-FW7qA"
+  year: 2024
+  
+dev:
+  input_dir: "test"
+  

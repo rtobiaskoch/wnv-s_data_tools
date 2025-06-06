@@ -30,6 +30,9 @@ read_list <- function(path, pattern) {
     ignore.case = TRUE
   )
   
+  # Find files
+  file_name <- basename(file_list)
+  
   if (length(file_list) == 0) {
     warning("No files matched the pattern: ", pattern)
     return(tibble::tibble())  # Return empty tibble
@@ -38,12 +41,29 @@ read_list <- function(path, pattern) {
   }
   
   # Read and process files
-  combined_df <- file_list %>%
+  df_list <- file_list %>%
     purrr::map(~ rio::import(.x)) %>%
-    purrr::map(~ dplyr::mutate_all(., as.character)) %>%
+    purrr::map(~ dplyr::mutate_all(., as.character))
+  
+  cols <- purrr::map_int(df_list, ncol)
+  rows <- purrr::map_int(df_list, nrow)
+  
+  # Combine each triplet into one tab-separated line
+  summary_lines <- pmap_chr(list(file_name, rows, cols), ~ paste(..., sep = "\t"))
+  
+  # Print all lines
+  cat("\nImported files have the following number of rows and columns:\n\n",
+      paste(summary_lines, collapse = "\n"))
+  
+  combined_df <- df_list %>%
     dplyr::bind_rows()
   
-  cat("\nSuccessfully read in", nrow(combined_df), "observations.\n")
+  cat("\n\nFinal combined data has the following dimensions:", dim(combined_df), "\n")
+  
+  if(ncol(combined_df) != round(mean(cols),2)) {
+    cat("\nWarning number of columns in combined_df ", ncol(combined_df), 
+        "and average in df_list", mean(cols), "don't match.\n")
+  }
   
   return(combined_df)
 }

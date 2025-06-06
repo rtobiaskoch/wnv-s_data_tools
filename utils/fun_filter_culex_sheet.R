@@ -48,15 +48,16 @@ filter_culex_sheet <- function(df, na_col, trap_keep_df = NULL) {
   cat("\nFiltered out", nrow(data) - nrow(data2), "duplicates,", nrow(data2), "remaining.\n")
  
   #REMOVE NON CULEX SPECIES
-  data3 = data2 %>%
-    filter(str_detect(str_to_lower(spp), 
-                      pattern = str_to_lower("Tarsalis|Pipiens|No Mosquitoes|Trap Malfunction|Trap Stolen")))
-  
-  cat("\nFiltered out", nrow(data2) - nrow(data3), "non culex species,", nrow(data2), "remaining.\n")
+   data3 = data2 %>%
+     group_by()
+     filter(spp != "foo")
+   
+   cat("\nFiltered out", nrow(data2) - nrow(data3), "non culex species,", nrow(data2), "remaining.\n")
   
   #REMOVE NON-ACTIVE TRAPS 
   if (!is.null(trap_keep_df)) {
-    data4 <- dplyr::semi_join(data3, trap_keep_df, by = rlang::set_names(rlang::quo_name(col_sym)))
+    data4 <- dplyr::semi_join(data3, trap_keep_df, 
+                              by = rlang::set_names(rlang::quo_name(col_sym)))
     
     if(length(unique(data4)) != length(unique(data3)) ){
       stop(cat("Warning some traps from foco_trap were not found in the culex sheet. check the semi_join in filter_culex_sheet."))
