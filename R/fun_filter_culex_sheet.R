@@ -87,7 +87,7 @@ filter_culex_sheet <- function(df, na_col, trap_keep_df = NULL) {
     missing_traps <- setdiff(trap_keep_df$trap_id, data2$trap_id)
 
     if (length(missing_traps) > 0) {
-      stop(
+      warning(
         "Traps not found in culex sheet: ",
         paste(missing_traps, collapse = ", "),
         call. = FALSE

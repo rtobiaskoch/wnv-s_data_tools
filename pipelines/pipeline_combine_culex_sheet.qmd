@@ -102,7 +102,7 @@ INPUTS
 -   cfg$fn_trap_keep: filename for the dataframe that contains the traps that you want to keep
 -   trap_keep_df: dataframe that contains a column called trap_id that you want to keep from from the culex_sheets
 
-```{r}
+```{r, filter}
 # F I L T E R
 cat("\n Reading in active foco traps to remove untested traps from", cfg$fn_trap_keep, "\n")
 
@@ -114,20 +114,7 @@ if(cfg$filter_active){
   trap_keep_df = read.csv(cfg$fn_trap_keep)
 }
 
-temp <- culex_clean |>
-  distinct(trap_id, year, week, trap_status, zone, zone2, method)
-
-t = culex_clean %>%
-  complete(trap_id, year, week, spp) %>%
-  filter(week > 21) %>%
-  group_by(trap_id, year, week) %>%
-  mutate(
-    trap_status = case_when(
-      all(is.na(trap_status)) ~ "no mosquitoes",
-      any(trap_status == "no culex") ~ "no culex",
-      TRUE ~ trap_status
-                           )) 
-   
+#WARNING FOR BERTHOUD TRAPS EXPECTED 
 culex_filtered = filter_culex_sheet(df = culex_clean, 
                                   na_col = rlang::sym(cfg$na_col), 
                                   trap_keep_df = trap_keep_df)
@@ -137,7 +124,7 @@ plot_n_trap(culex_filtered)
 
 skimr::skim(culex_filtered)
 
-write.csv(culex_filtered, cfg$output_culex, row.names = FALSE)
+write.csv(culex_filtered, cfg$mid_culex_database, row.names = FALSE)
 ```
 
 #------------------------ R E F O R M A T   D A T A S H E E T -------------------------------------
@@ -224,7 +211,7 @@ database_reformat_trim = database_reformat %>%
 
 culex_database = join_merge_z(culex_filtered, database_reformat_trim, "total")
 
-write.csv(culex_database$full, cfg$output_culex_database)
+write.csv(culex_database$final, cfg$output_culex_database, row.names = FALSE)
 
 ```
 
@@ -245,7 +232,7 @@ INPUTS
 -   data_reformat: the wnv-s_database that has been reformatted
 
 ```{r, add na}
-y = lubridate::year(Sys.Date())
+y = lubridate::year(Sys.Date())# this FUNction does X
 
 if(cfg$filter_active){
  trap_keep_df = read.csv(cfg$fn_trap_keep) %>% 
@@ -303,7 +290,7 @@ p_trap_n = plot_n_trap(culex_database_expand) +
   ggtitle("N traps by Zone")
 
 p_trap_n
-ggsave(plot = p_trap_n, filename = "3_output/trap_status.png")
+ggsave(plot = p_trap_n, filename = "3_output/trap_status.png", width = 12, height = 6)
 ```
 
 
@@ -322,11 +309,9 @@ INPUTS
 
 ```{r}
 y = lubridate::year(Sys.Date())-1
-BE_rm = c("LC-061", "LC-058", "LC-062", "LC-059", "LC-060") #remove the traps cdc sent us and weren't managed by VDCI at the time
 
 trap_keep_df = trap_keep_df %>%
   filter(active == 1) %>%
-  filter(!trap_id %in% BE_rm) %>%
   mutate(end = y,
          w_start = 23,
          w_end = 37)

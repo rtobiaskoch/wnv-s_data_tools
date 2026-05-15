@@ -54,7 +54,15 @@ zones are groupes of traps used to calculate final statistics for a report
 ## Berthoud (BE)
 ### Background
 In 2024 CDC helped set 5 additional traps for Berthoud to help test expanding there trap surveillance. They didn't submit trap level data but they gave us all the culex mosquitoes so we can supplement the trap level data
-### Expected Active Trap Number: pre 2024 5, post 10-
+
+These traps at one point were called: BE-### but name was changed by VDCI
+new	old	name
+LC-061	BE-001	BERTHOUD RESERVOIR
+LC-058	BE-002	GATEWAY PARK
+LC-062	BE-003	GOLF COURSE
+LC-059	BE-004	HILLSDALE PARK
+LC-060	BE-005	PIONEER PARK
+### Expected Active Trap Number: pre 2024 5, post 10
 
 ## Fort Collins
 Fort Collins FC is broken up into four zones (NW, NE, SW, SE)
