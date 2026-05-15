@@ -5,13 +5,28 @@ DESC: defines functions to be used in pipeline
 
 rm(list = ls())
 #define packages to be used
-pkg = c("dplyr", "lubridate", "purrr", "stringr", "ggplot2")
+pkg = c("dplyr", "lubridate", "purrr", "stringr", "ggplot2", "tidyr")
 cat("\n Loading required packages: ", pkg, "\n")
-pacman::p_load(pkg, character.only = T)
+pacman::p_load(pkg, character.only = TRUE)
 
 #USER DEFINED FUNCTIONS
-utils <- list.files("../utils", pattern = "*", full.names = TRUE)
-walk(utils, source)
+# utils <- list.files(file.path(here::here(),"utils"), pattern = "*", full.names = TRUE)
+# walk(utils, source)
+
+#SOURCE USED FUNCTIONS
+source("R/fun_read_list.R")
+source("R/key_rename.R")
+source("R/fun_wnv_s_clean.R")
+source("R/fun_parse_flexible_date.R")
+source("R/fun_filter_culex_sheet.R")
+source("R/fun_plot_n_trap.R")
+source("R/fun_plot_n.R")
+source("R/fun_reformat_database_2_culex_sheet.R")
+source("R/fun_bind_culex_sheets.R")
+source("R/fun_plot_bind_culex.R")       # plot_culex_datasheet_comp
+source("R/fun_join_culex_sheets.R")     # join_merge_z
+source("R/fun_row_wise_expand.R")       # rowwise_expand
+source("R/fun_rm_grp_NA.R")            # rm_grp_na
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -20,6 +35,8 @@ walk(utils, source)
 ```{r}
 cfg <- config::get(file = here::here("config", "config_culex_combine.yml"),
                    config = "default") #change to culex if you want to use the culex datasheets
+
+input = file.path(here::here(),cfg$path)
 ```
 
 #--------------------------------  C O M P I L E  ------------------------------------------------
@@ -38,7 +55,7 @@ INPUTS
     -   pattern: pattern for culex files to use in read_list
     
 ```{r}
-culex0 = read_list(path = cfg$path, 
+culex0 = read_list(path = input, 
                    pattern = cfg$pattern)
 ```
 
@@ -56,11 +73,11 @@ DEPENDENCIES
 INPUTS
 -   df: dataframe from culex sheets
 
-```{r}
+```{r,clean}
 keychain = read.csv(cfg$fn_rename_col)
 
 culex_clean = culex0 %>% 
-  key_rename(keychain, drop_extra = T) %>%
+  key_rename(keychain, drop_extra = TRUE) %>%
   wnv_s_clean()
 
 write.csv(culex_clean, cfg$output_trap_all)
@@ -70,7 +87,7 @@ write.csv(culex_clean, cfg$output_trap_all)
 ``` 
 
 #--------------------------------  F I L T E R  ------------------------------------------------
-DESCRIPTION: filters cleaned_culex_sheet by a na_col and from a list of traps that you want to keep
+DESCRIPTION: filters cleaned_culex_sheet by a na_col and from a list of traps that you want to keep and removes non culex species
 DEPENDENCIES
 -   CRAN
     -   dplyr
@@ -89,7 +106,7 @@ INPUTS
 cat("\n Reading in active foco traps to remove untested traps from", cfg$fn_trap_keep, "\n")
 
 #if filter_active is true will only keep traps from active surveillance tested traps
-if(cfg$filter_active == TRUE){
+if(cfg$filter_active){
  trap_keep_df = read.csv(cfg$fn_trap_keep) %>% 
   filter(active == 1)
 } else {
@@ -139,7 +156,7 @@ database = read.csv(cfg$fn_database)
 
 database_reformat = database %>%
   reformat_database_2_culex_sheet() %>%
-  wnv_s_clean(drop_col = "trap_status")
+  wnv_s_clean(rm_col = "trap_status")
 ```
 
 #------------------------ B I N D   D A T A S H E E T  &  C U L E X -------------------------------------
@@ -187,8 +204,15 @@ INPUTS
 
 
 ```{r}
-#joins 
-culex_database = join_merge_z(culex_filtered, database_reformat, "total")
+# Join on (trap_id, zone, year, week, spp) only.
+# database_reformat's spp0 = "Tarsalis"/"Pipiens" (abbreviated) while culex_filtered's
+# spp0 = "Culex tarsalis"/"Culex pipiens" (full name). Including spp0 — or trap_date,
+# zone2, method — in the join key prevents any rows from matching. Trimming to the
+# minimal key columns forces a clean merge on the biologically meaningful key.
+database_reformat_trim = database_reformat %>%
+  dplyr::select(trap_id, zone, year, week, spp, total)
+
+culex_database = join_merge_z(culex_filtered, database_reformat_trim, "total")
 
 write.csv(culex_database$full, cfg$output_culex_database)
 
@@ -210,17 +234,17 @@ INPUTS
 -   data_filtered:
 -   data_reformat: the wnv-s_database that has been reformatted
 
-```{r}
+```{r, add na}
 y = lubridate::year(Sys.Date())
 
-if(cfg$filter_active == TRUE){
+if(cfg$filter_active){
  trap_keep_df = read.csv(cfg$fn_trap_keep) %>% 
   filter(active == 1)
 } else {
   trap_keep_df = read.csv(cfg$fn_trap_keep)
 }
 
-trap_keep_df = trap_keep_df
+trap_keep_df = trap_keep_df %>%
   mutate(end = y,
          w_start = 23,
          w_end = 37)
@@ -230,8 +254,6 @@ trap_expand = rowwise_expand(trap_expand, "w_start", "w_end", "week")
 trap_expand = trap_expand %>%
   select(trap_id, zone, year, week)
 
-
-
 culex_database_expand = left_join(trap_expand, culex_database$final, 
                     by = colnames(trap_expand))
 
@@ -240,8 +262,16 @@ culex_database_expand = culex_database_expand %>%
   #rm_grp_na(c("year", "week", "zone"), "total") %>%
   mutate(total = replace_na(total, 0)) %>%
   mutate(spp = replace_na(spp, "No Mosquitoes")) %>%
+  # Step 1: propagate dates from any trap in the same zone-week (fills NAs for unobserved weeks)
   group_by(year, week, zone) %>%
   fill(trap_date, .direction = "downup") %>%
+  ungroup() %>%
+  # Step 2: normalize to one date per trap-week so wnv_s_clean groups all rows together.
+  # Without this, culex "no mosquitoes" rows (set date) and database rows (collection date)
+  # land in separate group_by(trap_id, trap_date) groups → same trap gets two trap_status
+  # values in the same week → inflates the plot count above the expected number of traps.
+  group_by(trap_id, zone, year, week) %>%
+  mutate(trap_date = dplyr::first(sort(trap_date, na.last = TRUE))) %>%
   ungroup() %>%
   wnv_s_clean()
 
@@ -250,13 +280,13 @@ t = culex_database_expand %>%
   dplyr::mutate(zone = dplyr::if_else(zone %in% cfg$fc_zone, 
                                     "FC", 
                                     zone)) %>%
-    filter(!zone %in% NULL) %>%
+    filter(is.null(zone)) %>%
     group_by(year, week, zone) %>%
     summarise(n = n_distinct(trap_id),
               .groups = "drop") %>%
   filter(zone == "FC" & n != 53)
 
-t2 = culex_database_expand %>% filter(zone %in% cfg$fc_zone & year == 2020 & week == 23)
+#t2 = culex_database_expand %>% filter(zone %in% cfg$fc_zone & year == 2020 & week == 23)
 
 
 p_trap_n = plot_n_trap(culex_database_expand) +
@@ -309,7 +339,7 @@ p_na_trap = plot_n(na_trap, trap_id) +
 
 p_na_trap
 
-ggsave(plot = p_na_trap, filename = "../3_output/na_trap.png")
+ggsave(plot = p_na_trap, filename = "3_output/na_trap.png")
 ```
 
 

@@ -10,6 +10,7 @@ cfg <- config::get(file = here::here("config", "config_match_negatives.yml"),
 
 #load custom functions
 utils = list.files(path = "../utils",
+                   pattern = "*.R",
                    full.names = T)
 
 purrr::walk(utils, source)
@@ -17,8 +18,7 @@ purrr::walk(utils, source)
 
 R E A D   I N   D A T A 
 ```{r}
-gsheet_pull_prompt(dir = cfg$input_dir, 
-                   filename = cfg$fn_wnv_s_database, 
+gsheet_pull_prompt(filename = cfg$fn_wnv_s_database, 
                    sheet = "data",
                    key = cfg$key_database)
 
@@ -34,43 +34,14 @@ clean_changes = anti_join_by_columns(mdata0, mdata, names(mdata0), c("csu_id"))
 
 G E T  N = 1  P O O L 
 ```{r}
-pool_1 = get_n_pool(mdata, wks = c(1:25, 35:52), n = 1)
+pool_1 = filter_pool_n(mdata, yr = 2024, wk = c(1:25, 35:52), n = 1)
+write.csv(pool_1, "../3_output/pool_n1.csv", row.names = F)
 ```
 
 G E T   M A T C H E D   N E G A T I V E S
 ```{r}
-# 2. Identify trap-level summaries
-trap_summary <- mdata |>
-  group_by(trap_id) |>
-  reframe(
-    test_code = unique(test_code),
-    n = n(),
-    trap_date = first(trap_date),
-    spp = paste(unique(spp), collapse = ", "),
-    .groups = "drop"
-  )
-
-# 3. Split positive and negative pools 
-positive_pools <- trap_summary |>
-  filter(test_code == "positive")
-
-negative_pools <- trap_summary |>
-  filter(test_code != "positive")
-
-
-matched <- positive_pools |>
-  rowwise() |>
-  mutate(
-    match_id = list(
-      negative_pools |>
-        filter(spp == spp) |>
-        mutate(date_diff = abs(as.numeric(difftime(trap_date, !!trap_date, units = "days")))) |>
-        arrange(date_diff) |>
-        slice(1)  # Best match
-    )
-  ) |>
-  unnest(match_id, names_sep = "_neg")
-
+matched_neg = matched_negatives(mdata, 2024)
+write.csv(matched_neg, "../3_output/matched_negatives.csv", row.names = F)
 
 ```
 

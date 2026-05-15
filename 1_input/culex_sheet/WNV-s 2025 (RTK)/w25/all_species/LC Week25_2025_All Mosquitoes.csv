@@ -1,0 +1,377 @@
+date_trap_set,contract,location,zone,mosquito_species,mosquito_count,trap_type,trap_name
+6/16/2025,Fort Collins,Poudre River Trail,NE,Aedes dorsalis,4,CDC Light Trap,FC-067
+6/16/2025,Fort Collins,Poudre River Trail,NE,Aedes increpitus,20,CDC Light Trap,FC-067
+6/16/2025,Fort Collins,Poudre River Trail,NE,Anopheles freeborni,2,CDC Light Trap,FC-067
+6/16/2025,Fort Collins,Poudre River Trail,NE,Culex pipiens,4,CDC Light Trap,FC-067
+6/16/2025,Fort Collins,Poudre River Trail,NE,Aedes vexans,63,CDC Light Trap,FC-067
+6/16/2025,Fort Collins,Poudre River Trail,NE,Culex tarsalis,31,CDC Light Trap,FC-067
+6/16/2025,Fort Collins,Prospect Ponds,NE,Aedes increpitus,224,CDC Light Trap,FC-066
+6/16/2025,Fort Collins,Hemlock,NW,Aedes dorsalis,2,CDC Light Trap,FC-036 
+6/16/2025,Fort Collins,Hemlock,NW,Culex tarsalis,19,CDC Light Trap,FC-036 
+6/16/2025,Fort Collins,Hemlock,NW,Coquillettidia perturbans,1,CDC Light Trap,FC-036 
+6/16/2025,Fort Collins,Hemlock,NW,Aedes increpitus,8,CDC Light Trap,FC-036 
+6/16/2025,Fort Collins,Hemlock,NW,Aedes cinereus,1,CDC Light Trap,FC-036 
+6/16/2025,Fort Collins,Hemlock,NW,Aedes vexans,50,CDC Light Trap,FC-036 
+6/16/2025,Fort Collins,Edora Park,NE,Aedes dorsalis,1,CDC Light Trap,FC-019
+6/16/2025,Fort Collins,Edora Park,NE,Culex tarsalis,16,CDC Light Trap,FC-019
+6/16/2025,Fort Collins,PVH Gravid,NE,Culex pipiens,1,Gravid Trap,FC-091gr
+6/16/2025,Fort Collins,Edora Park,NE,Aedes vexans,4,CDC Light Trap,FC-019
+6/16/2025,Fort Collins,Edora Park,NE,Aedes increpitus,26,CDC Light Trap,FC-019
+6/16/2025,Fort Collins,Redwood,NE,Culex pipiens,1,CDC Light Trap,FC-040
+6/16/2025,Fort Collins,Redwood,NE,Aedes vexans,29,CDC Light Trap,FC-040
+6/16/2025,Fort Collins,Redwood,NE,Aedes dorsalis,1,CDC Light Trap,FC-040
+6/16/2025,Fort Collins,Redwood,NE,Culex tarsalis,8,CDC Light Trap,FC-040
+6/16/2025,Fort Collins,Redwood,NE,Coquillettidia perturbans,1,CDC Light Trap,FC-040
+6/16/2025,Fort Collins,Linden Lake Rd,NE,Aedes increpitus,12,CDC Light Trap,FC-069
+6/16/2025,Fort Collins,Redwood Gravid,NE,Culex pipiens,9,Gravid Trap,FC-040gr
+6/16/2025,Fort Collins,N. Linden,NE,Aedes increpitus,9,CDC Light Trap,FC-006
+6/16/2025,Fort Collins,N. Linden,NE,Aedes nigromaculis,1,CDC Light Trap,FC-006
+6/16/2025,Fort Collins,N. Linden,NE,Culiseta inornata,1,CDC Light Trap,FC-006
+6/16/2025,Fort Collins,N. Linden,NE,Culex tarsalis,6,CDC Light Trap,FC-006
+6/16/2025,Fort Collins,N. Linden,NE,Anopheles freeborni,1,CDC Light Trap,FC-006
+6/16/2025,Fort Collins,N. Linden,NE,Aedes vexans,25,CDC Light Trap,FC-006
+6/16/2025,Fort Collins,Udall Natural Gravid,NE,Culex pipiens,7,Gravid Trap,FC-092gr
+6/16/2025,Fort Collins,Lochside Lane,NE,Culiseta inornata,1,CDC Light Trap,FC-038
+6/16/2025,Fort Collins,Lochside Lane,NE,Aedes melanimon,36,CDC Light Trap,FC-038
+6/16/2025,Fort Collins,Lochside Lane,NE,Aedes vexans,28,CDC Light Trap,FC-038
+6/16/2025,Fort Collins,Lochside Lane,NE,Culex tarsalis,22,CDC Light Trap,FC-038
+6/16/2025,Fort Collins,Lochside Lane,NE,Culex pipiens,1,CDC Light Trap,FC-038
+6/16/2025,Fort Collins,Lochside Lane,NE,Aedes increpitus,4,CDC Light Trap,FC-038
+6/16/2025,Fort Collins,Country Club,NE,Aedes melanimon,1,CDC Light Trap,FC-034
+6/16/2025,Fort Collins,Country Club,NE,Aedes increpitus,5,CDC Light Trap,FC-034
+6/16/2025,Fort Collins,Country Club,NE,Aedes dorsalis,1,CDC Light Trap,FC-034
+6/16/2025,Fort Collins,Country Club,NE,Anopheles freeborni,5,CDC Light Trap,FC-034
+6/16/2025,Fort Collins,Country Club,NE,Aedes vexans,30,CDC Light Trap,FC-034
+6/16/2025,Fort Collins,Country Club,NE,Culex tarsalis,26,CDC Light Trap,FC-034
+6/16/2025,Fort Collins,FC Visitor Center,NE,Aedes vexans,13,CDC Light Trap,FC-014
+6/16/2025,Fort Collins,FC Visitor Center,NE,Aedes dorsalis,103,CDC Light Trap,FC-014
+6/16/2025,Fort Collins,FC Visitor Center,NE,Aedes increpitus,30,CDC Light Trap,FC-014
+6/16/2025,Fort Collins,FC Visitor Center,NE,Aedes trivittatus,1,CDC Light Trap,FC-014
+6/16/2025,Fort Collins,FC Visitor Center,NE,Culex tarsalis,6,CDC Light Trap,FC-014
+6/16/2025,Fort Collins,Prospect Ponds Gravid,NE,Aedes vexans,2,Gravid Trap,FC-066gr
+6/16/2025,Fort Collins,Prospect Ponds Gravid,NE,Culex tarsalis,1,Gravid Trap,FC-066gr
+6/16/2025,Fort Collins,Prospect Ponds Gravid,NE,Aedes increpitus,7,Gravid Trap,FC-066gr
+6/16/2025,Fort Collins,Linden Lake Rd,NE,Culex tarsalis,14,CDC Light Trap,FC-069
+6/16/2025,Fort Collins,422 Lake Dr,NE,Aedes hendersoni,1,CDC Light Trap,FC-072
+6/16/2025,Fort Collins,422 Lake Dr,NE,Aedes increpitus,4,CDC Light Trap,FC-072
+6/16/2025,Fort Collins,422 Lake Dr,NE,Aedes vexans,13,CDC Light Trap,FC-072
+6/16/2025,Fort Collins,422 Lake Dr,NE,Culex pipiens,3,CDC Light Trap,FC-072
+6/16/2025,Fort Collins,422 Lake Dr,NE,Culex tarsalis,26,CDC Light Trap,FC-072
+6/16/2025,Fort Collins,422 Lake Dr,NE,Aedes nigromaculis,1,CDC Light Trap,FC-072
+6/16/2025,Fort Collins,Linden Lake Rd,NE,Culex pipiens,2,CDC Light Trap,FC-069
+6/16/2025,Fort Collins,Prospect Ponds,NE,Anopheles freeborni,4,CDC Light Trap,FC-066
+6/16/2025,Fort Collins,Prospect Ponds,NE,Aedes vexans,19,CDC Light Trap,FC-066
+6/16/2025,Fort Collins,Prospect Ponds,NE,Aedes dorsalis,14,CDC Light Trap,FC-066
+6/16/2025,Fort Collins,Prospect Ponds,NE,Culex tarsalis,18,CDC Light Trap,FC-066
+6/16/2025,Fort Collins,Linden Lake Rd,NE,Aedes vexans,61,CDC Light Trap,FC-069
+6/16/2025,Fort Collins,Linden Lake Rd,NE,Aedes melanimon,2,CDC Light Trap,FC-069
+6/16/2025,Fort Collins,Linden Lake Rd,NE,Coquillettidia perturbans,2,CDC Light Trap,FC-069
+6/16/2025,Fort Collins,Hemlock,NW,Aedes nigromaculis,1,CDC Light Trap,FC-036 
+6/16/2025,Fort Collins,Hemlock,NW,Culex pipiens,4,CDC Light Trap,FC-036 
+6/17/2025,Fort Collins,Sage Creek North,SE,Aedes melanimon,2,CDC Light Trap,FC-075
+6/17/2025,Fort Collins,Sage Creek North,SE,Aedes vexans,231,CDC Light Trap,FC-075
+6/17/2025,Fort Collins,Sage Creek North,SE,Aedes increpitus,2,CDC Light Trap,FC-075
+6/17/2025,Fort Collins,Sage Creek North,SE,Culex tarsalis,21,CDC Light Trap,FC-075
+6/17/2025,Fort Collins,Sage Creek North,SE,Aedes dorsalis,4,CDC Light Trap,FC-075
+6/17/2025,Fort Collins,Big Horn,SE,Aedes vexans,11,CDC Light Trap,FC-004
+6/17/2025,Fort Collins,Big Horn,SE,Aedes dorsalis,4,CDC Light Trap,FC-004
+6/17/2025,Fort Collins,3001 San Luis,SE,Aedes dorsalis,3,CDC Light Trap,FC-027
+6/17/2025,Fort Collins,3001 San Luis,SE,Aedes increpitus,7,CDC Light Trap,FC-027
+6/17/2025,Fort Collins,3001 San Luis,SE,Aedes vexans,12,CDC Light Trap,FC-027
+6/17/2025,Fort Collins,Rock Creek,SE,Culex tarsalis,58,CDC Light Trap,FC-074
+6/17/2025,Fort Collins,Rock Creek,SE,Aedes dorsalis,44,CDC Light Trap,FC-074
+6/17/2025,Fort Collins,3001 San Luis,SE,Culex tarsalis,58,CDC Light Trap,FC-027
+6/17/2025,Fort Collins,Westshore Ct,SE,Culex tarsalis,22,CDC Light Trap,FC-046
+6/17/2025,Fort Collins,Westshore Ct,SE,Aedes vexans,9,CDC Light Trap,FC-046
+6/17/2025,Fort Collins,Springwood and Lochwood,SE,Aedes vexans,35,CDC Light Trap,FC-059
+6/17/2025,Fort Collins,West Chase,SE,Culex tarsalis,63,CDC Light Trap,FC-064
+6/17/2025,Fort Collins,West Chase,SE,Culex pipiens,3,CDC Light Trap,FC-064
+6/17/2025,Fort Collins,West Chase,SE,Aedes dorsalis,23,CDC Light Trap,FC-064
+6/17/2025,Fort Collins,West Chase,SE,Aedes vexans,641,CDC Light Trap,FC-064
+6/17/2025,Fort Collins,Sage Creek North Gravid,SE,Aedes vexans,1,Gravid Trap,FC-075gr
+6/17/2025,Fort Collins,Sage Creek North Gravid,SE,Culex tarsalis,1,Gravid Trap,FC-075gr
+6/17/2025,Fort Collins,Sage Creek North Gravid,SE,Culex pipiens,7,Gravid Trap,FC-075gr
+6/17/2025,Fort Collins,West Chase,SE,Aedes melanimon,65,CDC Light Trap,FC-064
+6/17/2025,Fort Collins,Springwood and Lochwood,SE,Culex tarsalis,18,CDC Light Trap,FC-059
+6/17/2025,Fort Collins,Springwood and Lochwood,SE,Culiseta inornata,2,CDC Light Trap,FC-059
+6/17/2025,Fort Collins,Springwood and Lochwood,SE,Aedes increpitus,1,CDC Light Trap,FC-059
+6/17/2025,Fort Collins,Willow Springs,SE,Culex tarsalis,1,CDC Light Trap,FC-031
+6/17/2025,Fort Collins,Egret and Rookery,SE,Culex pipiens,1,CDC Light Trap,FC-053
+6/17/2025,Fort Collins,Rock Creek,SE,Aedes melanimon,3,CDC Light Trap,FC-074
+6/17/2025,Fort Collins,Rock Creek,SE,Aedes vexans,53,CDC Light Trap,FC-074
+6/17/2025,Fort Collins,Fossil Creek South,SE,No Mosquitoes,0,CDC Light Trap,FC-039
+6/17/2025,Fort Collins,Egret and Rookery,SE,Aedes melanimon,1,CDC Light Trap,FC-053
+6/17/2025,Fort Collins,Egret and Rookery,SE,Culiseta inornata,1,CDC Light Trap,FC-053
+6/17/2025,Fort Collins,Egret and Rookery,SE,Aedes dorsalis,9,CDC Light Trap,FC-053
+6/17/2025,Fort Collins,Egret and Rookery,SE,Anopheles freeborni,3,CDC Light Trap,FC-053
+6/17/2025,Fort Collins,Egret and Rookery,SE,Culex tarsalis,136,CDC Light Trap,FC-053
+6/17/2025,Fort Collins,Keeneland And Twin Oak,SE,Aedes dorsalis,1,CDC Light Trap,FC-047
+6/17/2025,Fort Collins,Keeneland And Twin Oak,SE,Aedes vexans,132,CDC Light Trap,FC-047
+6/17/2025,Fort Collins,Keeneland And Twin Oak,SE,Aedes increpitus,1,CDC Light Trap,FC-047
+6/17/2025,Fort Collins,Keeneland And Twin Oak,SE,Culex tarsalis,24,CDC Light Trap,FC-047
+6/17/2025,Fort Collins,Rock Creek,SE,Culex pipiens,1,CDC Light Trap,FC-074
+6/17/2025,Fort Collins,Golden Meadows Ditch,SE,Culex tarsalis,2,CDC Light Trap,FC-050
+6/17/2025,Fort Collins,Golden Meadows Ditch,SE,Aedes vexans,8,CDC Light Trap,FC-050
+6/17/2025,Fort Collins,Boltz,SE,Aedes vexans,4,CDC Light Trap,FC-023
+6/17/2025,Fort Collins,Boltz,SE,Aedes melanimon,1,CDC Light Trap,FC-023
+6/17/2025,Fort Collins,Boltz,SE,Aedes dorsalis,1,CDC Light Trap,FC-023
+6/17/2025,Fort Collins,Boltz,SE,Culex tarsalis,5,CDC Light Trap,FC-023
+6/17/2025,Fort Collins,English Ranch Park Gravid,SE,Culiseta inornata,1,Gravid Trap,FC-088gr
+6/17/2025,Fort Collins,English Ranch Park Gravid,SE,Culex pipiens,68,Gravid Trap,FC-088gr
+6/17/2025,Fort Collins,English Ranch Park Gravid,SE,Aedes vexans,2,Gravid Trap,FC-088gr
+6/17/2025,Fort Collins,English Ranch Park Gravid,SE,Culex tarsalis,1,Gravid Trap,FC-088gr
+6/17/2025,Fort Collins,Egret and Rookery,SE,Aedes vexans,328,CDC Light Trap,FC-053
+6/17/2025,Fort Collins,Big Horn,SE,Aedes trivittatus,1,CDC Light Trap,FC-004
+6/17/2025,Fort Collins,Big Horn,SE,Culex tarsalis,35,CDC Light Trap,FC-004
+6/17/2025,Fort Collins,Big Horn,SE,Aedes increpitus,1,CDC Light Trap,FC-004
+6/17/2025,Fort Collins,Big Horn,SE,Culiseta inornata,1,CDC Light Trap,FC-004
+6/18/2025,Fort Collins,Golden Current,NW,Culex tarsalis,2,CDC Light Trap,FC-011
+6/18/2025,Fort Collins,603 Gilgalad Way,NW,Aedes melanimon,1,CDC Light Trap,FC-052
+6/18/2025,Fort Collins,603 Gilgalad Way,NW,Aedes increpitus,6,CDC Light Trap,FC-052
+6/18/2025,Fort Collins,603 Gilgalad Way,NW,Aedes vexans,63,CDC Light Trap,FC-052
+6/18/2025,Fort Collins,Casa Grande and Downing,SW,Culex tarsalis,2,CDC Light Trap,FC-049
+6/18/2025,Fort Collins,Casa Grande and Downing,SW,Aedes vexans,1,CDC Light Trap,FC-049
+6/18/2025,Fort Collins,Casa Grande and Downing,SW,Culex pipiens,2,CDC Light Trap,FC-049
+6/18/2025,Fort Collins,Mountain Grandview Cemetery Gravid,NW,No Mosquitoes,0,Gravid Trap,FC-090gr
+6/18/2025,Fort Collins,Red Fox Meadows Gravid,NW,Aedes increpitus,1,Gravid Trap,FC-063gr
+6/18/2025,Fort Collins,Stuart and Dorset,NW,Aedes increpitus,1,CDC Light Trap,FC-015
+6/18/2025,Fort Collins,Stuart and Dorset,NW,Aedes vexans,4,CDC Light Trap,FC-015
+6/18/2025,Fort Collins,Stuart and Dorset,NW,Aedes hendersoni,1,CDC Light Trap,FC-015
+6/18/2025,Fort Collins,Fishback,NW,Culex pipiens,1,CDC Light Trap,FC-041
+6/18/2025,Fort Collins,Fishback,NW,Culex tarsalis,1,CDC Light Trap,FC-041
+6/18/2025,Fort Collins,Holley Plant Research Center,NW,Aedes vexans,8,CDC Light Trap,FC-061
+6/18/2025,Fort Collins,Holley Plant Research Center,NW,Aedes increpitus,2,CDC Light Trap,FC-061
+6/18/2025,Fort Collins,Holley Plant Research Center,NW,Culex pipiens,1,CDC Light Trap,FC-061
+6/18/2025,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Aedes melanimon,2,CDC Light Trap,FC-058
+6/18/2025,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Aedes increpitus,41,CDC Light Trap,FC-058
+6/18/2025,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Culex pipiens,2,CDC Light Trap,FC-058
+6/18/2025,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Culex tarsalis,1,CDC Light Trap,FC-058
+6/18/2025,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Aedes vexans,44,CDC Light Trap,FC-058
+6/18/2025,Fort Collins,Spring Creek Trail-- Michener Dr,SW,Aedes dorsalis,1,CDC Light Trap,FC-058
+6/18/2025,Fort Collins,118 S Grant ,NW,Culex tarsalis,1,CDC Light Trap,FC-073
+6/18/2025,Fort Collins,118 S Grant ,NW,Aedes vexans,1,CDC Light Trap,FC-073
+6/18/2025,Fort Collins,Red Fox Meadows,NW,Aedes vexans,7,CDC Light Trap,FC-063
+6/18/2025,Fort Collins,Red Fox Meadows,NW,Aedes increpitus,41,CDC Light Trap,FC-063
+6/18/2025,Fort Collins,Red Fox Meadows,NW,Culiseta inornata,1,CDC Light Trap,FC-063
+6/18/2025,Fort Collins,Red Fox Meadows,NW,Culex tarsalis,1,CDC Light Trap,FC-063
+6/18/2025,Fort Collins,Golden Current,NW,Culex pipiens,2,CDC Light Trap,FC-011
+6/18/2025,Fort Collins,Golden Current,NW,Aedes increpitus,3,CDC Light Trap,FC-011
+6/18/2025,Fort Collins,Golden Current,NW,Aedes vexans,8,CDC Light Trap,FC-011
+6/18/2025,Fort Collins,808 Ponderosa,NW,Culex pipiens,2,CDC Light Trap,FC-060
+6/19/2025,Fort Collins,Chelsea Ridge,SW,Culex tarsalis,47,CDC Light Trap,FC-037
+6/19/2025,Fort Collins,Chelsea Ridge,SW,Aedes increpitus,6,CDC Light Trap,FC-037
+6/19/2025,Fort Collins,Kunz Ct. and Brook Dr. Gravid,SW,Aedes vexans,1,Gravid Trap,FC-089gr
+6/19/2025,Fort Collins,Kunz Ct. and Brook Dr. Gravid,SW,Culex pipiens,7,Gravid Trap,FC-089gr
+6/19/2025,Fort Collins,Ben's Park Gravid,SE,Culex pipiens,12,Gravid Trap,FC-029gr
+6/19/2025,Fort Collins,Magic Carpet,SW,Aedes vexans,7,CDC Light Trap,FC-001
+6/19/2025,Fort Collins,Magic Carpet,SW,Culex tarsalis,5,CDC Light Trap,FC-001
+6/19/2025,Fort Collins,Magic Carpet,SW,Aedes dorsalis,1,CDC Light Trap,FC-001
+6/19/2025,Fort Collins,Magic Carpet,SW,Culex pipiens,4,CDC Light Trap,FC-001
+6/19/2025,Fort Collins,5029 Crest Dr,SW,Aedes increpitus,1,CDC Light Trap,FC-068
+6/19/2025,Fort Collins,5029 Crest Dr,SW,Aedes dorsalis,1,CDC Light Trap,FC-068
+6/19/2025,Fort Collins,5029 Crest Dr,SW,Culex tarsalis,2,CDC Light Trap,FC-068
+6/19/2025,Fort Collins,Lopez Elementary,SW,Aedes vexans,36,CDC Light Trap,FC-093
+6/19/2025,Fort Collins,Lopez Elementary,SW,Culex pipiens,2,CDC Light Trap,FC-093
+6/19/2025,Fort Collins,Lopez Elementary,SW,Culex tarsalis,12,CDC Light Trap,FC-093
+6/19/2025,Fort Collins,Lopez Elementary,SW,Culiseta inornata,1,CDC Light Trap,FC-093
+6/19/2025,Fort Collins,Chelsea Ridge,SW,Culex pipiens,9,CDC Light Trap,FC-037
+6/19/2025,Fort Collins,Silvergate Rd,SW,Culex pipiens,1,CDC Light Trap,FC-071
+6/19/2025,Fort Collins,Silvergate Rd,SW,Culex tarsalis,3,CDC Light Trap,FC-071
+6/19/2025,Fort Collins,Silvergate Rd,SW,Aedes vexans,1,CDC Light Trap,FC-071
+6/19/2025,Fort Collins,Registry Ridge,SW,No Mosquitoes,0,CDC Light Trap,FC-057
+6/19/2025,Fort Collins,Chelsea Ridge,SW,Aedes dorsalis,3,CDC Light Trap,FC-037
+6/19/2025,Fort Collins,Chelsea Ridge,SW,Aedes vexans,42,CDC Light Trap,FC-037
+6/19/2025,Fort Collins,Chelsea Ridge,SW,Culiseta inornata,2,CDC Light Trap,FC-037
+6/19/2025,Fort Collins,Ben's Park,SE,Aedes dorsalis,3,CDC Light Trap,FC-029
+6/19/2025,Fort Collins,Ben's Park,SE,Culex tarsalis,4,CDC Light Trap,FC-029
+6/19/2025,Fort Collins,Ben's Park,SE,Aedes vexans,11,CDC Light Trap,FC-029
+6/19/2025,Fort Collins,737 Parliament,SE,Aedes melanimon,3,CDC Light Trap,FC-054
+6/19/2025,Fort Collins,737 Parliament,SE,Culex tarsalis,5,CDC Light Trap,FC-054
+6/19/2025,Fort Collins,737 Parliament,SE,Culex pipiens,1,CDC Light Trap,FC-054
+6/19/2025,Fort Collins,737 Parliament,SE,Aedes vexans,18,CDC Light Trap,FC-054
+6/19/2025,Fort Collins,Water's Edge at Blue Mesa,SW,Aedes vexans,4,CDC Light Trap,FC-062
+6/19/2025,Fort Collins,Water's Edge at Blue Mesa,SW,Culex pipiens,1,CDC Light Trap,FC-062
+6/19/2025,Fort Collins,Water's Edge at Blue Mesa,SW,Culex tarsalis,2,CDC Light Trap,FC-062
+6/16/2025,Loveland,Centerra,LV,Aedes vexans,1,CDC Light Trap,LV-117
+6/16/2025,Loveland,Boyd Lake,LV,Culex tarsalis,5,CDC Light Trap,LV-095
+6/16/2025,Loveland,29th and Madison,LV,Aedes dorsalis,1,CDC Light Trap,LV-004
+6/16/2025,Loveland,29th and Madison,LV,Culex tarsalis,9,CDC Light Trap,LV-004
+6/16/2025,Loveland,29th and Madison,LV,Aedes vexans,9,CDC Light Trap,LV-004
+6/16/2025,Loveland,Outlet Mall Apartments,LV,No Mosquitoes,0,CDC Light Trap,LV-066
+6/16/2025,Loveland,Centerra,LV,Aedes dorsalis,1,CDC Light Trap,LV-117
+6/16/2025,Loveland,7 Lakes Park,LV,Culex tarsalis,5,CDC Light Trap,LV-078
+6/16/2025,Loveland,7 Lakes Park,LV,Aedes increpitus,11,CDC Light Trap,LV-078
+6/16/2025,Loveland,7 Lakes Park,LV,Aedes vexans,1,CDC Light Trap,LV-078
+6/16/2025,Loveland,Sundisk and 13E,LV,Aedes vexans,14,CDC Light Trap,LV-116
+6/16/2025,Loveland,Sundisk and 13E,LV,Culex pipiens,1,CDC Light Trap,LV-116
+6/16/2025,Loveland,Sundisk and 13E,LV,Aedes increpitus,1,CDC Light Trap,LV-116
+6/16/2025,Loveland,Sundisk and 13E,LV,Culex tarsalis,1,CDC Light Trap,LV-116
+6/16/2025,Loveland,Boyd Lake,LV,Aedes vexans,42,CDC Light Trap,LV-095
+6/16/2025,Loveland,Boyd Lake,LV,Aedes dorsalis,1,CDC Light Trap,LV-095
+6/16/2025,Loveland,Boyd Lake,LV,Aedes increpitus,1,CDC Light Trap,LV-095
+6/16/2025,Loveland,Harding and Reagan,LV,Aedes increpitus,28,CDC Light Trap,LV-080
+6/16/2025,Loveland,Harding and Reagan,LV,Aedes vexans,264,CDC Light Trap,LV-080
+6/16/2025,Loveland,Harding and Reagan,LV,Aedes dorsalis,4,CDC Light Trap,LV-080
+6/16/2025,Loveland,Harding and Reagan,LV,Culex tarsalis,44,CDC Light Trap,LV-080
+6/16/2025,Loveland,7 Lakes Gravid,LV,Culex pipiens,11,Gravid Trap,LV-079gr
+6/16/2025,Loveland,Horseshoe Peninsula,LV,Aedes vexans,1,CDC Light Trap,LV-069
+6/16/2025,Loveland,Horseshoe Peninsula,LV,Aedes dorsalis,3,CDC Light Trap,LV-069
+6/16/2025,Loveland,Horseshoe Peninsula,LV,Culex tarsalis,13,CDC Light Trap,LV-069
+6/16/2025,Loveland,2229 Arikaree,LV,Culex pipiens,2,CDC Light Trap,LV-088
+6/16/2025,Loveland,2229 Arikaree,LV,Culex tarsalis,19,CDC Light Trap,LV-088
+6/16/2025,Loveland,2229 Arikaree,LV,Aedes increpitus,1,CDC Light Trap,LV-088
+6/16/2025,Loveland,2229 Arikaree,LV,Aedes vexans,6,CDC Light Trap,LV-088
+6/16/2025,Loveland,7 Lakes Gravid,LV,Culex tarsalis,1,Gravid Trap,LV-079gr
+6/16/2025,Loveland,Centerra,LV,Culex tarsalis,1,CDC Light Trap,LV-117
+6/16/2025,Loveland,Pond at Silver Lake,LV,Culex tarsalis,2,CDC Light Trap,LV-093
+6/17/2025,Loveland,Cr 20 and 9,LV,Aedes increpitus,16,CDC Light Trap,LV-104
+6/17/2025,Loveland,Cr 20 and 9,LV,Culex tarsalis,203,CDC Light Trap,LV-104
+6/17/2025,Loveland,Cr 20 and 9,LV,Coquillettidia perturbans,3,CDC Light Trap,LV-104
+6/17/2025,Loveland,Cr 20 and 9,LV,Aedes nigromaculis,2,CDC Light Trap,LV-104
+6/17/2025,Loveland,Cr 20 and 9,LV,Anopheles freeborni,187,CDC Light Trap,LV-104
+6/17/2025,Loveland,Cr 20 and 9,LV,Culiseta inornata,7,CDC Light Trap,LV-104
+6/17/2025,Loveland,9th and DesMoines,LV,Culiseta inornata,1,CDC Light Trap,LV-089
+6/17/2025,Loveland,9th and DesMoines,LV,Culex tarsalis,19,CDC Light Trap,LV-089
+6/17/2025,Loveland,9th and DesMoines,LV,Aedes vexans,16,CDC Light Trap,LV-089
+6/17/2025,Loveland,Cr 20 and 9,LV,Culex pipiens,3,CDC Light Trap,LV-104
+6/17/2025,Loveland,Jefferson And 11th Gravid,LV,Culex pipiens,12,Gravid Trap,LV-074gr
+6/17/2025,Loveland,Golf Vista,LV,Aedes vexans,6,CDC Light Trap,LV-118
+6/17/2025,Loveland,Golf Vista,LV,Culiseta inornata,2,CDC Light Trap,LV-118
+6/17/2025,Loveland,Golf Vista,LV,Culex tarsalis,11,CDC Light Trap,LV-118
+6/17/2025,Loveland,Golf Vista,LV,Aedes increpitus,2,CDC Light Trap,LV-118
+6/17/2025,Loveland,Golf Vista,LV,Aedes dorsalis,1,CDC Light Trap,LV-118
+6/17/2025,Loveland,Golf Vista,LV,Coquillettidia perturbans,13,CDC Light Trap,LV-118
+6/17/2025,Loveland,Cr 20 and 9,LV,Aedes melanimon,1,CDC Light Trap,LV-104
+6/17/2025,Loveland,Cr 20 and 9,LV,Aedes vexans,22,CDC Light Trap,LV-104
+6/17/2025,Loveland,Downtown Loveland ,LV,No Mosquitoes,0,CDC Light Trap,LV-100
+6/17/2025,Loveland,1105 East 1st Street,LV,Aedes increpitus,1,CDC Light Trap,LV-077
+6/17/2025,Loveland,9th and DesMoines,LV,Aedes dorsalis,1,CDC Light Trap,LV-089
+6/17/2025,Loveland,915 S Boise,LV,Coquillettidia perturbans,2,CDC Light Trap,LV-112
+6/17/2025,Loveland,915 S Boise,LV,Culex pipiens,1,CDC Light Trap,LV-112
+6/17/2025,Loveland,Keysight Technologies,LV,Coquillettidia perturbans,1,CDC Light Trap,LV-124
+6/17/2025,Loveland,Keysight Technologies,LV,Culex tarsalis,45,CDC Light Trap,LV-124
+6/17/2025,Loveland,Keysight Technologies,LV,Aedes vexans,6,CDC Light Trap,LV-124
+6/17/2025,Loveland,8th And No Name,LV,Aedes vexans,11,CDC Light Trap,LV-125
+6/17/2025,Loveland,8th And No Name,LV,Culex tarsalis,11,CDC Light Trap,LV-125
+6/17/2025,Loveland,8th And No Name,LV,Aedes increpitus,11,CDC Light Trap,LV-125
+6/17/2025,Loveland,Springs at Marianna,LV,Aedes cinereus,28,CDC Light Trap,LV-113
+6/17/2025,Loveland,Springs at Marianna,LV,Aedes dorsalis,4,CDC Light Trap,LV-113
+6/17/2025,Loveland,Springs at Marianna,LV,Culex tarsalis,12,CDC Light Trap,LV-113
+6/17/2025,Loveland,Springs at Marianna,LV,Aedes increpitus,84,CDC Light Trap,LV-113
+6/17/2025,Loveland,Springs at Marianna,LV,Aedes vexans,104,CDC Light Trap,LV-113
+6/17/2025,Loveland,915 S Boise,LV,Culex tarsalis,4,CDC Light Trap,LV-112
+6/17/2025,Loveland,915 S Boise,LV,Aedes vexans,2,CDC Light Trap,LV-112
+6/17/2025,Loveland,1105 East 1st Street,LV,Culex tarsalis,2,CDC Light Trap,LV-077
+6/17/2025,Loveland,Jefferson and 11th,LV,Culex tarsalis,11,CDC Light Trap,LV-074
+6/17/2025,Loveland,Jefferson and 11th,LV,Aedes vexans,4,CDC Light Trap,LV-074
+6/17/2025,Loveland,Jefferson and 11th,LV,Aedes hendersoni,1,CDC Light Trap,LV-074
+6/17/2025,Loveland,Jefferson and 11th,LV,Culex pipiens,2,CDC Light Trap,LV-074
+6/17/2025,Loveland,Big Thompson ,LV,Aedes vexans,272,CDC Light Trap,LV-110
+6/17/2025,Loveland,Big Thompson ,LV,Culex tarsalis,335,CDC Light Trap,LV-110
+6/17/2025,Loveland,Big Thompson ,LV,Culiseta inornata,4,CDC Light Trap,LV-110
+6/17/2025,Loveland,Big Thompson ,LV,Aedes melanimon,1,CDC Light Trap,LV-110
+6/17/2025,Loveland,Big Thompson ,LV,Culex pipiens,2,CDC Light Trap,LV-110
+6/17/2025,Loveland,Big Thompson ,LV,Aedes increpitus,10,CDC Light Trap,LV-110
+6/17/2025,Loveland,Big Thompson ,LV,Anopheles freeborni,15,CDC Light Trap,LV-110
+6/17/2025,Loveland,1105 East 1st Street,LV,Aedes vexans,2,CDC Light Trap,LV-077
+6/17/2025,Loveland,Cr 20 and 9,LV,Aedes dorsalis,39,CDC Light Trap,LV-104
+6/18/2025,Loveland,Jill Drive Pond,LV,Aedes vexans,184,CDC Light Trap,LV-114
+6/18/2025,Loveland,Del Norte Private Park,LV,Culex tarsalis,4,CDC Light Trap,LV-067
+6/18/2025,Loveland,Del Norte Private Park,LV,Aedes vexans,2,CDC Light Trap,LV-067
+6/18/2025,Loveland,Derby Hill,LV,Aedes vexans,1,CDC Light Trap,LV-087
+6/18/2025,Loveland,Derby Hill,LV,Culex tarsalis,3,CDC Light Trap,LV-087
+6/18/2025,Loveland,Derby Hill,LV,Aedes dorsalis,1,CDC Light Trap,LV-087
+6/18/2025,Loveland,Derby Hill,LV,Aedes increpitus,2,CDC Light Trap,LV-087
+6/18/2025,Loveland,Derby Hill,LV,Culex pipiens,3,CDC Light Trap,LV-087
+6/18/2025,Loveland,Linda and 26th ,LV,Aedes dorsalis,7,CDC Light Trap,LV-021
+6/18/2025,Loveland,Linda and 26th ,LV,Culex tarsalis,3,CDC Light Trap,LV-021
+6/18/2025,Loveland,Cattail Pond,LV,Aedes melanimon,2,CDC Light Trap,LV-020
+6/18/2025,Loveland,Cattail Pond,LV,Aedes vexans,24,CDC Light Trap,LV-020
+6/18/2025,Loveland,Cattail Pond,LV,Aedes increpitus,127,CDC Light Trap,LV-020
+6/18/2025,Loveland,Cattail Pond,LV,Culex pipiens,1,CDC Light Trap,LV-020
+6/18/2025,Loveland,Cattail Pond,LV,Culiseta inornata,2,CDC Light Trap,LV-020
+6/18/2025,Loveland,Cattail Pond,LV,Culex tarsalis,17,CDC Light Trap,LV-020
+6/18/2025,Loveland,Cattail Pond,LV,Anopheles freeborni,2,CDC Light Trap,LV-020
+6/18/2025,Loveland,Cattail Pond,LV,Aedes dorsalis,1,CDC Light Trap,LV-020
+6/18/2025,Loveland,Jocelyn and Eagle,LV,Aedes increpitus,4,CDC Light Trap,LV-019
+6/18/2025,Loveland,Jocelyn and Eagle,LV,Aedes vexans,8,CDC Light Trap,LV-019
+6/18/2025,Loveland,Jocelyn and Eagle,LV,Culex tarsalis,6,CDC Light Trap,LV-019
+6/18/2025,Loveland,2001 S Douglas,LV,Culex tarsalis,4,CDC Light Trap,LV-042
+6/18/2025,Loveland,2001 S Douglas,LV,Coquillettidia perturbans,1,CDC Light Trap,LV-042
+6/18/2025,Loveland,2001 S Douglas,LV,Aedes vexans,9,CDC Light Trap,LV-042
+6/18/2025,Loveland,End of City Limits North,LV,Aedes increpitus,1,CDC Light Trap,LV-120
+6/18/2025,Loveland,End of City Limits North,LV,Culex pipiens,1,CDC Light Trap,LV-120
+6/18/2025,Loveland,End of City Limits North,LV,Aedes dorsalis,6,CDC Light Trap,LV-120
+6/18/2025,Loveland,End of City Limits North,LV,Culex tarsalis,2,CDC Light Trap,LV-120
+6/18/2025,Loveland,End of City Limits North,LV,Culiseta inornata,1,CDC Light Trap,LV-120
+6/18/2025,Loveland,End of City Limits North,LV,Aedes vexans,6,CDC Light Trap,LV-120
+6/18/2025,Loveland,Jill Drive Pond,LV,Culex tarsalis,4,CDC Light Trap,LV-114
+6/18/2025,Loveland,Jill Drive Pond,LV,Aedes increpitus,48,CDC Light Trap,LV-114
+6/18/2025,Loveland,Del Norte Private Park,LV,Aedes increpitus,8,CDC Light Trap,LV-067
+6/19/2025,Loveland,Cattails Golfcourse,LV,Aedes vexans,3,CDC Light Trap,LV-099
+6/19/2025,Loveland,Cattails Golfcourse,LV,Culex tarsalis,1,CDC Light Trap,LV-099
+6/19/2025,Loveland,Glen Isle Ditch,LV,Aedes vexans,21,CDC Light Trap,LV-102
+6/19/2025,Loveland,Glen Isle Ditch,LV,Culex pipiens,8,CDC Light Trap,LV-102
+6/19/2025,Loveland,Bayfield and Windsor,LV,Culex tarsalis,5,CDC Light Trap,LV-121
+6/19/2025,Loveland,Bayfield and Windsor,LV,Aedes vexans,2,CDC Light Trap,LV-121
+6/19/2025,Loveland,Glen Isle Ditch,LV,Anopheles freeborni,2,CDC Light Trap,LV-102
+6/19/2025,Loveland,Glen Isle Ditch,LV,Culex tarsalis,16,CDC Light Trap,LV-102
+6/19/2025,Loveland,Farasita at Rist Benson,LV,Aedes increpitus,4,CDC Light Trap,LV-097
+6/19/2025,Loveland,Farasita at Rist Benson,LV,Culex pipiens,2,CDC Light Trap,LV-097
+6/19/2025,Loveland,Farasita at Rist Benson,LV,Aedes vexans,5,CDC Light Trap,LV-097
+6/19/2025,Loveland,Farasita at Rist Benson,LV,Culex tarsalis,4,CDC Light Trap,LV-097
+6/19/2025,Loveland,Farasita at Rist Benson,LV,Anopheles freeborni,1,CDC Light Trap,LV-097
+6/19/2025,Loveland,Hendler Gravid,LV,Culex pipiens,117,Gravid Trap,LV-010gr
+6/19/2025,Loveland,Estrella Park,LV,Culex pipiens,1,CDC Light Trap,LV-014
+6/19/2025,Loveland,Estrella Park,LV,Aedes vexans,4,CDC Light Trap,LV-014
+6/19/2025,Loveland,Estrella Park,LV,Culex tarsalis,1,CDC Light Trap,LV-014
+6/19/2025,Loveland,Benson Sculpture Park,LV,Aedes vexans,13,CDC Light Trap,LV-098
+6/19/2025,Loveland,Benson Sculpture Park,LV,Anopheles freeborni,8,CDC Light Trap,LV-098
+6/19/2025,Loveland,Benson Sculpture Park,LV,Aedes increpitus,3,CDC Light Trap,LV-098
+6/19/2025,Loveland,Benson Sculpture Park,LV,Culex tarsalis,2,CDC Light Trap,LV-098
+6/19/2025,Loveland,Benson Sculpture Park,LV,Culex pipiens,1,CDC Light Trap,LV-098
+6/19/2025,Loveland,West 43rd Railroad,LV,No Mosquitoes,0,CDC Light Trap,LV-105
+6/19/2025,Loveland,Fallgold,LV,Culex pipiens,6,CDC Light Trap,LV-122
+6/19/2025,Loveland,Fallgold,LV,Aedes increpitus,4,CDC Light Trap,LV-122
+6/19/2025,Loveland,Fallgold,LV,Culex tarsalis,12,CDC Light Trap,LV-122
+6/19/2025,Loveland,Fallgold,LV,Aedes vexans,12,CDC Light Trap,LV-122
+6/18/2025,Berthoud,Berthoud North,BE,Culex tarsalis,1,CDC Light Trap,LC-049 
+6/18/2025,Berthoud,Berthoud North,BE,Aedes melanimon,1,CDC Light Trap,LC-049 
+6/18/2025,Berthoud,Berthoud North,BE,Culiseta inornata,1,CDC Light Trap,LC-049 
+6/18/2025,Berthoud,Berthoud North,BE,Aedes dorsalis,2,CDC Light Trap,LC-049 
+6/18/2025,Berthoud,Berthoud North,BE,Culex pipiens,1,CDC Light Trap,LC-049 
+6/18/2025,Berthoud,Berthoud West,BE,Aedes trivittatus,1,CDC Light Trap,LC-053 
+6/18/2025,Berthoud,Berthoud West,BE,Aedes vexans,4,CDC Light Trap,LC-053 
+6/18/2025,Berthoud,Berthoud West,BE,Culex tarsalis,5,CDC Light Trap,LC-053 
+6/18/2025,Berthoud,Berthoud Point,BE,Culex pipiens,1,CDC Light Trap,LC-054 
+6/18/2025,Berthoud,Berthoud Point,BE,Aedes vexans,1,CDC Light Trap,LC-054 
+6/18/2025,Berthoud,Berthoud Point,BE,Culex tarsalis,5,CDC Light Trap,LC-054 
+6/18/2025,Berthoud,Berthoud Park,BE,Culex pipiens,3,CDC Light Trap,LC-001 
+6/18/2025,Berthoud,Berthoud Park,BE,Aedes trivittatus,1,CDC Light Trap,LC-001 
+6/18/2025,Berthoud,Berthoud Park,BE,Culex tarsalis,8,CDC Light Trap,LC-001 
+6/18/2025,Berthoud,Berthoud Park,BE,Aedes dorsalis,3,CDC Light Trap,LC-001 
+6/18/2025,Berthoud,Berthoud Park,BE,Aedes vexans,2,CDC Light Trap,LC-001 
+6/18/2025,Berthoud,Berthoud Park,BE,Aedes nigromaculis,1,CDC Light Trap,LC-001 
+6/18/2025,Berthoud,Berthoud East,BE,Culiseta inornata,1,CDC Light Trap,WC-055
+6/18/2025,Berthoud,Berthoud East,BE,Aedes dorsalis,1,CDC Light Trap,WC-055
+6/18/2025,Berthoud,Berthoud East,BE,Culex tarsalis,2,CDC Light Trap,WC-055
+6/18/2025,Berthoud,Berthoud Reservoir,BE,Aedes dorsalis,2,CDC Light Trap,LC-061
+6/18/2025,Berthoud,Berthoud Reservoir,BE,Aedes trivittatus,1,CDC Light Trap,LC-061
+6/18/2025,Berthoud,Berthoud Reservoir,BE,Aedes melanimon,6,CDC Light Trap,LC-061
+6/18/2025,Berthoud,Berthoud Reservoir,BE,Aedes vexans,77,CDC Light Trap,LC-061
+6/18/2025,Berthoud,Berthoud Reservoir,BE,Anopheles freeborni,3,CDC Light Trap,LC-061
+6/18/2025,Berthoud,Berthoud Reservoir,BE,Culex tarsalis,17,CDC Light Trap,LC-061
+6/18/2025,Berthoud,Berthoud Gateway,BE,Culex tarsalis,5,CDC Light Trap,LC-058
+6/18/2025,Berthoud,Berthoud Gateway,BE,Aedes vexans,1,CDC Light Trap,LC-058
+6/18/2025,Berthoud,Berthoud Golf Course,BE,Aedes increpitus,8,CDC Light Trap,LC-062
+6/18/2025,Berthoud,Berthoud Golf Course,BE,Aedes dorsalis,4,CDC Light Trap,LC-062
+6/18/2025,Berthoud,Berthoud Golf Course,BE,Aedes vexans,69,CDC Light Trap,LC-062
+6/18/2025,Berthoud,Berthoud Golf Course,BE,Aedes melanimon,56,CDC Light Trap,LC-062
+6/18/2025,Berthoud,Berthoud Golf Course,BE,Culex tarsalis,5,CDC Light Trap,LC-062
+6/18/2025,Berthoud,Berthoud Hillsdale,BE,Aedes vexans,21,CDC Light Trap,LC-059
+6/18/2025,Berthoud,Berthoud Hillsdale,BE,Culex tarsalis,13,CDC Light Trap,LC-059
+6/18/2025,Berthoud,Berthoud Hillsdale,BE,Aedes trivittatus,8,CDC Light Trap,LC-059
+6/18/2025,Berthoud,Berthoud Hillsdale,BE,Culiseta inornata,1,CDC Light Trap,LC-059
+6/18/2025,Berthoud,Berthoud Pioneer,BE,Aedes vexans,1,CDC Light Trap,LC-060
+6/18/2025,Berthoud,Berthoud Pioneer,BE,Culex tarsalis,3,CDC Light Trap,LC-060
+6/18/2025,Berthoud,Berthoud Pioneer,BE,Culex pipiens,1,CDC Light Trap,LC-060
