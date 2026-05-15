@@ -6,9 +6,11 @@ trap_stat_sum = function(df) {
   group_by(zone, trap_status) %>%
   count()
   
-  p = df %>% 
+  p = df %>%
     ggplot(aes(x = zone, y = n, fill = trap_status, color = trap_status)) +
     geom_col(alpha = 0.7) +
+    scale_fill_manual(values = trap_status_colors, na.value = "grey80") +
+    scale_color_manual(values = trap_status_colors, na.value = "grey80") +
     theme_classic()
   
   df_long = df %>%

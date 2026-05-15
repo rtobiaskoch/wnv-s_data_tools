@@ -14,6 +14,7 @@ pacman::p_load(pkg, character.only = TRUE)
 # walk(utils, source)
 
 #SOURCE USED FUNCTIONS
+source("R/palettes.R")
 source("R/fun_read_list.R")
 source("R/key_rename.R")
 source("R/fun_wnv_s_clean.R")
@@ -80,7 +81,7 @@ culex_clean = culex0 %>%
   key_rename(keychain, drop_extra = TRUE) %>%
   wnv_s_clean()
 
-write.csv(culex_clean, cfg$output_trap_all)
+write.csv(culex_clean, cfg$output_trap_all, row.names = FALSE)
 
 #checked to ensure that data0$trap_type == method and it held true for str_detect(trap_id, "gr) == "G
 
@@ -136,7 +137,7 @@ plot_n_trap(culex_filtered)
 
 skimr::skim(culex_filtered)
 
-write.csv(culex_filtered, cfg$output_culex)
+write.csv(culex_filtered, cfg$output_culex, row.names = FALSE)
 ```
 
 #------------------------ R E F O R M A T   D A T A S H E E T -------------------------------------
@@ -176,11 +177,20 @@ INPUTS
 -   data_reformat: the wnv-s_database that has been reformatted
 
 ```{r}
-culex_database_bind = bind_culex_sheets(culex_filtered, #culex sheet
-                                  database_reformat) #datasheet formatted
+# Restrict database to the same active traps as culex_filtered so the
+# comparison is apples-to-apples. Without this filter, inactive LV/FC traps
+# in the database inflate the datasheet totals above the culex sheet totals.
+culex_database_bind = bind_culex_sheets(
+  culex_filtered,
+  database_reformat %>% dplyr::semi_join(trap_keep_df, by = "trap_id")
+)
 
-p_comp = plot_culex_datasheet_comp(culex_database_bind %>% filter(!zone %in% cfg$filter_zone), #combined data
-                                   2018) # year to filter for
+# Filter to the first year with culex-sheet data so years with only database
+# records don't appear as "pools > traps" (which is scientifically impossible).
+culex_start_yr <- min(culex_filtered$year, na.rm = TRUE) - 1
+
+p_comp = plot_culex_datasheet_comp(culex_database_bind %>% filter(!zone %in% cfg$filter_zone),
+                                   culex_start_yr)
 p_comp
 
 ggsave(plot = p_comp, filename = cfg$output_plot_comp)
@@ -293,7 +303,7 @@ p_trap_n = plot_n_trap(culex_database_expand) +
   ggtitle("N traps by Zone")
 
 p_trap_n
-
+ggsave(plot = p_trap_n, filename = "3_output/trap_status.png")
 ```
 
 

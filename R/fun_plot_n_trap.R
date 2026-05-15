@@ -1,12 +1,10 @@
-trap_status_colors = c(
-  "culex"        = "#4e9ec2",
-  "no mosquitoes"= "#cccccc",
-  "no culex"     = "#a8c97f",
-  "malfunction"  = "#d62728"
-)
-
 plot_n_trap = function(df, rm_zone = NULL) {
- df %>%
+
+  if (!"zone2" %in% names(df)) {
+    stop("`df` must have a `zone2` column — run wnv_s_clean() first.")
+  }
+
+  df %>%
   filter(!zone %in% rm_zone) %>%
   # Collapse duplicate rows per trap-week to one representative trap_status.
   # The join can produce multiple rows per (trap_id, year, week) when both the
@@ -22,8 +20,7 @@ plot_n_trap = function(df, rm_zone = NULL) {
   )) %>%
   ungroup() %>%
   group_by(year, week, zone2, trap_status) %>%
-  summarise(n = n_distinct(trap_id),
-            .groups = "drop") %>%
+  summarise(n = n_distinct(trap_id), .groups = "drop") %>%
   ggplot(aes(week, n, color = trap_status, fill = trap_status)) +
   geom_col(alpha = 0.7) +
   scale_fill_manual(values = trap_status_colors, na.value = "grey80") +
