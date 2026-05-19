@@ -28,6 +28,10 @@ source("R/fun_plot_bind_culex.R")       # plot_culex_datasheet_comp
 source("R/fun_join_culex_sheets.R")     # join_merge_z
 source("R/fun_row_wise_expand.R")       # rowwise_expand
 source("R/fun_rm_grp_NA.R")            # rm_grp_na
+source("R/fun_fix_zone.R")             # fix_zone_from_ref
+source("R/fun_plot_all_spp.R")
+source("R/fun_dedup_culex.R")       # culex_dedup
+source("R/fun_make_key.R")
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -40,7 +44,15 @@ cfg <- config::get(file = here::here("config", "config_culex_combine.yml"),
 input = file.path(here::here(),cfg$path)
 ```
 
-#--------------------------------  C O M P I L E  ------------------------------------------------
+#---------------------------  I M P O R T  ------------------------------------------------
+```{r}
+trap_ref = read.csv(cfg$fn_trap_keep) #foco_trap
+keychain = read.csv(cfg$fn_rename_col) #column renaming key
+database = read.csv(cfg$fn_database) #databaes for augmenting culex sheets
+```
+
+
+#--------------------------- B U L K   I M P O R T --------------------------------------------
 DESCRIPTION: combines sheets that contain config\$pattern using function read_list
 
 DEPENDENCIES
@@ -58,7 +70,19 @@ INPUTS
 ```{r}
 culex0 = read_list(path = input, 
                    pattern = cfg$pattern)
+
+write.csv(culex0, cfg$mid_culex0, row.names = FALSE)
 ```
+
+
+
+#------------------------  E X P A N D   G R I D  ------------------------------------------------
+```{r}
+#data = expand_grid(trap_ref)
+
+```
+
+
 
 #--------------------------------  C L E A N  ------------------------------------------------
 DESCRIPTION: cleans combined sheets using wnv_s_clean and parse_flexible_date
@@ -75,13 +99,22 @@ INPUTS
 -   df: dataframe from culex sheets
 
 ```{r,clean}
-keychain = read.csv(cfg$fn_rename_col)
 
-culex_clean = culex0 %>% 
+culex_clean = culex0 %>%
   key_rename(keychain, drop_extra = TRUE) %>%
-  wnv_s_clean()
+  wnv_s_clean() %>%
+  make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
+  culex_dedup()   # remove weekend collection dates (non-standard surveillance nights)
+
+
+culex_clean_dupes_key = culex_clean %>% get_dupes(key) %>% filter(spp != "non culex")
+culex_clean_dupes_all = culex_clean %>% get_dupes() %>% filter(spp != "non culex")
 
 write.csv(culex_clean, cfg$output_trap_all, row.names = FALSE)
+
+p_culex_clean = plot_all_spp(culex_clean, "zone2")
+p_culex_clean
+ggsave(cfg$mid_culex_clean_plot, p_culex_clean, width = 12, height = 10)
 
 #checked to ensure that data0$trap_type == method and it held true for str_detect(trap_id, "gr) == "G
 
@@ -103,6 +136,7 @@ INPUTS
 -   trap_keep_df: dataframe that contains a column called trap_id that you want to keep from from the culex_sheets
 
 ```{r, filter}
+
 # F I L T E R
 cat("\n Reading in active foco traps to remove untested traps from", cfg$fn_trap_keep, "\n")
 
@@ -140,14 +174,26 @@ INPUTS
 -   cfg$fn_database: filename for the csv that has the wnv-s_database
 
 ```{r}
-database = read.csv(cfg$fn_database)
+
+
+# Load the full (unfiltered) trap reference so inactive traps also get correct zones.
+# This is separate from trap_keep_df which may be filtered to active == 1.
 
 database_reformat = database %>%
   reformat_database_2_culex_sheet() %>%
-  wnv_s_clean(rm_col = "trap_status")
+  fix_zone_from_ref(trap_ref) %>%    # correct zone from foco_trap - data.csv before zone2 is derived
+  wnv_s_clean() %>%
+  make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
+  culex_dedup()   # remove weekend collection dates (non-standard surveillance nights)
+
+
+database_reformat_dupes_key = database_reformat %>% get_dupes(key)
+database_reformat_dupes_all = database_reformat %>% get_dupes()
+
+write.csv(database_reformat, cfg$mid_database_reformat, row.names = FALSE)
 ```
 
-#------------------------ B I N D   D A T A S H E E T  &  C U L E X -------------------------------------
+#------------------------ P L O T   D A T A S H E E T  vs  C U L E X -------------------------------------
 DESCRIPTION: bind the culex data with the wnv-s_database that has been reformatted to match the culex sheet
 in order to visualize the difference in mosquito numbers between the culex sheet (trap data) and the
 database (pool data)
@@ -201,17 +247,24 @@ INPUTS
 
 
 ```{r}
-# Join on (trap_id, zone, year, week, spp) only.
-# database_reformat's spp0 = "Tarsalis"/"Pipiens" (abbreviated) while culex_filtered's
-# spp0 = "Culex tarsalis"/"Culex pipiens" (full name). Including spp0 — or trap_date,
-# zone2, method — in the join key prevents any rows from matching. Trimming to the
-# minimal key columns forces a clean merge on the biologically meaningful key.
-database_reformat_trim = database_reformat %>%
-  dplyr::select(trap_id, zone, year, week, spp, total)
+# join_merge_z joins on (trap_id, spp, year, week) and coalesces all shared
+# columns, preferring culex_sheet values. The database fills in trap-weeks that
+# are absent from the culex sheet entirely (e.g., CDC Berthoud traps in 2024
+# before VDCI took over the contract).
+#
+# source is added here so the coalesce loop in join_merge_z resolves it:
+#   matched rows   -> "culex_sheet"  (.x wins)
+#   culex-only     -> "culex_sheet"
+#   database-only  -> "database"
+culex_database = join_merge_z(
+  culex_filtered    %>% dplyr::mutate(source = "culex_sheet"),
+  database_reformat %>% dplyr::mutate(source = "database")
+)
 
-culex_database = join_merge_z(culex_filtered, database_reformat_trim, "total")
+culex_database_dupes_key = culex_database %>% get_dupes(key)
+culex_database_dupes_all= culex_database %>% get_dupes()
 
-write.csv(culex_database$final, cfg$output_culex_database, row.names = FALSE)
+write.csv(culex_database, cfg$output_culex_database, row.names = FALSE)
 
 ```
 
@@ -251,7 +304,7 @@ trap_expand = rowwise_expand(trap_expand, "w_start", "w_end", "week")
 trap_expand = trap_expand %>%
   select(trap_id, zone, year, week)
 
-culex_database_expand = left_join(trap_expand, culex_database$final, 
+culex_database_expand = left_join(trap_expand, culex_database, 
                     by = colnames(trap_expand))
 
 #remove years and trap ids where we have no data which indicates the traps didn't exist yet or we don't have any data

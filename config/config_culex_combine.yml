@@ -6,9 +6,13 @@ default:
   fn_rename_col: "1_input/database_column_rename.csv" #column used to rename the input data to the wnv-s_database format
   na_col: "trap_id" #na_col for culex_filter
   filter_active: "TRUE" #whether you want to only keep the active traps for
+
+  mid_culex_clean_plot: "2_mid/culex_clean_all_spp_plot.png"
+  mid_culex0: "2_mid/culex0_raw_rbind.csv"
+  mid_database_reformat: "2_mid/database_reformat.csv"
   mid_culex_database: "2_mid/culex_sheet_database_preaugment.csv"
   output_culex_database: "3_output/culex_sheet_database_augment.csv"
-  output_trap_all: "3_output/trap_database_all_spp.csv"
+  output_trap_all: "3_output/culex_clean_all_spp.csv"
   output_plot_abund: "3_output/culex_sheet_combined_abundance.png"
   output_plot_comp: "3_output/culex_v_datasheet.png"
   output_plot_n_trap: "3_output/n_trap_per_wk_culex_sheet.png"

@@ -3,7 +3,7 @@ plot_map <- function(
   long = "long",
   lat = "lat",
   id,
-  color,
+  color = "zone",
   palette = "Set2"
 ) {
   # Create a color palette based on the color column
@@ -13,12 +13,12 @@ plot_map <- function(
   map <- leaflet(df) %>%
     addProviderTiles("CartoDB.Positron") %>%
     addCircleMarkers(
-      lng = ~ get(long),
-      lat = ~ get(lat),
-      color = ~ pal(get(color)),
-      popup = ~ paste0("Station: ", get(id), "<br>", color, ": ", get(color))
+      lng = df[[long]],
+      lat = df[[lat]],
+      color = pal(df[[color]]),
+      popup = paste0("Station: ", df[[id]], "<br>", color, ": ", df[[color]])
     ) %>%
-    addLegend("bottomright", pal = pal, values = ~ get(color), title = color)
+    addLegend("bottomright", pal = pal, values = df[[color]], title = color)
 
   return(map)
 }
