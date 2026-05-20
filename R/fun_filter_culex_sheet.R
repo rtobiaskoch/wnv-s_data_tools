@@ -62,28 +62,15 @@ filter_culex_sheet <- function(df, na_col, trap_keep_df = NULL) {
     "remaining.\n"
   )
 
-  #REMOVE NON CULEX SPECIES
-  data3 = data2 %>%
-    dplyr::filter(spp != "non culex")
-
-  cat(
-    "\nFiltered out",
-    nrow(data2) - nrow(data3),
-    "non culex species,",
-    nrow(data2),
-    "remaining.\n"
-  )
-
   #REMOVE NON-ACTIVE TRAPS
   if (!is.null(trap_keep_df)) {
-    data4 <- dplyr::semi_join(
-      data3,
+    data3 <- dplyr::semi_join(
+      data2,
       trap_keep_df,
       by = rlang::set_names(rlang::quo_name(col_sym))
     )
 
-    # check against data2 (pre-spp filter) so traps with only non-culex
-    # species don't trigger a false-alarm stop
+    # check against data2 so traps missing entirely don't trigger a false-alarm stop
     missing_traps <- setdiff(trap_keep_df$trap_id, data2$trap_id)
 
     if (length(missing_traps) > 0) {
@@ -96,17 +83,17 @@ filter_culex_sheet <- function(df, na_col, trap_keep_df = NULL) {
 
     cat(
       "\nRemoved",
-      nrow(data3) - nrow(data4),
+      nrow(data2) - nrow(data3),
       "observations from",
-      length(unique(dplyr::pull(data3, !!col_sym))) -
-        length(unique(dplyr::pull(data4, !!col_sym))),
+      length(unique(dplyr::pull(data2, !!col_sym))) -
+        length(unique(dplyr::pull(data3, !!col_sym))),
       "non-testing traps,",
-      nrow(data4),
+      nrow(data3),
       "observations remaining.\n"
     )
   } else {
-    data4 <- data3
+    data3 <- data2
   }
 
-  return(data4)
+  return(data3)
 }

@@ -35,6 +35,7 @@ source("R/fun_make_key.R")
 source("R/fun_expand_trap.R")          # expand_trap
 source("R/fun_assign_trap_status.R")   # assign_trap_status_post_expand
 source("R/fun_fill_skeleton.R")        # fill_skeleton, collect_unmerged
+source("R/fun_prep_for_skeleton.R")    # prep_for_skeleton
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -122,6 +123,12 @@ culex_clean = culex0 %>%
   culex_dedup()   # remove weekend collection dates (non-standard surveillance nights)
 
 
+# Convert all spp types to spp_levels rows with trap_status set.
+# This runs before filter_culex_sheet() so that status rows ("non culex",
+# "none") survive to enter the skeleton rather than being dropped by the
+# species filter or failing the key join.
+culex_clean_prepped <- prep_for_skeleton(culex_clean, cfg$spp_levels)
+
 culex_clean_dupes_key = culex_clean %>% get_dupes(key) %>% filter(spp != "non culex")
 culex_clean_dupes_all = culex_clean %>% get_dupes() %>% filter(spp != "non culex")
 
@@ -164,7 +171,7 @@ if(cfg$filter_active){
 }
 
 #WARNING FOR BERTHOUD TRAPS EXPECTED 
-culex_filtered = filter_culex_sheet(df = culex_clean, 
+culex_filtered = filter_culex_sheet(df = culex_clean_prepped,
                                   na_col = rlang::sym(cfg$na_col), 
                                   trap_keep_df = trap_keep_df)
 
@@ -206,6 +213,8 @@ database_reformat_dupes_key = database_reformat %>% get_dupes(key)
 database_reformat_dupes_all = database_reformat %>% get_dupes()
 
 write.csv(database_reformat, cfg$mid_database_reformat, row.names = FALSE)
+
+database_reformat_prepped <- prep_for_skeleton(database_reformat, cfg$spp_levels)
 ```
 
 #------------------------ P L O T   D A T A S H E E T  vs  C U L E X -------------------------------------
@@ -305,30 +314,10 @@ write.csv(culex_database, cfg$output_culex_database, row.names = FALSE)
 # Each list name becomes the value of the `source` column in the output.
 data_sources <- list(
   culex_sheet = culex_filtered,
-  database    = database_reformat
+  database    = database_reformat_prepped
 )
 
 culex_database_expand <- fill_skeleton(trap_skeleton, data_sources)
-
-# Propagate malfunction to skeleton at the trap-week level.
-# Malfunction rows have spp = "none" after wnv_s_clean() and are dropped by
-# filter_culex_sheet(), so they never reach fill_skeleton(). We recover them
-# from culex_clean (pre-filter) and join on (trap_id, year, week) — not spp —
-# so both Tarsalis and Pipiens rows for the same trap-week get the status.
-malfunction_trap_weeks <- dplyr::bind_rows(
-  culex_clean         %>% dplyr::filter(trap_status == "malfunction"),
-  database_reformat   %>% dplyr::filter(trap_status == "malfunction")
-) %>%
-  dplyr::distinct(trap_id, year, week) %>%
-  dplyr::mutate(.is_malfunction = TRUE)
-
-culex_database_expand <- culex_database_expand %>%
-  dplyr::left_join(malfunction_trap_weeks, by = c("trap_id", "year", "week")) %>%
-  dplyr::mutate(
-    trap_status = dplyr::if_else(!is.na(.is_malfunction), "malfunction", trap_status),
-    total       = dplyr::if_else(trap_status == "malfunction", NA_real_, total)
-  ) %>%
-  dplyr::select(-.is_malfunction)
 
 unmerged <- collect_unmerged(trap_skeleton, data_sources)
 write.csv(unmerged, cfg$mid_unmerged_data, row.names = FALSE)
@@ -396,6 +385,51 @@ cat(
 stopifnot(
   "'no mosquitoes' trap-weeks shrank between input and final output" =
     n_final_no_mosq >= n_raw_no_mosq
+)
+
+# 3. "No culex" trap-week count must be identical in input and final output.
+#    Traps that caught only non-culex species contribute to the denominator
+#    and must not be silently reclassified as "no mosquitoes" or "no trap".
+#    Baseline is culex_filtered (active traps, post-prep_for_skeleton): "no culex"
+#    rows exist here as Tarsalis/Pipiens rows with trap_status="no culex".
+n_raw_no_culex <- culex_filtered %>%
+  dplyr::filter(trap_status == "no culex") %>%
+  dplyr::distinct(trap_id, year, week) %>%
+  nrow()
+
+n_final_no_culex <- culex_database_expand %>%
+  dplyr::filter(trap_status == "no culex") %>%
+  dplyr::distinct(trap_id, year, week) %>%
+  nrow()
+
+cat(
+  "\nValidation — 'no culex' trap-weeks:\n",
+  "  culex_filtered input: ", n_raw_no_culex, "\n",
+  "  final expanded:       ", n_final_no_culex, "\n"
+)
+stopifnot(
+  "'no culex' trap-week count changed between input and final output" =
+    n_final_no_culex == n_raw_no_culex
+)
+
+# 4. malfunction and no trap rows must have total = NA.
+stopifnot(
+  "malfunction and no trap rows must have total = NA" = {
+    culex_database_expand %>%
+      dplyr::filter(trap_status %in% c("malfunction", "no trap"),
+                    !is.na(total)) %>%
+      nrow() == 0
+  }
+)
+
+# 5. no culex and no mosquitoes rows must have total = 0.
+stopifnot(
+  "no culex and no mosquitoes rows must have total = 0" = {
+    culex_database_expand %>%
+      dplyr::filter(trap_status %in% c("no culex", "no mosquitoes"),
+                    is.na(total) | total != 0) %>%
+      nrow() == 0
+  }
 )
 
 write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = FALSE)
