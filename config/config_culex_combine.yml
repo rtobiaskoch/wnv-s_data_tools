@@ -6,6 +6,10 @@ default:
   fn_rename_col: "1_input/database_column_rename.csv" #column used to rename the input data to the wnv-s_database format
   na_col: "trap_id" #na_col for culex_filter
   filter_active: "TRUE" #whether you want to only keep the active traps for
+  year_start: 2006
+  week_start: 23
+  week_end: 37
+  mid_unmerged_data: "2_mid/unmerged_data.csv"
 
   mid_culex_clean_plot: "2_mid/culex_clean_all_spp_plot.png"
   mid_culex0: "2_mid/culex0_raw_rbind.csv"
