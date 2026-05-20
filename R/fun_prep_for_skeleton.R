@@ -52,7 +52,7 @@ prep_for_skeleton <- function(df, spp_levels) {
       ) %>%
       dplyr::mutate(total = dplyr::coalesce(as.numeric(total), 0))
   } else {
-    dplyr::tibble()
+    tibble::tibble()
   }
 
   # ── status events: expand to all spp_levels ───────────────────────────────
@@ -66,7 +66,7 @@ prep_for_skeleton <- function(df, spp_levels) {
         total = dplyr::if_else(trap_status == "malfunction", NA_real_, 0)
       )
   } else {
-    dplyr::tibble()
+    tibble::tibble()
   }
 
   dplyr::bind_rows(culex_complete, status_expanded) %>%

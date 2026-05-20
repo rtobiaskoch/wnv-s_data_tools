@@ -281,7 +281,7 @@ INPUTS
 #   culex-only     -> "culex_sheet"
 #   database-only  -> "database"
 # NOTE: culex_database is used for the comparison plot below (culex_v_datasheet).
-# The skeleton join uses culex_filtered and database_reformat directly so that
+# The skeleton join uses culex_filtered and database_reformat_prepped directly so that
 # each source enters the skeleton independently rather than through a pre-merged
 # dataset — preserving the skeleton's role as the deduplication boundary.
 culex_database = join_cxsheet_database(
