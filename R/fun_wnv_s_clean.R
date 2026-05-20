@@ -5,7 +5,12 @@
 #' @importFrom dplyr filter
 #' @importFrom rlang enquo
 #' @export
-clean_summary <- function(df0, df, col_name, label = deparse(substitute(col_name))) {
+clean_summary <- function(
+  df0,
+  df,
+  col_name,
+  label = deparse(substitute(col_name))
+) {
   col <- rlang::enquo(col_name)
 
   # Check if column exists in both dataframes
@@ -14,26 +19,41 @@ clean_summary <- function(df0, df, col_name, label = deparse(substitute(col_name
   #does new column already exists in original?
   if (col_string %in% names(df0) && col_string %in% names(df)) {
     # coerce to character so type changes (e.g. character -> Date) don't trigger charToDate
-    changed <- sum(as.character(dplyr::pull(df0, !!col)) != as.character(dplyr::pull(df, !!col)), na.rm = TRUE)
-    unchanged <- sum(as.character(dplyr::pull(df0, !!col)) == as.character(dplyr::pull(df, !!col)), na.rm = TRUE)
+    changed <- sum(
+      as.character(dplyr::pull(df0, !!col)) !=
+        as.character(dplyr::pull(df, !!col)),
+      na.rm = TRUE
+    )
+    unchanged <- sum(
+      as.character(dplyr::pull(df0, !!col)) ==
+        as.character(dplyr::pull(df, !!col)),
+      na.rm = TRUE
+    )
     # Count NA and non-NA in df
     na0 <- df0 %>% filter(is.na(!!col)) %>% nrow()
-
-  } else { #if not indicate it is being added
+  } else {
+    #if not indicate it is being added
     cat("Column", label, "is being added.\n")
     changed <- "NA"
     unchanged <- "NA"
     na0 <- "NA"
-
   }
   na <- df %>% filter(is.na(!!col)) %>% nrow()
 
   # Print summary
-  cat("\nFor rows in", label, ":\n",
-      changed, "changed,\n",
-      unchanged, "unchanged\n",
-      na0, " missing in input\n",
-      na, " missing in output\n")
+  cat(
+    "\nFor rows in",
+    label,
+    ":\n",
+    changed,
+    "changed,\n",
+    unchanged,
+    "unchanged\n",
+    na0,
+    " missing in input\n",
+    na,
+    " missing in output\n"
+  )
 }
 
 #' Clean a Culex Surveillance Data Sheet
@@ -63,14 +83,24 @@ clean_summary <- function(df0, df, col_name, label = deparse(substitute(col_name
 #' @importFrom lubridate year week
 #' @export
 
-wnv_s_clean <- function(df,
-                        all_cols = c("csu_id", "trap_id", "zone", "zone2",
-                                     "trap_date", "year", "week",
-                                     "spp","spp0", "method",
-                                     "trap_status", "total"),
-                        rm_col = c()
-                        ) {
-
+wnv_s_clean <- function(
+  df,
+  all_cols = c(
+    "csu_id",
+    "trap_id",
+    "zone",
+    "zone2",
+    "trap_date",
+    "year",
+    "week",
+    "spp",
+    "spp0",
+    "method",
+    "trap_status",
+    "total"
+  ),
+  rm_col = c()
+) {
   #save original input for comparison
   df0 = df
 
@@ -80,12 +110,20 @@ wnv_s_clean <- function(df,
   missing_cols <- setdiff(all_cols, names(df))
 
   if (length(missing_cols) > 0) {
-    cat("\n Notice. Following are not present for cleaning: ", paste(missing_cols, collapse = ", "), "\n")
+    cat(
+      "\n Notice. Following are not present for cleaning: ",
+      paste(missing_cols, collapse = ", "),
+      "\n"
+    )
     cat("Run key_rename to convert columns to standard naming convention.")
   }
 
   if (length(present_cols) > 0) {
-    cat("\n The Following columns are being cleaned: ", paste(present_cols, collapse = ", "), "\n")
+    cat(
+      "\n The Following columns are being cleaned: ",
+      paste(present_cols, collapse = ", "),
+      "\n"
+    )
   }
 
   # Trim whitespace from all character columns
@@ -94,17 +132,14 @@ wnv_s_clean <- function(df,
 
   # CLEAN csu_id
   if ("csu_id" %in% names(df) && "csu_id" %in% col_2_clean) {
-
     df <- df %>%
       mutate(csu_id = str_remove(csu_id, "-"))
 
     clean_summary(df0, df, csu_id)
   }
 
-
   # CLEAN ZONE
   if ("zone" %in% names(df) && "zone2" %in% col_2_clean) {
-
     valid_zones <- c("NE", "NW", "SE", "SW", "LV", "BE", "BC")
     zone_pattern <- str_c(valid_zones, collapse = "|")
 
@@ -118,10 +153,8 @@ wnv_s_clean <- function(df,
     clean_summary(df0, df, zone)
   }
 
-
   # CLEAN/GET ZONE2
   if ("zone" %in% names(df) && "zone2" %in% col_2_clean) {
-
     fc_zones <- c("NE", "NW", "SE", "SW")
 
     df <- df %>%
@@ -132,10 +165,12 @@ wnv_s_clean <- function(df,
 
   #CLEAN DATE
   if ("trap_date" %in% names(df) && "trap_date" %in% col_2_clean) {
-
     df <- df %>%
       mutate(
-        trap_date = purrr::map_chr(trap_date, ~ as.character(parse_flexible_date(.x))),
+        trap_date = purrr::map_chr(
+          trap_date,
+          ~ as.character(parse_flexible_date(.x))
+        ),
         trap_date = as.Date(trap_date)
       )
 
@@ -151,10 +186,16 @@ wnv_s_clean <- function(df,
 
     df <- df %>%
       mutate(
-        year = if (has_year) dplyr::coalesce(as.integer(year), lubridate::year(trap_date))
-               else lubridate::year(trap_date),
-        week = if (has_week) dplyr::coalesce(as.integer(week), lubridate::isoweek(trap_date))
-               else lubridate::isoweek(trap_date)
+        year = if (has_year) {
+          dplyr::coalesce(as.integer(year), lubridate::year(trap_date))
+        } else {
+          lubridate::year(trap_date)
+        },
+        week = if (has_week) {
+          dplyr::coalesce(as.integer(week), lubridate::isoweek(trap_date))
+        } else {
+          lubridate::isoweek(trap_date)
+        }
       )
 
     clean_summary(df0, df, year)
@@ -175,53 +216,80 @@ wnv_s_clean <- function(df,
     clean_summary(df0, df, method)
   }
 
-  # CREATE TRAP_STATUS
-  if ("spp" %in% names(df) && "trap_status" %in% col_2_clean) {
-
-    # Guard: ensure the column exists so the any() check below is valid on a
-    # first pass where it hasn't been created yet. Base-R assignment avoids a
-    # full dplyr mutate pass for a single column initialisation.
-    if (!"trap_status" %in% names(df)) df$trap_status <- NA_character_
-
-    # "malfunction" is detected from raw spp on the first pass, then spp is
-    # cleaned to "none" — making it indistinguishable from "no mosquitoes".
-    # The any() check on the existing column re-signals malfunction before
-    # case_when would otherwise overwrite it.
-    # "no mosquitoes" is intentionally NOT preserved this way: it must be
-    # recomputable so it doesn't persist and inflate counts when a database row
-    # with actual culex catch exists for the same trap-week.
+  # SAVE SPP0 — always snapshot the raw spp before any cleaning whenever spp
+  # is present. spp0 is required internally by the CREATE TRAP_STATUS block
+  # regardless of col_2_clean / rm_col settings.
+  if ("spp" %in% names(df)) {
     df <- df %>%
-      group_by(trap_id, trap_date) %>%
-      mutate(
-        trap_status = case_when(
+      dplyr::mutate(spp0 = spp)
+
+    clean_summary(df0, df, spp0)
+  }
+
+  # CREATE TRAP_STATUS — derived from spp0 (raw value saved above).
+  # Grouped by trap_id + trap_date so a single malfunction or culex record
+  # sets the status for all rows from that trap-night.
+  if ("spp" %in% names(df) && "trap_status" %in% col_2_clean) {
+    if (!"trap_status" %in% names(df)) {
+      df$trap_status <- NA_character_
+    }
+
+    df <- df %>%
+      dplyr::group_by(trap_id, trap_date) %>%
+      dplyr::mutate(
+        trap_status = dplyr::case_when(
+          # Standardise legacy uppercase "No Traps" set by expand_trap_spp()
+          any(trap_status %in% c("No Traps", "no trap"), na.rm = TRUE) ~ "no trap",
           any(trap_status == "malfunction", na.rm = TRUE) ~ "malfunction",
-          any(str_detect(spp, "(?i)malfunction|stolen"))  ~ "malfunction",
-          any(str_detect(spp, "(?i)no mosquitoes"))       ~ "no mosquitoes",
-          any(str_detect(spp, "(?i)tarsalis|pipiens"))    ~ "culex",
-          TRUE                                             ~ "no culex"
+          any(stringr::str_detect(
+            spp0, "(?i)malfunction|stolen|vandalized"
+          ), na.rm = TRUE) ~ "malfunction",
+          any(stringr::str_detect(
+            spp0, "(?i)no mosquitoes"
+          ), na.rm = TRUE) ~ "no mosquitoes",
+          # total > 0 guard: 0-fill rows added by spp expansion must not
+          # trigger "culex" for trap-weeks where nothing was actually caught
+          any(
+            stringr::str_detect(spp0, "(?i)tarsalis|pipiens") & total > 0,
+            na.rm = TRUE
+          ) ~ "culex",
+          any(
+            stringr::str_detect(spp0, "(?i)tarsalis|pipiens"),
+            na.rm = TRUE
+          ) ~ "no mosquitoes",
+          TRUE ~ "no culex"
         )
       ) %>%
-      ungroup()
+      dplyr::ungroup()
+
+    # Set total = NA for malfunction BEFORE the CLEAN TOTAL block runs below.
+    # This is the operative coercion — CLEAN TOTAL becomes a no-op for these rows.
+    # Malfunction traps did not collect data — total must be NA so they are
+    # not counted as zeros in abundance calculations.
+    df <- df %>%
+      dplyr::mutate(
+        total = dplyr::if_else(
+          trap_status == "malfunction", NA_real_, as.numeric(total)
+        )
+      )
 
     clean_summary(df0, df, trap_status)
-
   }
 
-
-  # CLEAN SPP
+  # CLEAN SPP — standardise to Tarsalis / Pipiens / none / non culex.
+  # spp0 was already saved in the block above.
   if ("spp" %in% names(df) && "spp" %in% col_2_clean) {
     df <- df %>%
-      mutate(spp0 = spp,
-             spp = case_when(
-                      str_detect(spp, "(?i)Tarsalis") ~ "Tarsalis",
-                      str_detect(spp, "(?i)Pipiens") ~ "Pipiens",
-                      str_detect(spp, "(?i)malfunction|stolen|no mosquitoes") ~ "none",
-                      TRUE ~ "non culex"
-                           )
-          )
+      dplyr::mutate(
+        spp = dplyr::case_when(
+          stringr::str_detect(spp, "(?i)Tarsalis")                         ~ "Tarsalis",
+          stringr::str_detect(spp, "(?i)Pipiens")                          ~ "Pipiens",
+          stringr::str_detect(spp, "(?i)malfunction|stolen|no mosquitoes") ~ "none",
+          TRUE                                                               ~ "non culex"
+        )
+      )
     clean_summary(df0, df, spp)
   }
-
 
   # Convert total count to numeric
   if ("total" %in% names(df) && "total" %in% col_2_clean) {

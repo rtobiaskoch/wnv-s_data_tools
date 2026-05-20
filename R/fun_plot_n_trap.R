@@ -30,7 +30,7 @@ plot_n_trap = function(df, rm_zone = NULL) {
       breaks = seq(23, 37, by = 5),
       limits = c(23, 37)
     ) +
-    facet_grid(zone2 ~ year) +
-    scale_y_continuous(breaks = seq(0, 50, 10), limits = c(0, NA)) +
+    facet_grid(zone2 ~ year, scales = "free_y") +
+    # scale_y_continuous(breaks = seq(0, 50, 10), limits = c(0, NA)) +
     theme_classic()
 }

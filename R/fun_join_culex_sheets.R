@@ -22,7 +22,7 @@
 # @return          Data frame with one row per (trap_id, spp, year, week).
 #                  Columns: all coalesced shared columns, `source`, `check`, `key`.
 
-join_merge_z = function(
+join_cxsheet_database = function(
   df_z1,
   df_z2,
   key_cols = c("trap_id", "spp", "year", "week")

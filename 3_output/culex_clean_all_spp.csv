@@ -9049,7 +9049,7 @@
 "FC060|nonculex|2024|36","FC-060","NW","FC",2024-09-04,2024,36,"non culex","Aedes vexans","L","culex",1
 "FC060|nonculex|2025|26","FC-060","NW","FC",2025-06-25,2025,26,"non culex","Aedes vexans","L","culex",5
 "FC060|nonculex|2025|27","FC-060","NW","FC",2025-07-02,2025,27,"non culex","Aedes vexans","L","culex",1
-"FC060|nonculex|2025|28","FC-060","NW","FC",2025-07-09,2025,28,"non culex","Trap Vandalized","L","no culex",0
+"FC060|nonculex|2025|28","FC-060","NW","FC",2025-07-09,2025,28,"non culex","Trap Vandalized","L","malfunction",0
 "FC060|nonculex|2025|29","FC-060","NW","FC",2025-07-16,2025,29,"non culex","Aedes vexans","L","culex",4
 "FC060|none|2020|24","FC-060","NW","FC",2020-06-09,2020,24,"none","No Mosquitoes","L","no mosquitoes",0
 "FC060|none|2022|22","FC-060","NW","FC",2022-05-31,2022,22,"none","No Mosquitoes","L","no mosquitoes",0
@@ -19871,7 +19871,7 @@
 "LV079GR|nonculex|2025|27","LV-079GR","LV","LV",2025-06-30,2025,27,"non culex","Aedes vexans","G","culex",1
 "LV079GR|nonculex|2025|27","LV-079GR","LV","LV",2025-06-30,2025,27,"non culex","Culiseta inornata","G","culex",1
 "LV079GR|nonculex|2025|30","LV-079GR","LV","LV",2025-07-21,2025,30,"non culex","Aedes vexans","G","culex",1
-"LV079GR|nonculex|2025|34","LV-079GR","LV","LV",2025-08-18,2025,34,"non culex","Trap Vandalized","G","no culex",0
+"LV079GR|nonculex|2025|34","LV-079GR","LV","LV",2025-08-18,2025,34,"non culex","Trap Vandalized","G","malfunction",0
 "LV079GR|none|2020|26","LV-079GR","LV","LV",2020-06-28,2020,26,"none","No Mosquitoes","G","no mosquitoes",0
 "LV079GR|none|2023|23","LV-079GR","LV","LV",2023-06-11,2023,23,"none","No Mosquitoes","G","no mosquitoes",0
 "LV079GR|none|2023|34","LV-079GR","LV","LV",2023-08-27,2023,34,"none","No Mosquitoes","G","no mosquitoes",0

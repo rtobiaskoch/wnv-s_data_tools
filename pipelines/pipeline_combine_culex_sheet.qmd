@@ -32,6 +32,7 @@ source("R/fun_fix_zone.R")             # fix_zone_from_ref
 source("R/fun_plot_all_spp.R")
 source("R/fun_dedup_culex.R")       # culex_dedup
 source("R/fun_make_key.R")
+source("R/fun_expand_trap_spp.R")
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -256,7 +257,7 @@ INPUTS
 #   matched rows   -> "culex_sheet"  (.x wins)
 #   culex-only     -> "culex_sheet"
 #   database-only  -> "database"
-culex_database = join_merge_z(
+culex_database = join_cxsheet_database(
   culex_filtered    %>% dplyr::mutate(source = "culex_sheet"),
   database_reformat %>% dplyr::mutate(source = "database")
 )
@@ -285,65 +286,35 @@ INPUTS
 -   data_reformat: the wnv-s_database that has been reformatted
 
 ```{r, add na}
-y = lubridate::year(Sys.Date())# this FUNction does X
-
-if(cfg$filter_active){
- trap_keep_df = read.csv(cfg$fn_trap_keep) %>% 
-  filter(active == 1)
+# Load and filter the active trap reference list (cfg$filter_active from config)
+if (cfg$filter_active) {
+  trap_keep_df <- read.csv(cfg$fn_trap_keep) %>%
+    dplyr::filter(active == 1)
 } else {
-  trap_keep_df = read.csv(cfg$fn_trap_keep)
+  trap_keep_df <- read.csv(cfg$fn_trap_keep)
 }
 
-trap_keep_df = trap_keep_df %>%
-  mutate(end = y,
-         w_start = 23,
-         w_end = 37)
-
-trap_expand = rowwise_expand(trap_keep_df, "start", "end", "year")
-trap_expand = rowwise_expand(trap_expand, "w_start", "w_end", "week")
-trap_expand = trap_expand %>%
-  select(trap_id, zone, year, week)
-
-culex_database_expand = left_join(trap_expand, culex_database, 
-                    by = colnames(trap_expand))
-
-#remove years and trap ids where we have no data which indicates the traps didn't exist yet or we don't have any data
-culex_database_expand = culex_database_expand %>%
-  #rm_grp_na(c("year", "week", "zone"), "total") %>%
-  mutate(total = replace_na(total, 0)) %>%
-  mutate(spp = replace_na(spp, "No Mosquitoes")) %>%
-  # Step 1: propagate dates from any trap in the same zone-week (fills NAs for unobserved weeks)
-  group_by(year, week, zone) %>%
-  fill(trap_date, .direction = "downup") %>%
-  ungroup() %>%
-  # Step 2: normalize to one date per trap-week so wnv_s_clean groups all rows together.
-  # Without this, culex "no mosquitoes" rows (set date) and database rows (collection date)
-  # land in separate group_by(trap_id, trap_date) groups → same trap gets two trap_status
-  # values in the same week → inflates the plot count above the expected number of traps.
-  group_by(trap_id, zone, year, week) %>%
-  mutate(trap_date = dplyr::first(sort(trap_date, na.last = TRUE))) %>%
-  ungroup() %>%
+# expand_trap_spp() builds trap × year × week × spp grid, left-joins to
+# culex_database, fills missing spp with total = 0, and flags zone-weeks
+# with no data at all as trap_status = "No Traps" (trap_date = NA).
+# wnv_s_clean() is called outside the function to standardise column types
+# and derive zone2, method, and trap_status from the expanded output.
+culex_database_expand <- expand_trap_spp(
+  trap_keep_df   = trap_keep_df,
+  culex_database = culex_database,
+  spp_levels     = cfg$spp_levels
+) %>%
   wnv_s_clean()
 
 
-t = culex_database_expand %>% 
-  dplyr::mutate(zone = dplyr::if_else(zone %in% cfg$fc_zone, 
-                                    "FC", 
-                                    zone)) %>%
-    filter(is.null(zone)) %>%
-    group_by(year, week, zone) %>%
-    summarise(n = n_distinct(trap_id),
-              .groups = "drop") %>%
-  filter(zone == "FC" & n != 53)
-
-#t2 = culex_database_expand %>% filter(zone %in% cfg$fc_zone & year == 2020 & week == 23)
-
+write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = FALSE)
 
 p_trap_n = plot_n_trap(culex_database_expand) +
   ggtitle("N traps by Zone")
 
 p_trap_n
 ggsave(plot = p_trap_n, filename = "3_output/trap_status.png", width = 12, height = 6)
+
 ```
 
 

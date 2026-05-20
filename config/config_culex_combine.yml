@@ -11,11 +11,16 @@ default:
   mid_culex0: "2_mid/culex0_raw_rbind.csv"
   mid_database_reformat: "2_mid/database_reformat.csv"
   mid_culex_database: "2_mid/culex_sheet_database_preaugment.csv"
+  
+  output_culex_database_expand: "3_output/culex_sheet_database_expand.csv"
   output_culex_database: "3_output/culex_sheet_database_augment.csv"
   output_trap_all: "3_output/culex_clean_all_spp.csv"
   output_plot_abund: "3_output/culex_sheet_combined_abundance.png"
   output_plot_comp: "3_output/culex_v_datasheet.png"
   output_plot_n_trap: "3_output/n_trap_per_wk_culex_sheet.png"
+  spp_levels:
+    - "Tarsalis"
+    - "Pipiens"
   filter_zone:
     - "BC"
     - "BE"
