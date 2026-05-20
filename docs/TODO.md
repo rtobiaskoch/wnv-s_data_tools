@@ -11,6 +11,10 @@
 - [ ] VDCI
 - [ ] supplemental wnv-s_database 
 
+## wnv-s_clean()
+### desc: current summary isn't the most informative
+- [ ] create new summary 
+
 
 ## expand trap
 ### desc: create an initial database set to fill in data with as an alternative to dealing with duplicates

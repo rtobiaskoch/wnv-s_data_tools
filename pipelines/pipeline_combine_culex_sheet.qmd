@@ -5,7 +5,7 @@ DESC: defines functions to be used in pipeline
 
 rm(list = ls())
 #define packages to be used
-pkg = c("dplyr", "lubridate", "purrr", "stringr", "ggplot2", "tidyr")
+pkg = c("dplyr", "lubridate", "purrr", "stringr", "ggplot2", "tidyr", "janitor")
 cat("\n Loading required packages: ", pkg, "\n")
 pacman::p_load(pkg, character.only = TRUE)
 

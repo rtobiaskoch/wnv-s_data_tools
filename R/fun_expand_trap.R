@@ -93,15 +93,15 @@ expand_trap <- function(
   # week_end columns, so referencing those names inside dplyr::mutate() would
   # resolve to the column values (NA for many traps) via data masking rather
   # than to the function parameters.
-  year_end_int   <- as.integer(year_end)
+  year_end_int <- as.integer(year_end)
   week_start_int <- as.integer(week_start)
-  week_end_int   <- as.integer(week_end)
+  week_end_int <- as.integer(week_end)
 
   skeleton <- trap_keep %>%
     dplyr::mutate(
       .year_end = year_end_int,
-      .w_start  = week_start_int,
-      .w_end    = week_end_int
+      .w_start = week_start_int,
+      .w_end = week_end_int
     ) %>%
     rowwise_expand("start", ".year_end", "year") %>%
     rowwise_expand(".w_start", ".w_end", "week") %>%
