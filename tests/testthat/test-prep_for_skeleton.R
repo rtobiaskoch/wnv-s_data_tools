@@ -12,9 +12,12 @@ source(here::here("R/fun_make_key.R"))
 make_obs <- function(spp, trap_status, total,
                      trap_id = "FC-001", zone = "NE", year = 2023L,
                      week = 25L, trap_date = "2023-06-19", method = "L") {
+  # zone2 derived the same way wnv_s_clean() does — required by prep_for_skeleton()
+  zone2 <- if (zone %in% c("NE", "NW", "SE", "SW")) "FC" else zone
   data.frame(
     trap_id     = trap_id,
     zone        = zone,
+    zone2       = zone2,
     year        = year,
     week        = week,
     trap_date   = as.Date(trap_date),
@@ -27,6 +30,13 @@ make_obs <- function(spp, trap_status, total,
 }
 
 # ── Output shape ──────────────────────────────────────────────────────────────
+test_that("zone2 is preserved in output — required for downstream plotting", {
+  result <- prep_for_skeleton(make_obs("Tarsalis", "culex", 10, zone = "NE"),
+                              c("Tarsalis", "Pipiens"))
+  expect_true("zone2" %in% names(result))
+  expect_true(all(result$zone2 == "FC"))
+})
+
 test_that("output spp values are restricted to spp_levels only", {
   df <- rbind(
     make_obs("Tarsalis",  "culex",         10),

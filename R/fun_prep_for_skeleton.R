@@ -22,11 +22,12 @@ library(tidyr)
 #' a trap-date is either entirely "culex" or entirely a status event.
 #'
 #' @param df        Cleaned data frame from wnv_s_clean(). Must contain:
-#'   trap_id, zone, year, week, trap_date, method, spp, trap_status, total.
+#'   trap_id, zone, zone2, year, week, trap_date, method, spp, trap_status, total.
+#'   zone2 is derived by wnv_s_clean() and is required for downstream plotting.
 #' @param spp_levels Character vector of species to expand to (from cfg$spp_levels).
 #'
 #' @return Data frame with spp ∈ spp_levels only and a rebuilt key column.
-#'   Columns: key, trap_id, zone, year, week, trap_date, method, spp,
+#'   Columns: key, trap_id, zone, zone2, year, week, trap_date, method, spp,
 #'   trap_status, total.
 #' @export
 prep_for_skeleton <- function(df, spp_levels) {
@@ -42,7 +43,7 @@ prep_for_skeleton <- function(df, spp_levels) {
   # Join actual totals back — missing species (not caught) gets total = 0.
   culex_complete <- if (nrow(culex_rows) > 0L) {
     trap_meta <- culex_rows %>%
-      dplyr::distinct(trap_id, zone, year, week, trap_date, method, trap_status)
+      dplyr::distinct(trap_id, zone, zone2, year, week, trap_date, method, trap_status)
 
     trap_meta %>%
       tidyr::crossing(spp = spp_levels) %>%
@@ -60,7 +61,7 @@ prep_for_skeleton <- function(df, spp_levels) {
   # no culex / no mosquitoes → total = 0
   status_expanded <- if (nrow(status_rows) > 0L) {
     status_rows %>%
-      dplyr::distinct(trap_id, zone, year, week, trap_date, method, trap_status) %>%
+      dplyr::distinct(trap_id, zone, zone2, year, week, trap_date, method, trap_status) %>%
       tidyr::crossing(spp = spp_levels) %>%
       dplyr::mutate(
         total = dplyr::if_else(trap_status == "malfunction", NA_real_, 0)
@@ -75,6 +76,6 @@ prep_for_skeleton <- function(df, spp_levels) {
     # Guard against duplicate keys from the same trap having two dates in one
     # week (culex_dedup should prevent this, but defensive dedup is cheap)
     dplyr::distinct(key, .keep_all = TRUE) %>%
-    dplyr::select(key, trap_id, zone, year, week, trap_date, method,
+    dplyr::select(key, trap_id, zone, zone2, year, week, trap_date, method,
                   spp, trap_status, total)
 }
