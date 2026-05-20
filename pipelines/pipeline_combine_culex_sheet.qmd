@@ -288,8 +288,6 @@ write.csv(culex_database, cfg$output_culex_database, row.names = FALSE)
 ```
 
 
-
-
 #------------------------ J O I N   I N T O   S K E L E T O N  ----------------------------------
 # DESCRIPTION: fill the skeleton from each source in priority order using
 # fill_skeleton(). The culex sheet is preferred — it fills as many cells as
@@ -348,11 +346,17 @@ culex_database_expand <- assign_trap_status_post_expand(culex_database_expand)
 # ── VALIDATIONS ──────────────────────────────────────────────────────────────
 # These are hard assertions, not soft warnings. If either fails the pipeline
 # output is wrong and must be investigated before use.
+#
+# Baseline: culex_filtered (active traps, post-filter), NOT culex_clean.
+# culex_clean includes inactive traps that are never in the skeleton by design.
+# Comparing against culex_clean would count trap-weeks that cannot appear in
+# the output, causing false failures. culex_filtered is the correct baseline
+# because it has already been restricted to the same active-trap scope as the skeleton.
 
 # 1. Malfunction trap-week count must be identical in input and final output.
 #    Malfunctions carry no count data (total = NA); any drop means a trap event
 #    was lost entirely from the analysis denominator.
-n_raw_malfunction <- culex_clean %>%
+n_raw_malfunction <- culex_filtered %>%
   dplyr::filter(trap_status == "malfunction") %>%
   dplyr::distinct(trap_id, year, week) %>%
   nrow()
@@ -364,8 +368,8 @@ n_final_malfunction <- culex_database_expand %>%
 
 cat(
   "\nValidation — malfunction trap-weeks:\n",
-  "  culex sheet input: ", n_raw_malfunction, "\n",
-  "  final expanded:    ", n_final_malfunction, "\n"
+  "  culex_filtered input: ", n_raw_malfunction, "\n",
+  "  final expanded:       ", n_final_malfunction, "\n"
 )
 stopifnot(
   "Malfunction trap-week count changed between input and final output" =
@@ -374,7 +378,7 @@ stopifnot(
 
 # 2. "No mosquitoes" trap-week count must be ≥ culex sheet input count.
 #    Expansion adds zero-fill rows so final count should grow, never shrink.
-n_raw_no_mosq <- culex_clean %>%
+n_raw_no_mosq <- culex_filtered %>%
   dplyr::filter(trap_status == "no mosquitoes") %>%
   dplyr::distinct(trap_id, year, week) %>%
   nrow()
@@ -386,8 +390,8 @@ n_final_no_mosq <- culex_database_expand %>%
 
 cat(
   "\nValidation — 'no mosquitoes' trap-weeks:\n",
-  "  culex sheet input: ", n_raw_no_mosq, "\n",
-  "  final expanded:    ", n_final_no_mosq, "\n"
+  "  culex_filtered input: ", n_raw_no_mosq, "\n",
+  "  final expanded:       ", n_final_no_mosq, "\n"
 )
 stopifnot(
   "'no mosquitoes' trap-weeks shrank between input and final output" =
