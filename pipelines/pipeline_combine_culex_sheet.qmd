@@ -34,6 +34,7 @@ source("R/fun_dedup_culex.R")       # culex_dedup
 source("R/fun_make_key.R")
 source("R/fun_expand_trap.R")          # expand_trap
 source("R/fun_assign_trap_status.R")   # assign_trap_status_post_expand
+source("R/fun_fill_skeleton.R")        # fill_skeleton, collect_unmerged
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -270,6 +271,10 @@ INPUTS
 #   matched rows   -> "culex_sheet"  (.x wins)
 #   culex-only     -> "culex_sheet"
 #   database-only  -> "database"
+# NOTE: culex_database is used for the comparison plot below (culex_v_datasheet).
+# The skeleton join uses culex_filtered and database_reformat directly so that
+# each source enters the skeleton independently rather than through a pre-merged
+# dataset — preserving the skeleton's role as the deduplication boundary.
 culex_database = join_cxsheet_database(
   culex_filtered    %>% dplyr::mutate(source = "culex_sheet"),
   database_reformat %>% dplyr::mutate(source = "database")
@@ -286,26 +291,31 @@ write.csv(culex_database, cfg$output_culex_database, row.names = FALSE)
 
 
 #------------------------ J O I N   I N T O   S K E L E T O N  ----------------------------------
-# DESCRIPTION: left-join culex_database into the skeleton on the composite key.
-# Only trap_date, trap_status, total, source are pulled from culex_database —
-# zone2 and method come from the skeleton (derived by expand_trap() from trap_ref).
+# DESCRIPTION: fill the skeleton from each source in priority order using
+# fill_skeleton(). The culex sheet is preferred — it fills as many cells as
+# possible first. The database patches only cells still NA after the culex join.
+# Adding a new data source (CMC, Boulder, etc.) is a single list entry here.
 #
-# Unmerged rows are observations in culex_database absent from the skeleton
-# (traps not in the active reference list). Saved to mid_unmerged_data for audit.
+# zone2 and method come from the skeleton (expand_trap() from trap_ref) and are
+# never overwritten by source data.
+#
+# collect_unmerged() captures records from any source absent from the skeleton
+# (traps observed but not in the active reference list). Saved for audit.
 ```{r, join_skeleton}
 
-culex_database_expand <- trap_skeleton %>%
-  dplyr::left_join(
-    culex_database %>%
-      dplyr::select(key, trap_date, trap_status, total, source),
-    by = "key"
-  )
+# Priority order: culex sheet first, database fills remaining gaps.
+# Each list name becomes the value of the `source` column in the output.
+data_sources <- list(
+  culex_sheet = culex_filtered,
+  database    = database_reformat
+)
 
-unmerged <- culex_database %>%
-  dplyr::anti_join(trap_skeleton, by = "key")
+culex_database_expand <- fill_skeleton(trap_skeleton, data_sources)
 
+unmerged <- collect_unmerged(trap_skeleton, data_sources)
 write.csv(unmerged, cfg$mid_unmerged_data, row.names = FALSE)
-cat("Unmerged rows (in data, not in skeleton):", nrow(unmerged), "\n")
+cat("Unmerged culex_sheet rows:", nrow(unmerged[unmerged$source == "culex_sheet", ]), "\n")
+cat("Unmerged database rows:   ", nrow(unmerged[unmerged$source == "database", ]), "\n")
 ```
 
 #------------------------ P O S T - E X P A N D   S T A T U S  ----------------------------------
