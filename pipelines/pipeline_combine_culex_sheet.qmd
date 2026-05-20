@@ -390,10 +390,13 @@ stopifnot(
 # 3. "No culex" trap-week count must be identical in input and final output.
 #    Traps that caught only non-culex species contribute to the denominator
 #    and must not be silently reclassified as "no mosquitoes" or "no trap".
-#    Baseline is culex_filtered (active traps, post-prep_for_skeleton): "no culex"
-#    rows exist here as Tarsalis/Pipiens rows with trap_status="no culex".
+#    Baseline is culex_filtered restricted to skeleton-eligible keys via semi_join.
+#    Some "no culex" trap-weeks in culex_filtered fall outside the skeleton's
+#    year/week scope (23-37) and correctly appear in unmerged — excluding them
+#    from the baseline prevents false failures on out-of-season records.
 n_raw_no_culex <- culex_filtered %>%
   dplyr::filter(trap_status == "no culex") %>%
+  dplyr::semi_join(trap_skeleton, by = "key") %>%
   dplyr::distinct(trap_id, year, week) %>%
   nrow()
 
