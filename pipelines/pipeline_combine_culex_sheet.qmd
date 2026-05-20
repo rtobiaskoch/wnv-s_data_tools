@@ -295,10 +295,10 @@ write.csv(culex_database, cfg$output_culex_database, row.names = FALSE)
 # fill_skeleton(). The culex sheet is preferred — it fills as many cells as
 # possible first. The database patches only cells still NA after the culex join.
 # Adding a new data source (CMC, Boulder, etc.) is a single list entry here.
-#
+
 # zone2 and method come from the skeleton (expand_trap() from trap_ref) and are
 # never overwritten by source data.
-#
+
 # collect_unmerged() captures records from any source absent from the skeleton
 # (traps observed but not in the active reference list). Saved for audit.
 ```{r, join_skeleton}
@@ -312,6 +312,26 @@ data_sources <- list(
 
 culex_database_expand <- fill_skeleton(trap_skeleton, data_sources)
 
+# Propagate malfunction to skeleton at the trap-week level.
+# Malfunction rows have spp = "none" after wnv_s_clean() and are dropped by
+# filter_culex_sheet(), so they never reach fill_skeleton(). We recover them
+# from culex_clean (pre-filter) and join on (trap_id, year, week) — not spp —
+# so both Tarsalis and Pipiens rows for the same trap-week get the status.
+malfunction_trap_weeks <- dplyr::bind_rows(
+  culex_clean         %>% dplyr::filter(trap_status == "malfunction"),
+  database_reformat   %>% dplyr::filter(trap_status == "malfunction")
+) %>%
+  dplyr::distinct(trap_id, year, week) %>%
+  dplyr::mutate(.is_malfunction = TRUE)
+
+culex_database_expand <- culex_database_expand %>%
+  dplyr::left_join(malfunction_trap_weeks, by = c("trap_id", "year", "week")) %>%
+  dplyr::mutate(
+    trap_status = dplyr::if_else(!is.na(.is_malfunction), "malfunction", trap_status),
+    total       = dplyr::if_else(trap_status == "malfunction", NA_real_, total)
+  ) %>%
+  dplyr::select(-.is_malfunction)
+
 unmerged <- collect_unmerged(trap_skeleton, data_sources)
 write.csv(unmerged, cfg$mid_unmerged_data, row.names = FALSE)
 cat("Unmerged culex_sheet rows:", nrow(unmerged[unmerged$source == "culex_sheet", ]), "\n")
@@ -321,13 +341,39 @@ cat("Unmerged database rows:   ", nrow(unmerged[unmerged$source == "database", ]
 #------------------------ P O S T - E X P A N D   S T A T U S  ----------------------------------
 # DESCRIPTION: resolve trap_status for skeleton rows with no data match.
 # Zone-week present in data → "no mosquitoes"; zone-week entirely absent → "no trap".
-# Validator: "no mosquitoes" trap-weeks in final output ≥ culex sheet input count.
 ```{r, post_expand_status}
 
 culex_database_expand <- assign_trap_status_post_expand(culex_database_expand)
 
-# Validator: culex sheet "no mosquitoes" trap-weeks (single-source scope).
-# Expansion always adds rows so final count must be ≥ cleaned culex sheet count.
+# ── VALIDATIONS ──────────────────────────────────────────────────────────────
+# These are hard assertions, not soft warnings. If either fails the pipeline
+# output is wrong and must be investigated before use.
+
+# 1. Malfunction trap-week count must be identical in input and final output.
+#    Malfunctions carry no count data (total = NA); any drop means a trap event
+#    was lost entirely from the analysis denominator.
+n_raw_malfunction <- culex_clean %>%
+  dplyr::filter(trap_status == "malfunction") %>%
+  dplyr::distinct(trap_id, year, week) %>%
+  nrow()
+
+n_final_malfunction <- culex_database_expand %>%
+  dplyr::filter(trap_status == "malfunction") %>%
+  dplyr::distinct(trap_id, year, week) %>%
+  nrow()
+
+cat(
+  "\nValidation — malfunction trap-weeks:\n",
+  "  culex sheet input: ", n_raw_malfunction, "\n",
+  "  final expanded:    ", n_final_malfunction, "\n"
+)
+stopifnot(
+  "Malfunction trap-week count changed between input and final output" =
+    n_final_malfunction == n_raw_malfunction
+)
+
+# 2. "No mosquitoes" trap-week count must be ≥ culex sheet input count.
+#    Expansion adds zero-fill rows so final count should grow, never shrink.
 n_raw_no_mosq <- culex_clean %>%
   dplyr::filter(trap_status == "no mosquitoes") %>%
   dplyr::distinct(trap_id, year, week) %>%
@@ -340,17 +386,13 @@ n_final_no_mosq <- culex_database_expand %>%
 
 cat(
   "\nValidation — 'no mosquitoes' trap-weeks:\n",
-  "  culex sheet:    ", n_raw_no_mosq, "\n",
-  "  final expanded: ", n_final_no_mosq, "\n"
+  "  culex sheet input: ", n_raw_no_mosq, "\n",
+  "  final expanded:    ", n_final_no_mosq, "\n"
 )
-
-if (n_final_no_mosq < n_raw_no_mosq) {
-  warning(
-    "'no mosquitoes' trap-weeks in final output (", n_final_no_mosq,
-    ") is less than culex sheet input (", n_raw_no_mosq, "). ",
-    "Check for dropped records in join or dedup steps."
-  )
-}
+stopifnot(
+  "'no mosquitoes' trap-weeks shrank between input and final output" =
+    n_final_no_mosq >= n_raw_no_mosq
+)
 
 write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = FALSE)
 
