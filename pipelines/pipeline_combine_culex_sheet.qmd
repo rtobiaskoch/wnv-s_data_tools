@@ -32,7 +32,8 @@ source("R/fun_fix_zone.R")             # fix_zone_from_ref
 source("R/fun_plot_all_spp.R")
 source("R/fun_dedup_culex.R")       # culex_dedup
 source("R/fun_make_key.R")
-source("R/fun_expand_trap_spp.R")
+source("R/fun_expand_trap.R")          # expand_trap
+source("R/fun_assign_trap_status.R")   # assign_trap_status_post_expand
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -79,8 +80,20 @@ write.csv(culex0, cfg$mid_culex0, row.names = FALSE)
 
 #------------------------  E X P A N D   G R I D  ------------------------------------------------
 ```{r}
-#data = expand_grid(trap_ref)
+# Build skeleton FIRST — the complete trap×year×week×spp grid that all
+# observed data is joined into. No cleaning happens here.
+trap_skeleton <- expand_trap(
+  trap_ref   = trap_ref,
+  spp_levels = cfg$spp_levels,
+  year_start = cfg$year_start,
+  year_end   = lubridate::year(Sys.Date()),
+  week_start = cfg$week_start,
+  week_end   = cfg$week_end,
+  fc_zones   = cfg$fc_zone
+)
 
+cat("Skeleton rows:", nrow(trap_skeleton), "\n")
+cat("Skeleton traps:", dplyr::n_distinct(trap_skeleton$trap_id), "\n")
 ```
 
 
@@ -272,94 +285,68 @@ write.csv(culex_database, cfg$output_culex_database, row.names = FALSE)
 
 
 
-#------------------------ A D D   N A  C U L E X   T R A P  -------------------------------------
-DESCRIPTION: using the foco_trap get the NA traps from the culex sheet to test the completeness of those sheets
+#------------------------ J O I N   I N T O   S K E L E T O N  ----------------------------------
+# DESCRIPTION: left-join culex_database into the skeleton on the composite key.
+# Only trap_date, trap_status, total, source are pulled from culex_database —
+# zone2 and method come from the skeleton (derived by expand_trap() from trap_ref).
+#
+# Unmerged rows are observations in culex_database absent from the skeleton
+# (traps not in the active reference list). Saved to mid_unmerged_data for audit.
+```{r, join_skeleton}
 
-DEPENDENCIES
--   CRAN
-    -   dplyr
-    -   ggplot2
--   utils
-    -   bind_culex_sheets
-INPUTS
--   data_filtered:
--   data_reformat: the wnv-s_database that has been reformatted
+culex_database_expand <- trap_skeleton %>%
+  dplyr::left_join(
+    culex_database %>%
+      dplyr::select(key, trap_date, trap_status, total, source),
+    by = "key"
+  )
 
-```{r, add na}
-# Load and filter the active trap reference list (cfg$filter_active from config)
-if (cfg$filter_active) {
-  trap_keep_df <- read.csv(cfg$fn_trap_keep) %>%
-    dplyr::filter(active == 1)
-} else {
-  trap_keep_df <- read.csv(cfg$fn_trap_keep)
+unmerged <- culex_database %>%
+  dplyr::anti_join(trap_skeleton, by = "key")
+
+write.csv(unmerged, cfg$mid_unmerged_data, row.names = FALSE)
+cat("Unmerged rows (in data, not in skeleton):", nrow(unmerged), "\n")
+```
+
+#------------------------ P O S T - E X P A N D   S T A T U S  ----------------------------------
+# DESCRIPTION: resolve trap_status for skeleton rows with no data match.
+# Zone-week present in data → "no mosquitoes"; zone-week entirely absent → "no trap".
+# Validator: "no mosquitoes" trap-weeks in final output ≥ culex sheet input count.
+```{r, post_expand_status}
+
+culex_database_expand <- assign_trap_status_post_expand(culex_database_expand)
+
+# Validator: culex sheet "no mosquitoes" trap-weeks (single-source scope).
+# Expansion always adds rows so final count must be ≥ cleaned culex sheet count.
+n_raw_no_mosq <- culex_clean %>%
+  dplyr::filter(trap_status == "no mosquitoes") %>%
+  dplyr::distinct(trap_id, year, week) %>%
+  nrow()
+
+n_final_no_mosq <- culex_database_expand %>%
+  dplyr::filter(trap_status == "no mosquitoes") %>%
+  dplyr::distinct(trap_id, year, week) %>%
+  nrow()
+
+cat(
+  "\nValidation — 'no mosquitoes' trap-weeks:\n",
+  "  culex sheet:    ", n_raw_no_mosq, "\n",
+  "  final expanded: ", n_final_no_mosq, "\n"
+)
+
+if (n_final_no_mosq < n_raw_no_mosq) {
+  warning(
+    "'no mosquitoes' trap-weeks in final output (", n_final_no_mosq,
+    ") is less than culex sheet input (", n_raw_no_mosq, "). ",
+    "Check for dropped records in join or dedup steps."
+  )
 }
-
-# expand_trap_spp() builds trap × year × week × spp grid, left-joins to
-# culex_database, fills missing spp with total = 0, and flags zone-weeks
-# with no data at all as trap_status = "No Traps" (trap_date = NA).
-# wnv_s_clean() is called outside the function to standardise column types
-# and derive zone2, method, and trap_status from the expanded output.
-culex_database_expand <- expand_trap_spp(
-  trap_keep_df   = trap_keep_df,
-  culex_database = culex_database,
-  spp_levels     = cfg$spp_levels
-) %>%
-  wnv_s_clean()
-
 
 write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = FALSE)
 
-p_trap_n = plot_n_trap(culex_database_expand) +
-  ggtitle("N traps by Zone")
-
+p_trap_n <- plot_n_trap(culex_database_expand) +
+  ggplot2::ggtitle("N traps by Zone")
 p_trap_n
-ggsave(plot = p_trap_n, filename = "3_output/trap_status.png", width = 12, height = 6)
-
+ggplot2::ggsave(plot = p_trap_n, filename = "3_output/trap_status.png",
+                width = 12, height = 6)
 ```
-
-
-#------------------------ G E T   N A  C U L E X   T R A P  -------------------------------------
-DESCRIPTION: using the foco_trap get the NA traps from the culex sheet to test the completeness of those sheets
-
-DEPENDENCIES
--   CRAN
-    -   dplyr
-    -   ggplot2
--   utils
-    -   bind_culex_sheets
-INPUTS
--   data_filtered:
--   data_reformat: the wnv-s_database that has been reformatted
-
-```{r}
-y = lubridate::year(Sys.Date())-1
-
-trap_keep_df = trap_keep_df %>%
-  filter(active == 1) %>%
-  mutate(end = y,
-         w_start = 23,
-         w_end = 37)
-
-trap_expand = rowwise_expand(trap_keep_df, "start", "end", "year")
-trap_expand = rowwise_expand(trap_expand, "w_start", "w_end", "week")
-trap_expand = trap_expand %>%
-  mutate(week = week,
-         year = year) %>%
-  select(trap_id, zone, year, week)
-
-na_trap = anti_join(trap_expand, culex_clean, 
-                    by = c("trap_id", "year", "week")) %>%
-  mutate(zone = if_else(zone %in% cfg$fc_zone, "FC", zone)) %>%
-  filter(year > 2018) %>%
-  filter(zone %in% c("FC", "LV"))
-
-p_na_trap = plot_n(na_trap, trap_id) +
-  ggtitle("Number of weeks trap is missing. 2019-2024")
-
-p_na_trap
-
-ggsave(plot = p_na_trap, filename = "3_output/na_trap.png")
-```
-
-
-
