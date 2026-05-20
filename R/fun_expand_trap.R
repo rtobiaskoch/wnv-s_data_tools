@@ -36,14 +36,14 @@ expand_trap <- function(
   trap_ref,
   spp_levels,
   year_start = 2006L,
-  year_end   = lubridate::year(Sys.Date()),
+  year_end = lubridate::year(Sys.Date()),
   week_start = 23L,
-  week_end   = 37L,
-  fc_zones   = c("NE", "NW", "SE", "SW")
+  week_end = 37L,
+  fc_zones = c("NE", "NW", "SE", "SW")
 ) {
   # Validate required trap_ref columns early to give a clear error message.
   required_cols <- c("trap_id", "zone", "active", "start")
-  missing_cols  <- setdiff(required_cols, names(trap_ref))
+  missing_cols <- setdiff(required_cols, names(trap_ref))
   if (length(missing_cols) > 0) {
     stop(
       "trap_ref is missing required columns: ",
@@ -53,9 +53,14 @@ expand_trap <- function(
 
   # Canonical empty schema — returned when no traps qualify.
   empty_skeleton <- dplyr::tibble(
-    key    = character(), trap_id = character(),
-    zone   = character(), zone2   = character(), method = character(),
-    year   = integer(),   week    = integer(),    spp    = character()
+    key = character(),
+    trap_id = character(),
+    zone = character(),
+    zone2 = character(),
+    method = character(),
+    year = integer(),
+    week = integer(),
+    spp = character()
   )
 
   # BC: all traps regardless of active flag.
@@ -66,7 +71,9 @@ expand_trap <- function(
   )
 
   # Return empty tibble with correct schema if no traps qualify
-  if (nrow(trap_keep) == 0L) return(empty_skeleton)
+  if (nrow(trap_keep) == 0L) {
+    return(empty_skeleton)
+  }
 
   # Pre-filter traps whose start year is after year_end: seq(start, year_end)
   # would count *downward* in R (seq(2025, 2023) = c(2025,2024,2023)), which
@@ -75,20 +82,29 @@ expand_trap <- function(
   trap_keep <- trap_keep %>%
     dplyr::filter(as.integer(start) <= as.integer(year_end))
 
-  if (nrow(trap_keep) == 0L) return(empty_skeleton)
+  if (nrow(trap_keep) == 0L) {
+    return(empty_skeleton)
+  }
 
   # Expand: trap × year × week, then cross with spp.
   # rowwise_expand() handles per-trap start years so no trap generates rows
   # before its deployment date.
-  # .year_end, .w_start, .w_end are helper columns to feed rowwise_expand().
+  # Scalars extracted BEFORE the pipe: foco_trap - data.csv has week_start and
+  # week_end columns, so referencing those names inside dplyr::mutate() would
+  # resolve to the column values (NA for many traps) via data masking rather
+  # than to the function parameters.
+  year_end_int   <- as.integer(year_end)
+  week_start_int <- as.integer(week_start)
+  week_end_int   <- as.integer(week_end)
+
   skeleton <- trap_keep %>%
     dplyr::mutate(
-      .year_end = as.integer(year_end),
-      .w_start  = as.integer(week_start),
-      .w_end    = as.integer(week_end)
+      .year_end = year_end_int,
+      .w_start  = week_start_int,
+      .w_end    = week_end_int
     ) %>%
     rowwise_expand("start", ".year_end", "year") %>%
-    rowwise_expand(".w_start", ".w_end",  "week") %>%
+    rowwise_expand(".w_start", ".w_end", "week") %>%
     # Apply year_start floor: drop rows from before the surveillance baseline
     dplyr::filter(year >= as.integer(year_start)) %>%
     dplyr::select(trap_id, zone, year, week) %>%
@@ -96,10 +112,12 @@ expand_trap <- function(
     tidyr::crossing(spp = spp_levels) %>%
     dplyr::mutate(
       # zone2 collapses all four Fort Collins zones into a single "FC" label
-      zone2  = dplyr::if_else(zone %in% fc_zones, "FC", zone),
+      zone2 = dplyr::if_else(zone %in% fc_zones, "FC", zone),
       # method is determined by trap name: "gr" suffix indicates gravid trap
       method = dplyr::if_else(
-        stringr::str_detect(tolower(trap_id), "gr"), "G", "L"
+        stringr::str_detect(tolower(trap_id), "gr"),
+        "G",
+        "L"
       )
     ) %>%
     dplyr::select(trap_id, zone, zone2, method, year, week, spp)
