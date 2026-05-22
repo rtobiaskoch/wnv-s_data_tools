@@ -3,13 +3,21 @@
 ### desc:
 - [X] create unique key for the trap [trap_id, year, week, spp]
 - [ ] make all code R functions
+- [ ] incorporate all_mosquitoes_combine_pipeline
 
+## All mosquitoes pipeline
+- [ ] create a pipeline can combines the all spp pipeline. Use the git tagged commit all_mosq as a starting off point
 
 ## combine all available data
-- [ ] CMC
-- [ ] Boulder
-- [ ] VDCI
-- [ ] supplemental wnv-s_database 
+- [x] CMC
+- [x] Boulder
+- [x] VDCI
+- [x] supplemental wnv-s_database 
+- [ ] no culex status dropped
+- [ ] culex_clean_all_spp_plot.png only showing tarsalis and pipiens should still be all species 
+- [ ] ensure traps are uppercase for merging with list.
+- [ ] CFC 2006 to 2014 is only pool data but looks like a lot of traps are missing.
+- [ ] malfunction_trap_wks: 21 should be number of malfunctions and it looks low
 
 ## wnv-s_clean()
 ### desc: current summary isn't the most informative

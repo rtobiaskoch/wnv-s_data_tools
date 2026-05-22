@@ -1,15 +1,18 @@
-﻿new,old
-acct,Acct 
+new,old
+acct,Acct
 comment,Comments
 county,County
 csu_id,CSU Pool Number (CMC Enters)
 genus,Genus
 ida_pool,"IDA Pool (CSU Enters, Leave Blank)"
 method,trap_type
+method,Light / Gravid
 method,L/G
+method,Method (Light or Gravid)
 no_deplete,No. Deplete
 no_gravid,No. Gravid
 sex,Sex
+spp,Spp
 spp,mosquito_species
 spp,Species
 test_code,Test Code (CSU Enters)
@@ -18,9 +21,9 @@ total,mosquito_count
 total,Total
 trap_date,date_trap_set
 trap_date,Trap Date
+trap_id,Trap Number
 trap_id,trap_name
-trap_id,Collection Site       (Trap ID)
+trap_id,Collection Site (Trap ID)
+trap_id,Collection Site (Trap ID)
 week,Week
-zone,zone
-zone,Zone
-year,Year
+week,MMWR Week

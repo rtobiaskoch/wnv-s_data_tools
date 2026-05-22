@@ -163,6 +163,37 @@ wnv_s_clean <- function(
     clean_summary(df0, df, zone2)
   }
 
+  # FALLBACK: derive zone2 (and zone) from trap_id prefix when the zone
+  # column is absent from the input — e.g. when an upstream rename step has
+  # dropped it. Trap-id prefixes map deterministically to zone2:
+  #   FC-*  -> FC   (Fort Collins; underlying NE/NW/SE/SW lost without zone)
+  #   LV-*  -> LV   (Loveland)
+  #   BE-*  -> BE   (Berthoud current naming)
+  #   LC-*  -> BE   (Berthoud legacy CDC traps renamed from BE-***)
+  #   WC-*  -> BE   (Berthoud West)
+  #   BC-*  -> BC   (Boulder County)
+  # zone is set equal to zone2 here so downstream code that expects both
+  # columns (e.g. prep_for_skeleton's distinct()) works without errors.
+  # Specifying zone exactly (NE/NW/SE/SW) is impossible from trap_id alone
+  # for Fort Collins — those rows carry zone = "FC" as the best available value.
+  if (!"zone2" %in% names(df) && "zone2" %in% col_2_clean && "trap_id" %in% names(df)) {
+    df <- df %>%
+      mutate(
+        zone2 = case_when(
+          str_detect(trap_id, "^(?i)FC")          ~ "FC",
+          str_detect(trap_id, "^(?i)LV")          ~ "LV",
+          str_detect(trap_id, "^(?i)(BE|LC|WC)")  ~ "BE",
+          str_detect(trap_id, "^(?i)BC")          ~ "BC",
+          TRUE                                    ~ NA_character_
+        )
+      )
+    if (!"zone" %in% names(df)) {
+      df <- df %>% mutate(zone = zone2)
+    }
+
+    clean_summary(df0, df, zone2)
+  }
+
   #CLEAN DATE
   if ("trap_date" %in% names(df) && "trap_date" %in% col_2_clean) {
     df <- df %>%

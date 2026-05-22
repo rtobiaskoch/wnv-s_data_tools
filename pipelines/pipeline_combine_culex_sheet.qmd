@@ -2,6 +2,8 @@
 #-------------------- E N V I R O N M E N T -------------------------------------------
 DESC: defines functions to be used in pipeline
 ```{r, echo = FALSE}
+# Set working directory to project root so relative source() paths resolve correctly.
+knitr::opts_knit$set(root.dir = here::here())
 
 rm(list = ls())
 #define packages to be used
@@ -16,6 +18,11 @@ pacman::p_load(pkg, character.only = TRUE)
 #SOURCE USED FUNCTIONS
 source("R/palettes.R")
 source("R/fun_read_list.R")
+source("R/fun_read_source.R")
+source("R/fun_pivot_cmc.R")
+source("R/fun_pivot_cfc.R")
+source("R/fun_pivot_boulder.R")
+source("R/fun_manifest.R")
 source("R/key_rename.R")
 source("R/fun_wnv_s_clean.R")
 source("R/fun_parse_flexible_date.R")
@@ -43,9 +50,16 @@ source("R/fun_prep_for_skeleton.R")    # prep_for_skeleton
 
 ```{r}
 cfg <- config::get(file = here::here("config", "config_culex_combine.yml"),
-                   config = "default") #change to culex if you want to use the culex datasheets
+                   config = "default")
 
-input = file.path(here::here(),cfg$path)
+input = file.path(here::here(), cfg$path)
+
+manifest_init(cfg$manifest)
+manifest_log(cfg$manifest, "config",
+             config_file = "config/config_culex_combine.yml",
+             year_start  = cfg$year_start,
+             week_range  = paste(cfg$week_start, "-", cfg$week_end),
+             spp_levels  = cfg$spp_levels)
 ```
 
 #---------------------------  I M P O R T  ------------------------------------------------
@@ -56,26 +70,68 @@ database = read.csv(cfg$fn_database) #databaes for augmenting culex sheets
 ```
 
 
-#--------------------------- B U L K   I M P O R T --------------------------------------------
-DESCRIPTION: combines sheets that contain config\$pattern using function read_list
+#---------------------------  P E R   S O U R C E   I M P O R T  ------------------------------
+# DESC: read each source declared in cfg$sources, dispatch the optional pivot_fn,
+# then funnel every source through the canonical clean chain.
 
-DEPENDENCIES
--   CRAN
-    -   dplyr
-    -   rio
-    -   purrr
-    -   tibble
--   utils
-    -   fun_read_list
-INPUTS
--   config
-    -   pattern: pattern for culex files to use in read_list
-    
-```{r}
-culex0 = read_list(path = input, 
-                   pattern = cfg$pattern)
+```{r, per_source_import}
+# YAML stores pivot function names as strings (e.g. pivot_fn: "pivot_cmc").
+# pivot_registry translates those strings to the actual R function objects
+# so they can be passed to read_source(). Sources with pivot_fn: null get NULL.
+pivot_registry <- list(
+  pivot_cmc     = pivot_cmc,    # wide CMC sheet  → long
+  pivot_cfc     = pivot_cfc,    # CFC column rename only (already long)
+  pivot_boulder = pivot_boulder  # Boulder pass-through, enforces zone = "BC"
+)
 
-write.csv(culex0, cfg$mid_culex0, row.names = FALSE)
+# imap iterates cfg$sources (a named list from config_culex_combine.yml).
+#   src_name = the source key, e.g. "cmc_weekly"
+#   src      = the config sub-list for that source (path, pattern, pivot_fn, …)
+#
+# For each source:
+#   1. Resolve the pivot_fn string → function object via pivot_registry
+#      e.g. src$pivot_fn == "pivot_cmc"  →  pivot_fn = pivot_cmc
+#   2. Call read_source(), which lists files, drops exclude_paths, reads each
+#      file with rio::import (+ any import_args like sheet="CombinedData"),
+#      calls pivot_fn(raw_df) if not NULL, coerces all columns to character,
+#      and binds rows into one tibble.
+#
+# Result: sources_raw — a named list with one raw tibble per source key.
+sources_raw <- purrr::imap(cfg$sources, function(src, src_name) {
+  # Look up the pivot function by name; NULL means the file is already long.
+  pivot_fn      <- if (is.null(src$pivot_fn))      NULL        else pivot_registry[[src$pivot_fn]]
+  exclude_paths <- if (is.null(src$exclude_paths)) character() else src$exclude_paths
+  import_args   <- if (is.null(src$import_args))   list()      else src$import_args
+  read_source(
+    path          = src$path,
+    pattern       = src$pattern,
+    pivot_fn      = pivot_fn,
+    exclude_paths = exclude_paths,
+    import_args   = import_args
+  )
+})
+
+# Inventory week-level folders per source for the manifest
+purrr::iwalk(cfg$sources, function(src, src_name) {
+  inv_root <- "1_input/culex_sheet"
+  inv <- inventory_week_folders(inv_root, src$pattern)
+  manifest_log(cfg$manifest, paste0("inventory:", src_name),
+               root            = inv_root,
+               pattern         = src$pattern,
+               n_year_folders  = inv$n_year_folders,
+               n_week_folders  = inv$n_week_folders,
+               n_matched_files = inv$n_matched,
+               n_missing       = length(inv$missing_folders),
+               missing_folders = if (length(inv$missing_folders) == 0L) "(none)"
+                                 else inv$missing_folders)
+})
+
+# Raw row counts per source
+purrr::iwalk(sources_raw, function(df, src_name) {
+  cat(sprintf("raw %-12s rows: %d\n", src_name, nrow(df)))
+  manifest_log(cfg$manifest, paste0("read:", src_name),
+               n_rows = nrow(df), n_cols = ncol(df))
+})
 ```
 
 
@@ -100,50 +156,142 @@ cat("Skeleton traps:", dplyr::n_distinct(trap_skeleton$trap_id), "\n")
 
 
 
-#--------------------------------  C L E A N  ------------------------------------------------
-DESCRIPTION: cleans combined sheets using wnv_s_clean and parse_flexible_date
-DEPENDENCIES
--   CRAN
-    -   dplyr
-    -   lubridate
-    -   purrr
-    -   ggplot2
--   utils
-    -   fun_wnv_s_clean
-    -   fun_parse_flexible_date
-INPUTS
--   df: dataframe from culex sheets
+#---------------------------  P E R   S O U R C E   C L E A N  --------------------------------
+# DESC: clean_one() does ONLY cleaning — column normalisation, date/zone/
+# species/status assignment, and dedup. It does NOT drop rows for analysis
+# reasons (no spp filter, no active-trap filter). The output retains every
+# observed species (including non-culex) and every observed trap.
+#
+# prep_for_skeleton() and filter_culex_sheet() now live in their own
+# downstream chunks (per_source_prep and per_source_filter) so each stage
+# has its own row-count log in the manifest.
 
-```{r,clean}
+```{r, per_source_clean}
+# clean_one applies the canonical cleaning chain to one source's raw tibble.
+# Arguments:
+#   df_raw   — raw tibble from sources_raw (all columns are character at this point)
+#   src_name — source key string, used only for manifest logging
+#
+# Chain (clean only — no filtering, no skeleton prep):
+#   key_rename()  → translates source-specific column names to canonical names
+#                    (trap_id, trap_date, spp, total, …) using database_column_rename.csv
+#   wnv_s_clean() → parses dates, derives zone2/year/week/method, classifies spp,
+#                    sets trap_status (culex / malfunction / no_mosquitoes / no culex);
+#                    preserves the original spp value in column spp0
+#   make_key()    → builds a composite key "trap_id|spp|year|week" used for dedup
+#   culex_dedup() → drops non-standard collection nights (weekends, duplicate pickups)
+#
+# Returns: tibble with all observed species and all observed traps. spp0
+# carries the raw species label for use by plot_all_spp().
+clean_one <- function(df_raw, src_name) {
+  if (nrow(df_raw) == 0L) {
+    manifest_log(cfg$manifest, paste0("clean:", src_name), status = "EMPTY — skipped")
+    return(tibble::tibble(
+      key = character(), trap_id = character(), zone = character(),
+      zone2 = character(), year = integer(), week = integer(),
+      trap_date = as.Date(character()), method = character(),
+      spp = character(), spp0 = character(),
+      trap_status = character(), total = numeric()
+    ))
+  } #end of nrow == 0
 
-culex_clean = culex0 %>%
-  key_rename(keychain, drop_extra = TRUE) %>%
-  wnv_s_clean() %>%
-  make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
-  culex_dedup()   # remove weekend collection dates (non-standard surveillance nights)
+  after_clean <- df_raw %>%
+    key_rename(keychain, drop_extra = TRUE) %>%
+    wnv_s_clean()
+  after_dedup <- after_clean %>%
+    make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
+    culex_dedup()
 
+  manifest_log(cfg$manifest, paste0("clean:", src_name),
+               n_raw            = nrow(df_raw),
+               n_after_clean    = nrow(after_clean),
+               n_after_dedup    = nrow(after_dedup),
+               removed_by_dedup = nrow(after_clean) - nrow(after_dedup))
 
-# Convert all spp types to spp_levels rows with trap_status set.
-# This runs before filter_culex_sheet() so that status rows ("non culex",
-# "none") survive to enter the skeleton rather than being dropped by the
-# species filter or failing the key join.
-culex_clean_prepped <- prep_for_skeleton(culex_clean, cfg$spp_levels)
+  after_dedup
+} #end clean_one
 
-culex_clean_dupes_key = culex_clean %>% get_dupes(key) %>% filter(spp != "non culex")
-culex_clean_dupes_all = culex_clean %>% get_dupes() %>% filter(spp != "non culex")
+# imap iterates sources_raw (same names as cfg$sources):
+#   .x = the raw tibble for this source
+#   .y = the source name string (e.g. "cmc_weekly")
+# Result: sources_cleaned — a named list, one cleaned tibble per source.
+sources_cleaned <- purrr::imap(sources_raw, ~ clean_one(.x, .y))
+purrr::iwalk(sources_cleaned, ~ cat(sprintf("cleaned %-12s rows: %d\n", .y, nrow(.x))))
 
+# All-species combined view for the diagnostic plot and the all-spp CSV.
+# spp0 is preserved by wnv_s_clean() and holds the original species label
+# (e.g. "Aedes vexans", "Culex erythrothorax", "non culex") — plot_all_spp
+# groups by spp0 so this view shows every species observed, not just the
+# Tarsalis/Pipiens subset that ends up in the skeleton.
+culex_clean <- dplyr::bind_rows(sources_cleaned, .id = "source")
 write.csv(culex_clean, cfg$output_trap_all, row.names = FALSE)
 
-p_culex_clean = plot_all_spp(culex_clean, "zone2")
+p_culex_clean <- plot_all_spp(culex_clean, "zone2")
 p_culex_clean
 ggsave(cfg$mid_culex_clean_plot, p_culex_clean, width = 12, height = 10)
+```
 
-#checked to ensure that data0$trap_type == method and it held true for str_detect(trap_id, "gr) == "G
+#---------------------------  P E R   S O U R C E   P R E P  ----------------------------------
+# DESC: prep_for_skeleton() expands each cleaned tibble so every row has
+# spp ∈ cfg$spp_levels. Status events (malfunction / no culex / no mosquitoes)
+# get expanded to one row per spp_level with total set to NA or 0. Non-target
+# species (Aedes, "non culex", etc.) are dropped here — they are kept upstream
+# in sources_cleaned for the all-spp diagnostic plot.
 
-``` 
+```{r, per_source_prep}
+sources_prepped <- purrr::imap(sources_cleaned, function(df, src_name) {
+  if (nrow(df) == 0L) {
+    manifest_log(cfg$manifest, paste0("prep:", src_name), status = "EMPTY — skipped")
+    return(df)
+  }
+  out <- prep_for_skeleton(df, cfg$spp_levels)
+  manifest_log(cfg$manifest, paste0("prep:", src_name),
+               n_in_clean    = nrow(df),
+               n_out_prepped = nrow(out))
+  out
+})
+purrr::iwalk(sources_prepped, ~ cat(sprintf("prepped %-12s rows: %d\n", .y, nrow(.x))))
+```
+
+#--------------------------  P E R   S O U R C E   F I L T E R  -------------------------------
+# DESC: apply filter_culex_sheet() per source based on each source's
+# filter_active flag in config_culex_combine.yml. Sources with filter_active:
+# false (e.g. Boulder) pass through unchanged. The active-trap reference is
+# loaded here and reused by the comparison plot downstream.
+
+```{r, per_source_filter}
+if (isTRUE(cfg$filter_active)) {
+  trap_keep_df <- read.csv(cfg$fn_trap_keep) %>% dplyr::filter(active == 1)
+} else {
+  trap_keep_df <- read.csv(cfg$fn_trap_keep)
+}
+
+sources_filtered <- purrr::imap(sources_prepped, function(df, src_name) {
+  if (nrow(df) == 0L) {
+    manifest_log(cfg$manifest, paste0("filter:", src_name), status = "EMPTY — skipped")
+    return(df)
+  }
+  src <- cfg$sources[[src_name]]
+  out <- if (isTRUE(src$filter_active)) {
+    filter_culex_sheet(df,
+                       na_col       = rlang::sym(cfg$na_col),
+                       trap_keep_df = trap_keep_df)
+  } else {
+    df
+  }
+  manifest_log(cfg$manifest, paste0("filter:", src_name),
+               filter_active     = isTRUE(src$filter_active),
+               n_in_prepped      = nrow(df),
+               n_out_filtered    = nrow(out),
+               removed_by_filter = nrow(df) - nrow(out))
+  out
+})
+purrr::iwalk(sources_filtered, ~ cat(sprintf("filtered %-12s rows: %d\n", .y, nrow(.x))))
+```
 
 #--------------------------------  F I L T E R  ------------------------------------------------
-DESCRIPTION: filters cleaned_culex_sheet by a na_col and from a list of traps that you want to keep and removes non culex species
+DESCRIPTION: bind the per-source filtered tibbles into a single dataframe for
+downstream plots, the database join, and the skeleton fill.
 DEPENDENCIES
 -   CRAN
     -   dplyr
@@ -151,30 +299,16 @@ DEPENDENCIES
     -   purrr
     -   ggplot2
 -   utils
-    -   filter_culex_sheet
+    -   filter_culex_sheet (applied in per_source_filter chunk above)
 INPUTS
--   df: dataframe output from wnv_s_clean
--   cfg$fn_trap_keep: filename for the dataframe that contains the traps that you want to keep
--   trap_keep_df: dataframe that contains a column called trap_id that you want to keep from from the culex_sheets
+-   sources_filtered: named list produced by per_source_filter chunk
 
 ```{r, filter}
-
-# F I L T E R
-cat("\n Reading in active foco traps to remove untested traps from", cfg$fn_trap_keep, "\n")
-
-#if filter_active is true will only keep traps from active surveillance tested traps
-if(cfg$filter_active){
- trap_keep_df = read.csv(cfg$fn_trap_keep) %>% 
-  filter(active == 1)
-} else {
-  trap_keep_df = read.csv(cfg$fn_trap_keep)
-}
-
-#WARNING FOR BERTHOUD TRAPS EXPECTED 
-culex_filtered = filter_culex_sheet(df = culex_clean_prepped,
-                                  na_col = rlang::sym(cfg$na_col), 
-                                  trap_keep_df = trap_keep_df)
-
+# culex_filtered = combined post-filter sources for downstream plots and validations.
+# Per-source filtering was applied in the per_source_filter chunk above.
+culex_filtered <- dplyr::bind_rows(
+  purrr::keep(sources_filtered, function(df) nrow(df) > 0)
+)
 
 plot_n_trap(culex_filtered)
 
@@ -309,20 +443,53 @@ write.csv(culex_database, cfg$output_culex_database, row.names = FALSE)
 # collect_unmerged() captures records from any source absent from the skeleton
 # (traps observed but not in the active reference list). Saved for audit.
 ```{r, join_skeleton}
-
-# Priority order: culex sheet first, database fills remaining gaps.
+# Priority order: VDCI -> CMC weekly -> CFC -> BC -> database.
 # Each list name becomes the value of the `source` column in the output.
-data_sources <- list(
-  culex_sheet = culex_filtered,
-  database    = database_reformat_prepped
+#
+# TODO (see docs/TODO.md): when the separate all-mosquito pipeline lands,
+# it will emit a small handoff CSV — one row per (trap_id, year, week) where
+# all_mosq observed activity but no culex were caught. Read it here as a
+# LOW-priority source and append to data_sources BEFORE the database entry,
+# e.g.:
+#   trap_was_set <- read.csv("2_mid/trap_was_set.csv") %>%
+#     prep_for_skeleton(cfg$spp_levels)
+#   data_sources <- c(
+#     purrr::keep(sources_filtered, ~ nrow(.x) > 0L),
+#     list(trap_was_set = trap_was_set,
+#          database     = database_reformat_prepped)
+#   )
+# Effect: skeleton rows that were active traps but caught only non-culex
+# (currently land in unmerged or get labelled "no trap" by
+# assign_trap_status_post_expand) will be correctly labelled "no culex" —
+# fixing the abundance-denominator bias for 2020–2024.
+data_sources <- c(
+  purrr::keep(sources_filtered, ~ nrow(.x) > 0L),
+  list(database = database_reformat_prepped)
 )
 
 culex_database_expand <- fill_skeleton(trap_skeleton, data_sources)
 
 unmerged <- collect_unmerged(trap_skeleton, data_sources)
 write.csv(unmerged, cfg$mid_unmerged_data, row.names = FALSE)
-cat("Unmerged culex_sheet rows:", nrow(unmerged[unmerged$source == "culex_sheet", ]), "\n")
-cat("Unmerged database rows:   ", nrow(unmerged[unmerged$source == "database", ]), "\n")
+
+purrr::iwalk(split(unmerged, unmerged$source),
+             ~ cat(sprintf("Unmerged %-12s rows: %d\n", .y, nrow(.x))))
+
+# Per-source join accounting
+purrr::iwalk(sources_filtered, function(df, src_name) {
+  if (nrow(df) == 0L) return()
+  n_in  <- nrow(df)
+  n_unm <- sum(unmerged$source == src_name, na.rm = TRUE)
+  n_exp <- sum(culex_database_expand$source == src_name, na.rm = TRUE)
+  manifest_log(cfg$manifest, paste0("join:", src_name),
+               n_into_skeleton   = n_in,
+               n_in_final_expand = n_exp,
+               n_unmerged        = n_unm,
+               balance_check     = paste0(n_in, " == ", n_exp, " + ", n_unm,
+                                          " : ",
+                                          if (n_in == n_exp + n_unm) "OK"
+                                          else paste0("DRIFT (", n_in - n_exp - n_unm, ")")))
+})
 ```
 
 #------------------------ P O S T - E X P A N D   S T A T U S  ----------------------------------
@@ -345,8 +512,12 @@ culex_database_expand <- assign_trap_status_post_expand(culex_database_expand)
 # 1. Malfunction trap-week count must be identical in input and final output.
 #    Malfunctions carry no count data (total = NA); any drop means a trap event
 #    was lost entirely from the analysis denominator.
+#    Restrict to skeleton-eligible keys: historical sources (CMC, CFC) may have
+#    malfunction records for traps/weeks outside the skeleton scope that correctly
+#    land in unmerged rather than in culex_database_expand.
 n_raw_malfunction <- culex_filtered %>%
   dplyr::filter(trap_status == "malfunction") %>%
+  dplyr::semi_join(trap_skeleton, by = "key") %>%
   dplyr::distinct(trap_id, year, week) %>%
   nrow()
 
@@ -367,8 +538,11 @@ stopifnot(
 
 # 2. "No mosquitoes" trap-week count must be ≥ culex sheet input count.
 #    Expansion adds zero-fill rows so final count should grow, never shrink.
+#    Restrict to skeleton-eligible keys so historical out-of-scope records do
+#    not inflate the baseline and cause false failures.
 n_raw_no_mosq <- culex_filtered %>%
   dplyr::filter(trap_status == "no mosquitoes") %>%
+  dplyr::semi_join(trap_skeleton, by = "key") %>%
   dplyr::distinct(trap_id, year, week) %>%
   nrow()
 
@@ -434,6 +608,40 @@ stopifnot(
       nrow() == 0
   }
 )
+
+# 6. Completeness — every Pipiens/Tarsalis row from every source's filtered
+#    input must appear in either culex_database_expand or unmerged. A drop
+#    here means a record was silently lost between filter and join.
+all_prepped_keys <- dplyr::bind_rows(sources_filtered) %>%
+  dplyr::filter(spp %in% cfg$spp_levels) %>%
+  dplyr::pull(key) %>%
+  unique()
+
+accounted_keys <- unique(c(
+  culex_database_expand$key,
+  unmerged$key
+))
+
+missing_keys <- setdiff(all_prepped_keys, accounted_keys)
+
+cat(
+  "\nValidation — completeness:\n",
+  "  prepped keys:   ", length(all_prepped_keys), "\n",
+  "  accounted keys: ", length(accounted_keys), "\n",
+  "  missing keys:   ", length(missing_keys), "\n"
+)
+stopifnot(
+  "Source prepped records dropped silently between prep and skeleton join" =
+    length(missing_keys) == 0L
+)
+
+manifest_log(cfg$manifest, "final",
+             skeleton_rows        = nrow(trap_skeleton),
+             expand_rows          = nrow(culex_database_expand),
+             unmerged_rows        = nrow(unmerged),
+             malfunction_trap_wks = n_final_malfunction,
+             no_mosq_trap_wks     = n_final_no_mosq,
+             no_culex_trap_wks    = n_final_no_culex)
 
 write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = FALSE)
 
