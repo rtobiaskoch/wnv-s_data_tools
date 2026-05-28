@@ -1,6 +1,7 @@
 # Repository Purpose
 Compile dataset to be used calculated the historical abundance of mosquitoes from trap data which is defined by the average number of mosquitoes per trap per night for each species Tarsalis and Pipiens. For each zone each week should add up to expected trap number. Light traps (method = L) are used for abundance. We still keep gravid trap (method = G) to be used for pooled infection rate calculations. The pipeline needs to account for when traps malfunction or some traps or species for a certain may be missing from the data because these companies only report nonzeros. Every trap needs to be accounted for every week in the season. This is critical because it is the difference between a trap being set out and catching no mosquitoes vs never being set out at all.
 
+read docs/claude files for more context
 
 ## Year 2006-2017: CMC (NW, NE, SW, SE, LV, BE)
 ### Background
