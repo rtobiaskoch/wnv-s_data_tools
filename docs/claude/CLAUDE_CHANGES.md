@@ -203,3 +203,91 @@ _AI summary unavailable — API call failed or timed out._
 _AI summary unavailable — API call failed or timed out._
 
 ---
+
+## Commit c843a35: 2026-05-22 00:39 UTC — refactor: per-source culex ingestion with clean/prep/filter stages
+
+| File | Changes |
+|------|---------|
+| R/fun_manifest.R | +81 -0 | modified |
+| R/fun_pivot_boulder.R | +49 -0 | modified |
+| R/fun_pivot_cfc.R | +52 -0 | modified |
+| R/fun_pivot_cmc.R | +76 -0 | modified |
+| R/fun_read_source.R | +55 -0 | modified |
+| R/fun_wnv_s_clean.R | +31 -0 | modified |
+| _quarto.yml | +3 -0 | modified |
+| config/config_culex_combine.yml | +43 -3 | modified |
+| pipelines/pipeline_combine_culex_sheet.qmd | +292 -84 | modified |
+| tests/testthat/test-manifest.R | +36 -0 | modified |
+| tests/testthat/test-pivot_boulder.R | +38 -0 | modified |
+| tests/testthat/test-pivot_cfc.R | +36 -0 | modified |
+| tests/testthat/test-pivot_cmc.R | +33 -0 | modified |
+| tests/testthat/test-read_source.R | +40 -0 | modified |
+
+_AI summary unavailable — API call failed or timed out._
+
+---
+## Commit c843a35: 2026-05-21 18:39:50 -0600 — refactor: per-source culex ingestion with clean/prep/filter stages
+
+| File | Changes | What changed |
+|------|---------|--------------|
+| 1_input/database_column_rename.csv | +13 -2 | added Spp, MMWR Week, Trap Number, Collection Site (Trap ID), Method (Light or Gravid) entries |
+| R/fun_manifest.R | +81 | new manifest_init / manifest_log / inventory_week_folders utilities for per-stage diagnostics |
+| R/fun_pivot_boulder.R | +49 | new pass-through pivot; forces zone = "BC" on every row |
+| R/fun_pivot_cfc.R | +52 | new rename-only pivot + Excel-serial Date conversion to Date class |
+| R/fun_pivot_cmc.R | +76 | new wide→long pivot; synthesizes malfunction rows; header-row-2 detection |
+| R/fun_read_source.R | +55 | new dispatcher: list_files → exclude → rio::import → pivot_fn → as.character → bind_rows |
+| R/fun_wnv_s_clean.R | +31 | fallback derivation of zone/zone2 from trap_id prefix when zone column absent |
+| _quarto.yml | +3 | execute-dir: project so relative source() paths resolve during render |
+| config/config_culex_combine.yml | +42 -4 | new sources: registry (vdci / cmc_weekly / cfc / bc) and manifest path |
+| docs/DEV_NOTES.md | +169 | architecture reference for the per-source ingestion design |
+| docs/TODO.md | +13 -3 | added all-mosq pipeline TODO; checked off completed items |
+| docs/superpowers/plans/2026-05-20-multi-source-culex-ingestion.md | +1344 | original multi-source ingestion plan |
+| docs/superpowers/plans/reactive-gathering-curry.md | +232 | clean/prep/filter separation plan |
+| pipelines/pipeline_combine_culex_sheet.qmd | +308 -68 | split per_source_clean into three chunks; updated downstream references; TODO marker for all-mosq handoff |
+| tests/testthat/test-manifest.R | +36 | unit tests for manifest utilities |
+| tests/testthat/test-pivot_boulder.R | +38 | unit tests for Boulder pivot |
+| tests/testthat/test-pivot_cfc.R | +36 | unit tests for CFC pivot |
+| tests/testthat/test-pivot_cmc.R | +33 | unit tests for CMC wide→long pivot |
+| tests/testthat/test-read_source.R | +40 | unit tests for the file dispatcher |
+
+**Summary:** Replaces the consolidated `all_mosq` input with a per-source registry (`config_culex_combine.yml` → `sources:` block) consumed by a new `R/fun_read_source.R` dispatcher and per-source pivot functions (`fun_pivot_cmc/cfc/boulder.R`). The qmd chunk `per_source_clean` is split into three discrete stages — `clean_one()` (key_rename → wnv_s_clean → make_key → culex_dedup), `per_source_prep` (prep_for_skeleton), and `per_source_filter` (filter_culex_sheet) — so cleaning no longer drops rows for analysis reasons and each stage emits its own row counts via the new `R/fun_manifest.R` logger. Two correctness fixes ship with the refactor: `wnv_s_clean()` now derives `zone`/`zone2` from the `trap_id` prefix as a fallback when `key_rename(drop_extra=TRUE)` strips the zone column, and `pivot_cfc()` converts Excel-serial date numerics to `Date` class before the downstream `as.character()` coercion in `read_source()`, fixing CFC 2006–2017 rows that were silently failing to join the skeleton due to NA year/week. A TODO marker in the `join_skeleton` chunk reserves a slot for a future all-mosquito pipeline handoff source.
+
+**RSE Assessment:**
+- Improved: Modularity (per-source dispatch + single-responsibility chunks), Composability (each stage is a named `purrr::imap` over a list of cleaned tibbles), Parameter-Driven (sources / patterns / exclude_paths / import_args / filter_active declared in YAML), Trackable (per-stage manifest logs make data flow auditable), Testable (new testthat coverage for read_source / pivot_* / manifest)
+- Worsened: none
+
+**Suggestion:** Move `clean_one()` out of the qmd and into `R/fun_clean_one.R` so it gains a doc comment and dedicated tests — it is the only orchestration helper still hidden inside the pipeline file, and externalising it would let testthat cover the clean chain in isolation (including the new `zone2`-from-`trap_id` fallback path).
+
+---
+
+## Commit 5ef995c: 2026-05-28 19:10 UTC — refactor: migrate source paths to per-source folders and simplify manifest inventory
+
+| File | Changes |
+|------|---------|
+| R/fun_manifest.R | +12 -26 | modified |
+| config/config_culex_combine.yml | +6 -16 | modified |
+| pipelines/pipeline_combine_culex_sheet.qmd | +29 -11 | modified |
+| tests/testthat/test-manifest.R | +8 -15 | modified |
+
+_AI summary unavailable — API call failed or timed out._
+
+---
+
+## Commit 5ef995c: 2026-05-28 13:10:00 -0600 — refactor: migrate source paths to per-source folders and simplify manifest inventory
+
+| File | Changes | What changed |
+|------|---------|--------------|
+| R/fun_manifest.R | +14 -24 | `inventory_week_folders` replaced by `inventory_source(path, pattern)` |
+| config/config_culex_combine.yml | +10 -12 | All four source paths updated to flat per-source folders; vdci pattern fixed to regex; stale `exclude_paths` removed |
+| pipelines/pipeline_combine_culex_sheet.qmd | +30 -10 | Inventory chunk uses `inventory_source`; hardcoded `culex_sheet` root removed; `dropped_by_filter` sink added |
+| tests/testthat/test-manifest.R | +7 -14 | Test rewritten for `inventory_source`; week-folder fixture removed |
+
+**Summary:** All four input sources (`vdci`, `cmc_weekly`, `cfc`, `bc`) were moved from nested subdirectories under `1_input/culex_sheet/` into their own flat folders (`1_input/vdci/`, `1_input/cmc/`, etc.), and the config `path` keys updated to match. The `inventory_week_folders()` function, which was tightly coupled to the old `WNV-s YYYY/Week WW/` folder structure, was replaced by the simpler `inventory_source(path, pattern)` which just counts files matching the pattern — directly mirroring what `read_source()` does. The pipeline inventory chunk was corrected to read `src$path` from config rather than the previously hardcoded `"1_input/culex_sheet"` root, which had been silently producing stale manifest entries.
+
+**RSE Assessment:**
+- Improved: Parameter-Driven (paths now fully driven by config, no hardcoding), Modularity (inventory logic decoupled from folder convention), Trackable (manifest inventory now reflects actual discovered files), Testable (simpler function is easier to unit test)
+- Worsened: none
+
+**Suggestion:** The `vdci` pattern `\\.csv$` matches any CSV in `1_input/vdci/` — consider tightening it to `LC.*Week.*\\.csv$` to match only trap files and guard against accidentally ingesting stray CSVs (e.g. lookup tables) placed in the same folder.
+
+---

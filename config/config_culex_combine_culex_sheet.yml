@@ -1,0 +1,79 @@
+default:
+  path: "1_input"
+  fn_trap_keep: "1_input/foco_trap - data.csv"
+  fn_database: "1_input/wnv-s_database - data.csv"
+  fn_rename_col: "1_input/database_column_rename.csv" #column used to rename the input data to the wnv-s_database format
+  na_col: "trap_id" #na_col for culex_filter
+  filter_active: "TRUE" #whether you want to only keep the active traps for
+  year_start: 2006
+  week_start: 23
+  week_end: 37
+  mid_unmerged_data: "2_mid/unmerged_data.csv"
+  mid_dropped_by_filter: "2_mid/dropped_by_active_filter.csv"
+  manifest: "3_output/_manifest.txt"
+
+  # Per-source ingestion registry. Each entry declares:
+  #   path          - root folder to search recursively
+  #   pattern       - regex for matching trap files (ignore.case = TRUE)
+  #   pivot_fn      - name of reshape function (null = already long/VDCI format)
+  #   filter_active - whether to apply filter_culex_sheet active-trap filter
+  #   exclude_paths - path substrings to exclude from file discovery
+  #   import_args   - extra args forwarded to rio::import (e.g. sheet name)
+  # Priority in fill_skeleton: vdci > cmc_weekly > cfc > bc > database
+  sources:
+    vdci:
+      path: "1_input/culex_sheet"
+      pattern: "LC.*Week.*_[Cc]ulex\\.(csv|xlsx)$"
+      pivot_fn: null
+      filter_active: true
+      exclude_paths:
+        - "all_mosq"
+        - "CFC-2006-2017"
+    cmc_weekly:
+      path: "1_input/culex_sheet"
+      pattern: "LC.*Week.*\\.xls$"
+      pivot_fn: "pivot_cmc"
+      filter_active: true
+      exclude_paths:
+        - "all_mosq"
+        - "CSU Datasheet"
+        - "CSU Data Sheet"
+    cfc:
+      path: "1_input/culex_sheet/CFC-2006-2017"
+      pattern: "CFC_Full_Raw_Data.*\\.xlsx$"
+      pivot_fn: "pivot_cfc"
+      filter_active: true
+      import_args:
+        sheet: "CombinedData"
+    bc:
+      path: "1_input/culex_sheet"
+      pattern: "(Boulder.*[Cc]ulex|Abundance_Culex).*\\.(csv|xlsx)$"
+      pivot_fn: "pivot_boulder"
+      filter_active: false
+      exclude_paths:
+        - "all_mosq"
+
+  mid_culex_clean_plot: "2_mid/culex_clean_all_spp_plot.png"
+  mid_culex0: "2_mid/culex0_raw_rbind.csv"
+  mid_database_reformat: "2_mid/database_reformat.csv"
+  mid_culex_database: "2_mid/culex_sheet_database_preaugment.csv"
+  
+  output_culex_database_expand: "3_output/culex_sheet_database_expand.csv"
+  output_culex_database: "3_output/culex_sheet_database_augment.csv"
+  output_trap_all: "3_output/culex_clean_all_spp.csv"
+  output_plot_abund: "3_output/culex_sheet_combined_abundance.png"
+  output_plot_comp: "3_output/culex_v_datasheet.png"
+  output_plot_n_trap: "3_output/n_trap_per_wk_culex_sheet.png"
+  spp_levels:
+    - "Tarsalis"
+    - "Pipiens"
+  filter_zone:
+    - "BC"
+    - "BE"
+  fc_zone:
+    - "NE"
+    - "NW"
+    - "SE"
+    - "SW"
+
+ 

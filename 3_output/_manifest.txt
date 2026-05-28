@@ -1,0 +1,138 @@
+============================================================
+  WNV-S TRAP PIPELINE MANIFEST
+  Generated: 2026-05-28 13:02:39
+  R version: R version 4.4.3 (2025-02-28)
+============================================================
+
+[config]
+  config_file:                   config/config_culex_combine.yml
+  year_start:                    2006
+  week_range:                    23 - 37
+  spp_levels:                    Tarsalis, Pipiens
+[inventory:vdci]
+  root:                          1_input/vdci
+  pattern:                       \.csv$
+  n_year_folders:                0
+  n_week_folders:                0
+  n_matched_files:               0
+  n_missing:                     0
+  missing_folders:               (none)
+[inventory:cmc_weekly]
+  root:                          1_input/cmc
+  pattern:                       LC.*Week.*\.xls$
+  n_year_folders:                0
+  n_week_folders:                0
+  n_matched_files:               0
+  n_missing:                     0
+  missing_folders:               (none)
+[inventory:cfc]
+  root:                          1_input/cfc
+  pattern:                       CFC_Full_Raw_Data.*\.xlsx$
+  n_year_folders:                0
+  n_week_folders:                0
+  n_matched_files:               0
+  n_missing:                     0
+  missing_folders:               (none)
+[inventory:bc]
+  root:                          1_input/bc
+  pattern:                       (Boulder.*[Cc]ulex|Abundance_Culex).*\.(csv|xlsx)$
+  n_year_folders:                0
+  n_week_folders:                0
+  n_matched_files:               0
+  n_missing:                     0
+  missing_folders:               (none)
+[read:vdci]
+  n_rows:                        16358
+  n_cols:                        14
+[read:cmc_weekly]
+  n_rows:                        7848
+  n_cols:                        18
+[read:cfc]
+  n_rows:                        9758
+  n_cols:                        20
+[read:bc]
+  n_rows:                        754
+  n_cols:                        8
+[clean:vdci]
+  n_raw:                         16358
+  n_after_clean:                 16358
+  n_after_dedup:                 16165
+  removed_by_dedup:              193
+[clean:cmc_weekly]
+  n_raw:                         7848
+  n_after_clean:                 7848
+  n_after_dedup:                 7838
+  removed_by_dedup:              10
+[clean:cfc]
+  n_raw:                         9758
+  n_after_clean:                 9758
+  n_after_dedup:                 7547
+  removed_by_dedup:              2211
+[clean:bc]
+  n_raw:                         754
+  n_after_clean:                 754
+  n_after_dedup:                 749
+  removed_by_dedup:              5
+[prep:vdci]
+  n_in_clean:                    16165
+  n_out_prepped:                 17420
+[prep:cmc_weekly]
+  n_in_clean:                    7838
+  n_out_prepped:                 7728
+[prep:cfc]
+  n_in_clean:                    7547
+  n_out_prepped:                 9414
+[prep:bc]
+  n_in_clean:                    749
+  n_out_prepped:                 986
+[filter:vdci]
+  filter_active:                 TRUE
+  n_in_prepped:                  17420
+  n_out_filtered:                14270
+  removed_by_filter:             3150
+[filter:cmc_weekly]
+  filter_active:                 TRUE
+  n_in_prepped:                  7728
+  n_out_filtered:                6054
+  removed_by_filter:             1674
+[filter:cfc]
+  filter_active:                 TRUE
+  n_in_prepped:                  9414
+  n_out_filtered:                8660
+  removed_by_filter:             754
+[filter:bc]
+  filter_active:                 FALSE
+  n_in_prepped:                  986
+  n_out_filtered:                986
+  removed_by_filter:             0
+[filter:dropped_by_active_filter]
+  n_total_dropped:               5576
+  n_unique_trap_ids:             41
+  output_path:                   2_mid/dropped_by_active_filter.csv
+[join:vdci]
+  n_into_skeleton:               14270
+  n_in_final_expand:             10994
+  n_unmerged:                    3276
+  balance_check:                 14270 == 10994 + 3276 : OK
+[join:cmc_weekly]
+  n_into_skeleton:               6054
+  n_in_final_expand:             4624
+  n_unmerged:                    1430
+  balance_check:                 6054 == 4624 + 1430 : OK
+[join:cfc]
+  n_into_skeleton:               8660
+  n_in_final_expand:             8660
+  n_unmerged:                    0
+  balance_check:                 8660 == 8660 + 0 : OK
+[join:bc]
+  n_into_skeleton:               986
+  n_in_final_expand:             908
+  n_unmerged:                    78
+  balance_check:                 986 == 908 + 78 : OK
+[final]
+  skeleton_rows:                 43260
+  expand_rows:                   43260
+  unmerged_rows:                 4842
+  malfunction_trap_wks:          27
+  no_mosq_trap_wks:              4624
+  no_culex_trap_wks:             48

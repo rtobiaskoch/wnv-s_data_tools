@@ -1,9 +1,4 @@
 library(testthat)
-library(dplyr)
-library(stringr)
-library(here)
-source(here::here("R/fun_wnv_s_clean.R"))
-source(here::here("R/fun_parse_flexible_date.R"))
 
 # Minimal single-observation data frame with the columns wnv_s_clean() expects
 # after key_rename() has standardised names.

@@ -1,5 +1,4 @@
 library(testthat)
-source(here::here("R/fun_assign_trap_status.R"))
 
 # Post-join skeleton: FC-001 matched (culex), FC-002/FC-003 unmatched in active
 # zone, LV-001 unmatched in a zone with NO data at all

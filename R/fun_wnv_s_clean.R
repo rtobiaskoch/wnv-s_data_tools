@@ -1,9 +1,21 @@
 #' Clean Summary
-#' @param df A data frame containing raw Culex surveillance data. Must include the columns:
-#' trap_name, date_trap_set, mosquito_species, trap_type, mosquito_count, and zone.
-#' @return statement
-#' @importFrom dplyr filter
-#' @importFrom rlang enquo
+#'
+#' Report the outcome of a per-column cleaning step in a single semantic line.
+#' Each call classifies the column's transition from `df0` -> `df` into one of:
+#'   - added              (column did not exist in input)
+#'   - no-op              (column existed, no values changed, no new NAs)
+#'   - transformed        (values changed, no new NAs introduced)
+#'   - cleaned (warning)  (values changed AND new NAs introduced)
+#'
+#' @param df0 The input data frame, before the cleaning step.
+#' @param df  The output data frame, after the cleaning step.
+#' @param col_name Unquoted column name to summarise.
+#' @param label Optional display label; defaults to the deparsed `col_name`.
+#'
+#' @return Invisibly NULL. Called for the side effect of printing a cli alert.
+#'
+#' @importFrom dplyr filter pull
+#' @importFrom rlang enquo as_name
 #' @export
 clean_summary <- function(
   df0,
@@ -11,49 +23,47 @@ clean_summary <- function(
   col_name,
   label = deparse(substitute(col_name))
 ) {
-  col <- rlang::enquo(col_name)
-
-  # Check if column exists in both dataframes
+  col        <- rlang::enquo(col_name)
   col_string <- rlang::as_name(col)
+  n_rows     <- nrow(df)
 
-  #does new column already exists in original?
-  if (col_string %in% names(df0) && col_string %in% names(df)) {
-    # coerce to character so type changes (e.g. character -> Date) don't trigger charToDate
-    changed <- sum(
-      as.character(dplyr::pull(df0, !!col)) !=
-        as.character(dplyr::pull(df, !!col)),
-      na.rm = TRUE
-    )
-    unchanged <- sum(
-      as.character(dplyr::pull(df0, !!col)) ==
-        as.character(dplyr::pull(df, !!col)),
-      na.rm = TRUE
-    )
-    # Count NA and non-NA in df
-    na0 <- df0 %>% filter(is.na(!!col)) %>% nrow()
-  } else {
-    #if not indicate it is being added
-    cat("Column", label, "is being added.\n")
-    changed <- "NA"
-    unchanged <- "NA"
-    na0 <- "NA"
+  # Case 1: column did not exist in input — it was added by the cleaning step.
+  if (!col_string %in% names(df0)) {
+    cli::cli_alert_info("{.field {label}} added ({n_rows} rows)")
+    return(invisible(NULL))
   }
-  na <- df %>% filter(is.na(!!col)) %>% nrow()
 
-  # Print summary
-  cat(
-    "\nFor rows in",
-    label,
-    ":\n",
-    changed,
-    "changed,\n",
-    unchanged,
-    "unchanged\n",
-    na0,
-    " missing in input\n",
-    na,
-    " missing in output\n"
+  # Coerce to character so type changes (e.g. character -> Date) compare
+  # correctly without triggering charToDate. Comparison uses na.rm = TRUE
+  # so NA-vs-NA rows contribute to neither changed nor unchanged.
+  old_vals <- as.character(dplyr::pull(df0, !!col))
+  new_vals <- as.character(dplyr::pull(df,  !!col))
+
+  changed       <- sum(old_vals != new_vals, na.rm = TRUE)
+  na_in         <- sum(is.na(old_vals))
+  na_out        <- sum(is.na(new_vals))
+  na_introduced <- max(0L, na_out - na_in)
+
+  # Case 2: nothing happened to this column — quiet bullet.
+  if (changed == 0 && na_introduced == 0) {
+    cli::cli_alert("{.field {label}} no-op")
+    return(invisible(NULL))
+  }
+
+  # Case 3: values changed AND new NAs appeared — surface as warning so the
+  # user notices that some rows were nullified (e.g. failed regex, bad parse).
+  if (na_introduced > 0) {
+    cli::cli_alert_warning(
+      "{.field {label}} cleaned ({changed} changed, {na_introduced} new NA)"
+    )
+    return(invisible(NULL))
+  }
+
+  # Case 4: clean transformation — values changed, no NA introduced.
+  cli::cli_alert_success(
+    "{.field {label}} transformed ({changed}/{n_rows} rows changed)"
   )
+  invisible(NULL)
 }
 
 #' Clean a Culex Surveillance Data Sheet
@@ -176,15 +186,19 @@ wnv_s_clean <- function(
   # columns (e.g. prep_for_skeleton's distinct()) works without errors.
   # Specifying zone exactly (NE/NW/SE/SW) is impossible from trap_id alone
   # for Fort Collins — those rows carry zone = "FC" as the best available value.
-  if (!"zone2" %in% names(df) && "zone2" %in% col_2_clean && "trap_id" %in% names(df)) {
+  if (
+    !"zone2" %in% names(df) &&
+      "zone2" %in% col_2_clean &&
+      "trap_id" %in% names(df)
+  ) {
     df <- df %>%
       mutate(
         zone2 = case_when(
-          str_detect(trap_id, "^(?i)FC")          ~ "FC",
-          str_detect(trap_id, "^(?i)LV")          ~ "LV",
-          str_detect(trap_id, "^(?i)(BE|LC|WC)")  ~ "BE",
-          str_detect(trap_id, "^(?i)BC")          ~ "BC",
-          TRUE                                    ~ NA_character_
+          str_detect(trap_id, "^(?i)FC") ~ "FC",
+          str_detect(trap_id, "^(?i)LV") ~ "LV",
+          str_detect(trap_id, "^(?i)(BE|LC|WC)") ~ "BE",
+          str_detect(trap_id, "^(?i)BC") ~ "BC",
+          TRUE ~ NA_character_
         )
       )
     if (!"zone" %in% names(df)) {
@@ -233,11 +247,20 @@ wnv_s_clean <- function(
     clean_summary(df0, df, week)
   }
 
+  # CLEAN TRAP_ID — strip all whitespace and uppercase. Source spreadsheets
+  # have introduced case and internal-whitespace variation (e.g. "lc-001",
+  # "LC- 001") that must be canonicalised before joins and method derivation.
+  if ("trap_id" %in% names(df) && "trap_id" %in% col_2_clean) {
+    df <- df %>%
+      mutate(trap_id = toupper(stringr::str_remove_all(trap_id, "\\s+")))
+
+    clean_summary(df0, df, trap_id)
+  }
+
   #GET METHOD
   if ("trap_id" %in% names(df) && "trap_id" %in% col_2_clean) {
     df <- df %>%
       mutate(
-        trap_id = toupper(trap_id),
         method = case_when(
           str_detect(tolower(trap_id), "gr") ~ "G",
           TRUE ~ "L"
@@ -270,14 +293,25 @@ wnv_s_clean <- function(
       dplyr::mutate(
         trap_status = dplyr::case_when(
           # Standardise legacy uppercase "No Traps" set by expand_trap_spp()
-          any(trap_status %in% c("No Traps", "no trap"), na.rm = TRUE) ~ "no trap",
+          any(
+            trap_status %in% c("No Traps", "no trap"),
+            na.rm = TRUE
+          ) ~ "no trap",
           any(trap_status == "malfunction", na.rm = TRUE) ~ "malfunction",
-          any(stringr::str_detect(
-            spp0, "(?i)malfunction|stolen|vandalized"
-          ), na.rm = TRUE) ~ "malfunction",
-          any(stringr::str_detect(
-            spp0, "(?i)no mosquitoes"
-          ), na.rm = TRUE) ~ "no mosquitoes",
+          any(
+            stringr::str_detect(
+              spp0,
+              "(?i)malfunction|stolen|vandalized"
+            ),
+            na.rm = TRUE
+          ) ~ "malfunction",
+          any(
+            stringr::str_detect(
+              spp0,
+              "(?i)no mosquitoes"
+            ),
+            na.rm = TRUE
+          ) ~ "no mosquitoes",
           # total > 0 guard: 0-fill rows added by spp expansion must not
           # trigger "culex" for trap-weeks where nothing was actually caught
           any(
@@ -300,7 +334,9 @@ wnv_s_clean <- function(
     df <- df %>%
       dplyr::mutate(
         total = dplyr::if_else(
-          trap_status == "malfunction", NA_real_, as.numeric(total)
+          trap_status == "malfunction",
+          NA_real_,
+          as.numeric(total)
         )
       )
 
@@ -313,10 +349,13 @@ wnv_s_clean <- function(
     df <- df %>%
       dplyr::mutate(
         spp = dplyr::case_when(
-          stringr::str_detect(spp, "(?i)Tarsalis")                         ~ "Tarsalis",
-          stringr::str_detect(spp, "(?i)Pipiens")                          ~ "Pipiens",
-          stringr::str_detect(spp, "(?i)malfunction|stolen|no mosquitoes") ~ "none",
-          TRUE                                                               ~ "non culex"
+          stringr::str_detect(spp, "(?i)Tarsalis") ~ "Tarsalis",
+          stringr::str_detect(spp, "(?i)Pipiens") ~ "Pipiens",
+          stringr::str_detect(
+            spp,
+            "(?i)malfunction|stolen|no mosquitoes"
+          ) ~ "none",
+          TRUE ~ "non culex"
         )
       )
     clean_summary(df0, df, spp)

@@ -1,0 +1,28 @@
+Package: trapHxCombiner
+Type: Package
+Title: WNV Surveillance Trap Historical Abundance Combiner
+Version: 0.1.0
+Authors@R: person("Robert", "Koch", email = "r.tobiaskoch@gmail.com",
+    role = c("aut", "cre"))
+Description: Combines trap-level mosquito surveillance data from VDCI, CMC,
+    CFC, and Boulder County sources to compute historical West Nile virus
+    abundance metrics for northern Colorado surveillance programs.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports:
+    cli,
+    dplyr,
+    lubridate,
+    purrr,
+    rlang,
+    rio,
+    stringr,
+    tibble,
+    tidyr,
+    yaml
+Suggests:
+    devtools,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

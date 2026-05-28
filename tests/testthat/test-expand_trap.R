@@ -1,7 +1,4 @@
 library(testthat)
-source(here::here("R/fun_expand_trap.R"))
-source(here::here("R/fun_row_wise_expand.R"))
-source(here::here("R/fun_make_key.R"))
 
 # Minimal trap reference: one active FC trap, one inactive BC trap
 make_trap_ref <- function() {

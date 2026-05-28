@@ -1,6 +1,4 @@
 library(testthat)
-source(here::here("R/fun_prep_for_skeleton.R"))
-source(here::here("R/fun_make_key.R"))
 
 # Minimal helper — a single cleaned culex observation as wnv_s_clean() would produce.
 # NOTE on spp vs trap_status:

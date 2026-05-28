@@ -16,9 +16,8 @@
 #' # Count by multiple grouping variables
 #' plot_n(mtcars, cyl, gear)
 #'
-#' @import dplyr group_by count mutate
+#' @importFrom dplyr group_by count mutate
 #' @import ggplot2
-#' @import forcats fct_reorder
 #' @importFrom tidyr unite
 #' @export
 plot_n <- function(df, ...) {
