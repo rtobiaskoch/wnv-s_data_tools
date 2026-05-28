@@ -1,6 +1,6 @@
 ============================================================
   WNV-S TRAP PIPELINE MANIFEST
-  Generated: 2026-05-28 13:02:39
+  Generated: 2026-05-28 16:47:17
   R version: R version 4.4.3 (2025-02-28)
 ============================================================
 
@@ -10,40 +10,24 @@
   week_range:                    23 - 37
   spp_levels:                    Tarsalis, Pipiens
 [inventory:vdci]
-  root:                          1_input/vdci
+  path:                          1_input/vdci
   pattern:                       \.csv$
-  n_year_folders:                0
-  n_week_folders:                0
-  n_matched_files:               0
-  n_missing:                     0
-  missing_folders:               (none)
+  n_files:                       103
 [inventory:cmc_weekly]
-  root:                          1_input/cmc
+  path:                          1_input/cmc
   pattern:                       LC.*Week.*\.xls$
-  n_year_folders:                0
-  n_week_folders:                0
-  n_matched_files:               0
-  n_missing:                     0
-  missing_folders:               (none)
+  n_files:                       38
 [inventory:cfc]
-  root:                          1_input/cfc
+  path:                          1_input/cfc
   pattern:                       CFC_Full_Raw_Data.*\.xlsx$
-  n_year_folders:                0
-  n_week_folders:                0
-  n_matched_files:               0
-  n_missing:                     0
-  missing_folders:               (none)
+  n_files:                       1
 [inventory:bc]
-  root:                          1_input/bc
+  path:                          1_input/bc
   pattern:                       (Boulder.*[Cc]ulex|Abundance_Culex).*\.(csv|xlsx)$
-  n_year_folders:                0
-  n_week_folders:                0
-  n_matched_files:               0
-  n_missing:                     0
-  missing_folders:               (none)
+  n_files:                       63
 [read:vdci]
-  n_rows:                        16358
-  n_cols:                        14
+  n_rows:                        30599
+  n_cols:                        12
 [read:cmc_weekly]
   n_rows:                        7848
   n_cols:                        18
@@ -54,10 +38,10 @@
   n_rows:                        754
   n_cols:                        8
 [clean:vdci]
-  n_raw:                         16358
-  n_after_clean:                 16358
-  n_after_dedup:                 16165
-  removed_by_dedup:              193
+  n_raw:                         30599
+  n_after_clean:                 30599
+  n_after_dedup:                 30003
+  removed_by_dedup:              596
 [clean:cmc_weekly]
   n_raw:                         7848
   n_after_clean:                 7848
@@ -74,8 +58,8 @@
   n_after_dedup:                 749
   removed_by_dedup:              5
 [prep:vdci]
-  n_in_clean:                    16165
-  n_out_prepped:                 17420
+  n_in_clean:                    30003
+  n_out_prepped:                 18262
 [prep:cmc_weekly]
   n_in_clean:                    7838
   n_out_prepped:                 7728
@@ -87,9 +71,9 @@
   n_out_prepped:                 986
 [filter:vdci]
   filter_active:                 TRUE
-  n_in_prepped:                  17420
-  n_out_filtered:                14270
-  removed_by_filter:             3150
+  n_in_prepped:                  18262
+  n_out_filtered:                15666
+  removed_by_filter:             2596
 [filter:cmc_weekly]
   filter_active:                 TRUE
   n_in_prepped:                  7728
@@ -106,14 +90,14 @@
   n_out_filtered:                986
   removed_by_filter:             0
 [filter:dropped_by_active_filter]
-  n_total_dropped:               5576
-  n_unique_trap_ids:             41
+  n_total_dropped:               5024
+  n_unique_trap_ids:             39
   output_path:                   2_mid/dropped_by_active_filter.csv
 [join:vdci]
-  n_into_skeleton:               14270
-  n_in_final_expand:             10994
-  n_unmerged:                    3276
-  balance_check:                 14270 == 10994 + 3276 : OK
+  n_into_skeleton:               15666
+  n_in_final_expand:             11914
+  n_unmerged:                    3752
+  balance_check:                 15666 == 11914 + 3752 : OK
 [join:cmc_weekly]
   n_into_skeleton:               6054
   n_in_final_expand:             4624
@@ -132,7 +116,7 @@
 [final]
   skeleton_rows:                 43260
   expand_rows:                   43260
-  unmerged_rows:                 4842
-  malfunction_trap_wks:          27
-  no_mosq_trap_wks:              4624
-  no_culex_trap_wks:             48
+  unmerged_rows:                 5318
+  malfunction_trap_wks:          54
+  no_mosq_trap_wks:              4394
+  no_culex_trap_wks:             277

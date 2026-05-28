@@ -26,6 +26,8 @@ default:
       pattern: "\\.csv$"
       pivot_fn: null
       filter_active: true
+      exclude_paths:
+        - "archive"
     cmc_weekly:
       path: "1_input/cmc"
       pattern: "LC.*Week.*\\.xls$"

@@ -53,6 +53,7 @@ cfg <- config::get(file = here::here("config", "config_culex_combine.yml"),
                    config = "default")
 
 input = file.path(here::here(), cfg$path)
+cfg$manifest <- here::here(cfg$manifest)  # resolve to absolute so wd changes don't matter
 
 manifest_init(cfg$manifest)
 manifest_log(cfg$manifest, "config",
@@ -662,6 +663,19 @@ manifest_log(cfg$manifest, "final",
              no_culex_trap_wks    = n_final_no_culex)
 
 write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = FALSE)
+```
+
+#------------------------ P L O T  ----------------------------------
+# DESCRIPTION: Plot results for visual checks
+# Zone-week present in data → "no mosquitoes"; zone-week entirely absent → "no trap".
+```{r, plot}
+
+# spp column: raw species label used for validation alongside trap_status
+p_culex_spp <- plot_all_spp(culex_database_expand, "zone2", spp_col = "spp")
+p_culex_spp
+
+ggplot2::ggsave(plot = p_culex_spp, filename = "3_output/culex_counts.png",
+                width = 12, height = 6)
 
 p_trap_n <- plot_n_trap(culex_database_expand) +
   ggplot2::ggtitle("N traps by Zone")

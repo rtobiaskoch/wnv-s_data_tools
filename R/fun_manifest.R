@@ -7,8 +7,8 @@
 #' @param path Character. Path to the manifest file.
 #' @return Invisibly returns the path.
 #' @export
-manifest_init <- function(path) {
-  dir.create(dirname(path), showWarnings = FALSE, recursive = TRUE)
+manifest_init <- function(manifest_path) {
+  dir.create(dirname(manifest_path), showWarnings = FALSE, recursive = TRUE)
   lines <- c(
     "============================================================",
     "  WNV-S TRAP PIPELINE MANIFEST",
@@ -17,8 +17,8 @@ manifest_init <- function(path) {
     "============================================================",
     ""
   )
-  writeLines(lines, path)
-  invisible(path)
+  writeLines(lines, manifest_path)
+  invisible(manifest_path)
 }
 
 #' Append a Labeled Entry to the Manifest
@@ -30,7 +30,7 @@ manifest_init <- function(path) {
 #' @param label Character. Section heading for this entry.
 #' @param ...   Named arguments. Each becomes one indented line.
 #' @export
-manifest_log <- function(path, label, ...) {
+manifest_log <- function(manifest_path, label, ...) {
   args <- list(...)
   body <- if (length(args) == 0L) {
     character()
@@ -42,9 +42,9 @@ manifest_log <- function(path, label, ...) {
     })
   }
   lines <- c(paste0("[", label, "]"), body, "")
-  cat(paste(lines, collapse = "\n"), file = path, append = TRUE)
+  cat(paste(lines, collapse = "\n"), file = manifest_path, append = TRUE)
   cat(paste(lines, collapse = "\n"), "\n")
-  invisible(path)
+  invisible(manifest_path)
 }
 
 #' Count Source Files Matching a Pattern
