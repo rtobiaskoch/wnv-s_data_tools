@@ -111,19 +111,13 @@ sources_raw <- purrr::imap(cfg$sources, function(src, src_name) {
   )
 })
 
-# Inventory week-level folders per source for the manifest
+# Inventory files per source for the manifest
 purrr::iwalk(cfg$sources, function(src, src_name) {
-  inv_root <- "1_input/culex_sheet"
-  inv <- inventory_week_folders(inv_root, src$pattern)
+  inv <- inventory_source(src$path, src$pattern)
   manifest_log(cfg$manifest, paste0("inventory:", src_name),
-               root            = inv_root,
-               pattern         = src$pattern,
-               n_year_folders  = inv$n_year_folders,
-               n_week_folders  = inv$n_week_folders,
-               n_matched_files = inv$n_matched,
-               n_missing       = length(inv$missing_folders),
-               missing_folders = if (length(inv$missing_folders) == 0L) "(none)"
-                                 else inv$missing_folders)
+               path    = src$path,
+               pattern = src$pattern,
+               n_files = inv$n_files)
 })
 
 # Raw row counts per source
@@ -287,6 +281,30 @@ sources_filtered <- purrr::imap(sources_prepped, function(df, src_name) {
   out
 })
 purrr::iwalk(sources_filtered, ~ cat(sprintf("filtered %-12s rows: %d\n", .y, nrow(.x))))
+
+# Capture rows dropped by the active-trap semi_join inside filter_culex_sheet().
+# Without this sink, trap_ids that are NOT in foco_trap (e.g. typo'd names like
+# "FC-033075") disappear silently — they never reach fill_skeleton(), so they
+# never appear in unmerged_data.csv. The mirror logic below applies the same
+# NA-clean + distinct steps that filter_culex_sheet() performs before its
+# semi_join, then anti_joins trap_keep_df to capture exactly the rows removed
+# by the active-trap filter (case 3 of filter_culex_sheet's three drops).
+dropped_by_filter <- purrr::imap_dfr(sources_prepped, function(df, src_name) {
+  src <- cfg$sources[[src_name]]
+  if (!isTRUE(src$filter_active) || nrow(df) == 0L) return(tibble::tibble())
+  df %>%
+    dplyr::filter(!is.na(.data[[cfg$na_col]]), nchar(.data[[cfg$na_col]]) > 0) %>%
+    dplyr::distinct() %>%
+    dplyr::anti_join(trap_keep_df, by = cfg$na_col) %>%
+    dplyr::mutate(source = src_name)
+})
+
+write.csv(dropped_by_filter, cfg$mid_dropped_by_filter, row.names = FALSE)
+
+manifest_log(cfg$manifest, "filter:dropped_by_active_filter",
+             n_total_dropped   = nrow(dropped_by_filter),
+             n_unique_trap_ids = dplyr::n_distinct(dropped_by_filter$trap_id),
+             output_path       = cfg$mid_dropped_by_filter)
 ```
 
 #--------------------------------  F I L T E R  ------------------------------------------------

@@ -17,20 +17,13 @@ test_that("manifest_log appends without truncating", {
   expect_true(any(grepl("12345", txt)))
 })
 
-test_that("inventory_week_folders flags week folders missing a matched file", {
+test_that("inventory_source counts files matching pattern", {
   tmp <- tempfile()
-  dir.create(file.path(tmp, "WNV-s 2020 (X)", "Week 24", "Data from VDCI"),
-             recursive = TRUE)
-  dir.create(file.path(tmp, "WNV-s 2020 (X)", "Week 25"), recursive = TRUE)
-  file.create(file.path(tmp, "WNV-s 2020 (X)", "Week 24", "Data from VDCI",
-                        "LC Week24_2020_Culex.csv"))
-  result <- inventory_week_folders(
-    root    = tmp,
-    pattern = "LC Week.*Culex\\.csv$"
-  )
-  expect_equal(result$n_year_folders, 1L)
-  expect_equal(result$n_week_folders, 2L)
-  expect_equal(result$n_matched, 1L)
-  expect_equal(length(result$missing_folders), 1L)
-  expect_true(grepl("Week 25", result$missing_folders))
+  dir.create(file.path(tmp), recursive = TRUE)
+  file.create(file.path(tmp, "LC Week24_2020_Culex.csv"))
+  file.create(file.path(tmp, "LC Week25_2020_Culex.csv"))
+  file.create(file.path(tmp, "readme.txt"))
+  result <- inventory_source(tmp, pattern = "\\.csv$")
+  expect_equal(result$n_files, 2L)
+  expect_true(all(grepl("\\.csv$", result$files)))
 })

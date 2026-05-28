@@ -47,35 +47,21 @@ manifest_log <- function(path, label, ...) {
   invisible(path)
 }
 
-#' Inventory Week-Level Folders Under WNV-s Year Folders
+#' Count Source Files Matching a Pattern
 #'
-#' Walks `root`, finds each `WNV-s YYYY*` year folder, then finds each
-#' `Week WW` or `wWW` subfolder. Reports how many of those week folders
-#' contain at least one file matching `pattern` (recursively).
+#' Recursively lists files under `path` matching `pattern` and returns
+#' the count and file names. Replaces the old week-folder inventory which
+#' assumed a nested WNV-s YYYY/Week WW structure.
 #'
-#' @param root    Character. Root directory holding `WNV-s YYYY*` folders.
-#' @param pattern Character. Regex for the target trap file.
-#' @return Named list: n_year_folders, n_week_folders, n_matched,
-#'   missing_folders (character vector of week folders without a match).
+#' @param path    Character. Root directory to search.
+#' @param pattern Character. Regex passed to list.files().
+#' @return Named list: n_files (integer), files (character vector of paths).
 #' @export
-inventory_week_folders <- function(root, pattern) {
-  year_folders <- list.dirs(root, recursive = FALSE)
-  year_folders <- year_folders[grepl("WNV-s 20", basename(year_folders))]
-
-  week_folders <- unlist(lapply(year_folders, function(yf) {
-    sub <- list.dirs(yf, recursive = FALSE)
-    sub[grepl("^(Week\\s*\\d+|w\\d+)$", basename(sub), ignore.case = TRUE)]
-  }))
-
-  matched <- vapply(week_folders, function(wf) {
-    length(list.files(wf, pattern = pattern,
-                      recursive = TRUE, ignore.case = TRUE)) > 0L
-  }, logical(1))
-
+inventory_source <- function(path, pattern) {
+  files <- list.files(path, pattern = pattern,
+                      recursive = TRUE, ignore.case = TRUE, full.names = FALSE)
   list(
-    n_year_folders  = length(year_folders),
-    n_week_folders  = length(week_folders),
-    n_matched       = sum(matched),
-    missing_folders = week_folders[!matched]
+    n_files = length(files),
+    files   = files
   )
 }
