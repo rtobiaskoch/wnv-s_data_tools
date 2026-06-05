@@ -11,6 +11,11 @@ pkg = c("dplyr", "lubridate", "purrr", "stringr", "ggplot2", "tidyr", "janitor")
 cat("\n Loading required packages: ", pkg, "\n")
 pacman::p_load(pkg, character.only = TRUE)
 
+# Shared surveillance functions (single source of truth). Provides
+# calc_season_week(): the seasonal-week rule used IDENTICALLY here and in the
+# weekly report so pool and trap-count weeks always match. See wnv-ss_functions.
+library(wnvSurv)
+
 #USER DEFINED FUNCTIONS
 # utils <- list.files(file.path(here::here(),"utils"), pattern = "*", full.names = TRUE)
 # walk(utils, source)
@@ -184,6 +189,7 @@ clean_one <- function(df_raw, src_name) {
     return(tibble::tibble(
       key = character(), trap_id = character(), zone = character(),
       zone2 = character(), year = integer(), week = integer(),
+      week_submitted = integer(),
       trap_date = as.Date(character()), method = character(),
       spp = character(), spp0 = character(),
       trap_status = character(), total = numeric()
@@ -220,6 +226,17 @@ purrr::iwalk(sources_cleaned, ~ cat(sprintf("cleaned %-12s rows: %d\n", .y, nrow
 # Tarsalis/Pipiens subset that ends up in the skeleton.
 culex_clean <- dplyr::bind_rows(sources_cleaned, .id = "source")
 write.csv(culex_clean, cfg$output_trap_all, row.names = FALSE)
+
+# Bookkeeping lookup: the original submitter-entered week per trap-date, captured
+# from the cleaned sources BEFORE prep_for_skeleton drops the column. Deduplicated
+# to one value per (trap_id, spp, year, trap_date) — the QC warning in wnv_s_clean
+# already surfaces where this disagrees with the corrected week. Joined onto the
+# final expanded database at output assembly so the correction stays auditable.
+week_submitted_lookup <- culex_clean %>%
+  dplyr::filter(!is.na(trap_date)) %>%
+  dplyr::distinct(trap_id, spp, year, trap_date, week_submitted) %>%
+  dplyr::group_by(trap_id, spp, year, trap_date) %>%
+  dplyr::summarise(week_submitted = dplyr::first(week_submitted), .groups = "drop")
 
 p_culex_clean <- plot_all_spp(culex_clean, "zone2")
 p_culex_clean
@@ -661,6 +678,17 @@ manifest_log(cfg$manifest, "final",
              malfunction_trap_wks = n_final_malfunction,
              no_mosq_trap_wks     = n_final_no_mosq,
              no_culex_trap_wks    = n_final_no_culex)
+
+# Add raw MMWR epiweek for external submission (e.g. VectorSurv). Derived purely
+# from the final trap_date, so imputed / "no trap" rows (which carry no date)
+# correctly get NA. `week` (seasonal) was already set by wnv_s_clean / the
+# skeleton; epiweek is a passenger column and is not part of any join key.
+# Also attach the original submitter-entered week (week_submitted) for provenance;
+# imputed / no-trap rows have no source record so they get NA.
+culex_database_expand <- culex_database_expand %>%
+  dplyr::mutate(epiweek = lubridate::epiweek(trap_date)) %>%
+  dplyr::left_join(week_submitted_lookup,
+                   by = c("trap_id", "spp", "year", "trap_date"))
 
 write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = FALSE)
 ```

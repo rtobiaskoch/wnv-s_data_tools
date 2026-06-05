@@ -229,6 +229,10 @@ wnv_s_clean <- function(
     has_year <- "year" %in% names(df)
     has_week <- "week" %in% names(df)
 
+    # Capture the submitter-entered week (if present) before we overwrite it, so
+    # disagreements with the date-derived week can be surfaced as a QC signal.
+    submitter_week <- if (has_week) as.integer(df$week) else NA_integer_
+
     df <- df %>%
       mutate(
         year = if (has_year) {
@@ -236,16 +240,32 @@ wnv_s_clean <- function(
         } else {
           lubridate::year(trap_date)
         },
-        week = if (has_week) {
-          dplyr::coalesce(as.integer(week), lubridate::isoweek(trap_date))
-        } else {
-          lubridate::isoweek(trap_date)
-        }
+        # Seasonal/reported week from trap_date is the SINGLE week authority
+        # (wnvSurv::calc_season_week): the first full week of June is always week
+        # 23, leap-week-stable. This is the IDENTICAL rule the weekly report
+        # applies to incoming pools and counts, so a pool and the trap count it
+        # came from always land in the same week. The submitter-typed week is no
+        # longer trusted for the value (only used for the QC check below).
+        week = wnvSurv::calc_season_week(trap_date),
+        # Bookkeeping: keep the original human-entered week (NA if none) so the
+        # corrected `week` stays auditable in the final database.
+        week_submitted = submitter_week
       )
+
+    # QC: flag rows where the submitter-typed week disagrees with the
+    # date-derived week by more than 1 (usually a bad Trap Date or mis-keyed week).
+    if (has_week) {
+      n_wk_mismatch <- sum(abs(submitter_week - df$week) > 1, na.rm = TRUE)
+      if (n_wk_mismatch > 0) {
+        cli::cli_alert_warning(
+          "{n_wk_mismatch} row{?s}: submitter week differs from trap_date-derived week by >1 (check Trap Date)"
+        )
+      }
+    }
 
     clean_summary(df0, df, year)
     clean_summary(df0, df, week)
-  }
+  } #end if trap_date
 
   # CLEAN TRAP_ID — strip all whitespace and uppercase. Source spreadsheets
   # have introduced case and internal-whitespace variation (e.g. "lc-001",

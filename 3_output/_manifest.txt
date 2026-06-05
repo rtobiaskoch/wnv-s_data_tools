@@ -1,6 +1,6 @@
 ============================================================
   WNV-S TRAP PIPELINE MANIFEST
-  Generated: 2026-05-28 16:47:17
+  Generated: 2026-06-05 12:45:09
   R version: R version 4.4.3 (2025-02-28)
 ============================================================
 
@@ -40,8 +40,8 @@
 [clean:vdci]
   n_raw:                         30599
   n_after_clean:                 30599
-  n_after_dedup:                 30003
-  removed_by_dedup:              596
+  n_after_dedup:                 30439
+  removed_by_dedup:              160
 [clean:cmc_weekly]
   n_raw:                         7848
   n_after_clean:                 7848
@@ -50,30 +50,30 @@
 [clean:cfc]
   n_raw:                         9758
   n_after_clean:                 9758
-  n_after_dedup:                 7547
-  removed_by_dedup:              2211
+  n_after_dedup:                 7540
+  removed_by_dedup:              2218
 [clean:bc]
   n_raw:                         754
   n_after_clean:                 754
   n_after_dedup:                 749
   removed_by_dedup:              5
 [prep:vdci]
-  n_in_clean:                    30003
-  n_out_prepped:                 18262
+  n_in_clean:                    30439
+  n_out_prepped:                 18518
 [prep:cmc_weekly]
   n_in_clean:                    7838
   n_out_prepped:                 7728
 [prep:cfc]
-  n_in_clean:                    7547
-  n_out_prepped:                 9414
+  n_in_clean:                    7540
+  n_out_prepped:                 9398
 [prep:bc]
   n_in_clean:                    749
   n_out_prepped:                 986
 [filter:vdci]
   filter_active:                 TRUE
-  n_in_prepped:                  18262
-  n_out_filtered:                15666
-  removed_by_filter:             2596
+  n_in_prepped:                  18518
+  n_out_filtered:                15908
+  removed_by_filter:             2610
 [filter:cmc_weekly]
   filter_active:                 TRUE
   n_in_prepped:                  7728
@@ -81,33 +81,33 @@
   removed_by_filter:             1674
 [filter:cfc]
   filter_active:                 TRUE
-  n_in_prepped:                  9414
-  n_out_filtered:                8660
-  removed_by_filter:             754
+  n_in_prepped:                  9398
+  n_out_filtered:                8646
+  removed_by_filter:             752
 [filter:bc]
   filter_active:                 FALSE
   n_in_prepped:                  986
   n_out_filtered:                986
   removed_by_filter:             0
 [filter:dropped_by_active_filter]
-  n_total_dropped:               5024
+  n_total_dropped:               5036
   n_unique_trap_ids:             39
   output_path:                   2_mid/dropped_by_active_filter.csv
 [join:vdci]
-  n_into_skeleton:               15666
-  n_in_final_expand:             11914
-  n_unmerged:                    3752
-  balance_check:                 15666 == 11914 + 3752 : OK
+  n_into_skeleton:               15908
+  n_in_final_expand:             12252
+  n_unmerged:                    3656
+  balance_check:                 15908 == 12252 + 3656 : OK
 [join:cmc_weekly]
   n_into_skeleton:               6054
   n_in_final_expand:             4624
   n_unmerged:                    1430
   balance_check:                 6054 == 4624 + 1430 : OK
 [join:cfc]
-  n_into_skeleton:               8660
-  n_in_final_expand:             8660
-  n_unmerged:                    0
-  balance_check:                 8660 == 8660 + 0 : OK
+  n_into_skeleton:               8646
+  n_in_final_expand:             8578
+  n_unmerged:                    68
+  balance_check:                 8646 == 8578 + 68 : OK
 [join:bc]
   n_into_skeleton:               986
   n_in_final_expand:             908
@@ -116,7 +116,7 @@
 [final]
   skeleton_rows:                 43260
   expand_rows:                   43260
-  unmerged_rows:                 5318
-  malfunction_trap_wks:          54
-  no_mosq_trap_wks:              4394
-  no_culex_trap_wks:             277
+  unmerged_rows:                 5396
+  malfunction_trap_wks:          51
+  no_mosq_trap_wks:              4344
+  no_culex_trap_wks:             295
