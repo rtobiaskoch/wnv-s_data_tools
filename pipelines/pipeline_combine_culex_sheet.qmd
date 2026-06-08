@@ -43,11 +43,11 @@ source("R/fun_rm_grp_NA.R")            # rm_grp_na
 source("R/fun_fix_zone.R")             # fix_zone_from_ref
 source("R/fun_plot_all_spp.R")
 source("R/fun_dedup_culex.R")       # culex_dedup
-source("R/fun_make_key.R")
 source("R/fun_expand_trap.R")          # expand_trap
 source("R/fun_assign_trap_status.R")   # assign_trap_status_post_expand
 source("R/fun_fill_skeleton.R")        # fill_skeleton, collect_unmerged
 source("R/fun_prep_for_skeleton.R")    # prep_for_skeleton
+source("R/fun_plot_abundance.R")
 ```
 
 #--------------------------------  C O N F I G  ------------------------------------------------
@@ -697,6 +697,14 @@ write.csv(culex_database_expand, cfg$output_culex_database_expand, row.names = F
 # DESCRIPTION: Plot results for visual checks
 # Zone-week present in data → "no mosquitoes"; zone-week entirely absent → "no trap".
 ```{r, plot}
+abund = wnvSurv::calc_abund(culex_database_expand, grp_var = c("zone2", "year", "week", "spp"))
+
+p_abund = plot_abund(abund)
+p_abund
+ggplot2::ggsave(plot = p_abund, "3_output/plot_abund_culex_datasheet_expand.png",
+                width = 12, height = 10)
+
+
 
 # spp column: raw species label used for validation alongside trap_status
 p_culex_spp <- plot_all_spp(culex_database_expand, "zone2", spp_col = "spp")

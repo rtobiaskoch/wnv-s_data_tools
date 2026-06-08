@@ -61,8 +61,8 @@ culex_dedup = function(df, key_cols = c("trap_id", "year", "week")) {
   }
 
   # Build a single composite key column for all grouping and joining below.
-  # make_key() strips non-alphanumeric chars from values; "|" sep is preserved.
-  df <- make_key(df, key_cols, name = "dedup_key")
+  # wnvSurv::make_key() strips non-alphanumeric chars from values; "|" sep is preserved.
+  df <- wnvSurv::make_key(df, key_cols, name = "dedup_key")
 
   # Identify trap-weeks that have more than one distinct collection date AND
   # at least one of those dates falls on a weekend (wday 1 = Sunday, 7 = Saturday).

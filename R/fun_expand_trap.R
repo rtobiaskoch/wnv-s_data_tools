@@ -123,5 +123,5 @@ expand_trap <- function(
     dplyr::select(trap_id, zone, zone2, method, year, week, spp)
 
   # Append composite key: trap_id|spp|year|week (non-alphanumeric stripped)
-  make_key(skeleton, key_cols = c("trap_id", "spp", "year", "week"))
+  wnvSurv::make_key(skeleton, key_cols = c("trap_id", "spp", "year", "week"))
 }

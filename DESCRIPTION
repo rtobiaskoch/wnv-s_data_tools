@@ -21,8 +21,11 @@ Imports:
     stringr,
     tibble,
     tidyr,
+    wnvSurv,
     yaml
 Suggests:
     devtools,
     testthat (>= 3.0.0)
+Remotes:
+    rtobiaskoch/wnv-ss_functions
 Config/testthat/edition: 3

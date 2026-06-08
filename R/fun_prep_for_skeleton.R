@@ -72,7 +72,7 @@ prep_for_skeleton <- function(df, spp_levels) {
 
   dplyr::bind_rows(culex_complete, status_expanded) %>%
     # Rebuild key: spp has changed from "none"/"non culex" to spp_levels values
-    make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
+    wnvSurv::make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
     # Guard against duplicate keys from the same trap having two dates in one
     # week (culex_dedup should prevent this, but defensive dedup is cheap)
     dplyr::distinct(key, .keep_all = TRUE) %>%
