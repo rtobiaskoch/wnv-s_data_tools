@@ -4,7 +4,7 @@
 \alias{manifest_init}
 \title{Initialise / Truncate the Pipeline Manifest File}
 \usage{
-manifest_init(path)
+manifest_init(manifest_path)
 }
 \arguments{
 \item{path}{Character. Path to the manifest file.}

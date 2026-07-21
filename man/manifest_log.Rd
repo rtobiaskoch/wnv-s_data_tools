@@ -4,14 +4,14 @@
 \alias{manifest_log}
 \title{Append a Labeled Entry to the Manifest}
 \usage{
-manifest_log(path, label, ...)
+manifest_log(manifest_path, label, ...)
 }
 \arguments{
-\item{path}{Character. Manifest file path.}
-
 \item{label}{Character. Section heading for this entry.}
 
 \item{...}{Named arguments. Each becomes one indented line.}
+
+\item{path}{Character. Manifest file path.}
 }
 \description{
 Writes one block per call. Named arguments become indented lines under

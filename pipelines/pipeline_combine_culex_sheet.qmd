@@ -29,7 +29,11 @@ source("R/fun_pivot_cfc.R")
 source("R/fun_pivot_boulder.R")
 source("R/fun_manifest.R")
 source("R/key_rename.R")
-source("R/fun_wnv_s_clean.R")
+# wnv_s_clean() now comes from wnvSurv (loaded above) -- the local fork was
+# archived to sandbox/graveyard/. It was non-idempotent: re-processing its own
+# output overwrote spp0 with the already-cleaned spp, and overwrote
+# week_submitted with the previous run's corrected week.
+# source("R/fun_wnv_s_clean.R")
 source("R/fun_parse_flexible_date.R")
 source("R/fun_filter_culex_sheet.R")
 source("R/fun_plot_n_trap.R")
@@ -44,7 +48,8 @@ source("R/fun_fix_zone.R")             # fix_zone_from_ref
 source("R/fun_plot_all_spp.R")
 source("R/fun_dedup_culex.R")       # culex_dedup
 source("R/fun_expand_trap.R")          # expand_trap
-source("R/fun_assign_trap_status.R")   # assign_trap_status_post_expand
+# assign_trap_status() now comes from wnvSurv (was assign_trap_status_post_expand)
+# source("R/fun_assign_trap_status.R")
 source("R/fun_fill_skeleton.R")        # fill_skeleton, collect_unmerged
 source("R/fun_prep_for_skeleton.R")    # prep_for_skeleton
 source("R/fun_plot_abundance.R")
@@ -198,7 +203,7 @@ clean_one <- function(df_raw, src_name) {
 
   after_clean <- df_raw %>%
     key_rename(keychain, drop_extra = TRUE) %>%
-    wnv_s_clean()
+    wnv_s_clean(force_recompute = TRUE)
   after_dedup <- after_clean %>%
     make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
     culex_dedup()
@@ -374,7 +379,7 @@ INPUTS
 database_reformat = database %>%
   reformat_database_2_culex_sheet() %>%
   fix_zone_from_ref(trap_ref) %>%    # correct zone from foco_trap - data.csv before zone2 is derived
-  wnv_s_clean() %>%
+  wnv_s_clean(force_recompute = TRUE) %>%
   make_key(key_cols = c("trap_id", "spp", "year", "week")) %>%
   culex_dedup()   # remove weekend collection dates (non-standard surveillance nights)
 
@@ -533,7 +538,7 @@ purrr::iwalk(sources_filtered, function(df, src_name) {
 # Zone-week present in data → "no mosquitoes"; zone-week entirely absent → "no trap".
 ```{r, post_expand_status}
 
-culex_database_expand <- assign_trap_status_post_expand(culex_database_expand)
+culex_database_expand <- wnvSurv::assign_trap_status(culex_database_expand)
 
 # ── VALIDATIONS ──────────────────────────────────────────────────────────────
 # These are hard assertions, not soft warnings. If either fails the pipeline

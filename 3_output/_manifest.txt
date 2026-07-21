@@ -1,6 +1,6 @@
 ============================================================
   WNV-S TRAP PIPELINE MANIFEST
-  Generated: 2026-06-05 12:45:09
+  Generated: 2026-07-21 11:09:31
   R version: R version 4.4.3 (2025-02-28)
 ============================================================
 
@@ -39,24 +39,24 @@
   n_cols:                        8
 [clean:vdci]
   n_raw:                         30599
-  n_after_clean:                 30599
+  n_after_clean:                 30462
   n_after_dedup:                 30439
-  removed_by_dedup:              160
+  removed_by_dedup:              23
 [clean:cmc_weekly]
   n_raw:                         7848
-  n_after_clean:                 7848
+  n_after_clean:                 7841
   n_after_dedup:                 7838
-  removed_by_dedup:              10
+  removed_by_dedup:              3
 [clean:cfc]
   n_raw:                         9758
-  n_after_clean:                 9758
-  n_after_dedup:                 7540
-  removed_by_dedup:              2218
+  n_after_clean:                 8823
+  n_after_dedup:                 7542
+  removed_by_dedup:              1281
 [clean:bc]
   n_raw:                         754
-  n_after_clean:                 754
+  n_after_clean:                 749
   n_after_dedup:                 749
-  removed_by_dedup:              5
+  removed_by_dedup:              0
 [prep:vdci]
   n_in_clean:                    30439
   n_out_prepped:                 18518
@@ -64,7 +64,7 @@
   n_in_clean:                    7838
   n_out_prepped:                 7728
 [prep:cfc]
-  n_in_clean:                    7540
+  n_in_clean:                    7542
   n_out_prepped:                 9398
 [prep:bc]
   n_in_clean:                    749
@@ -119,4 +119,4 @@
   unmerged_rows:                 5396
   malfunction_trap_wks:          51
   no_mosq_trap_wks:              4344
-  no_culex_trap_wks:             295
+  no_culex_trap_wks:             0
